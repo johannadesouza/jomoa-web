@@ -1,0 +1,58 @@
+{
+  "hero": {
+    "eyebrow": "JOMOA Coach",
+    "h1": "Train in rhythm.",
+    "subheadline": "Powered by cyclical intelligence for smarter, more empathetic coaching.",
+    "cta": "Join the waitlist",
+    "card": "JOMOA helps coaches build structured macro/meso/micro programs, follow progress over time, and add cycle-informed insights when relevant."
+  },
+  "problemSolution": {
+    "cardA": {
+      "title": "Traditional tools assume linear bodies.",
+      "body": "Female physiology varies across the cycle. Most platforms ignore that—making sustainable coaching harder."
+    },
+    "cardB": {
+      "title": "JOMOA brings cyclical intelligence into coaching.",
+      "body": "Data + physiology + behavior insights so you can adapt training with confidence—not guesswork."
+    }
+  },
+  "builtForCoaches": {
+    "h2": "Built for coaches",
+    "items": [
+      "Build programs in macro / meso / micro cycles",
+      "Track sessions with sets / reps / RPE + notes",
+      "Optional cycle insights module for clients",
+      "Coach more individually—without extra admin"
+    ]
+  },
+  "howItWorks": {
+    "h2": "How it works",
+    "steps": [
+      "Create a structured program",
+      "Track training and recovery over time",
+      "Add cycle-based insights when needed"
+    ],
+    "tagline": "JOMOA isn't about training women \"differently\"—it's about coaching smarter."
+  },
+  "waitlist": {
+    "intro": "Be first to try the internal beta for coaches.",
+    "form": {
+      "title": "Join the Waitlist",
+      "description": "Be the first to know when we launch",
+      "placeholder": "Enter your email",
+      "buttonIdle": "Join Waitlist",
+      "buttonLoading": "Joining...",
+      "success": "Successfully added to waitlist!",
+      "duplicateError": "This email is already on the waitlist",
+      "genericError": "Something went wrong. Please try again.",
+      "validationError": "Please enter a valid email address",
+      "emptyError": "Please enter your email address"
+    },
+    "privacy": "Your privacy matters. We'll only use your email to notify you about the beta launch."
+  },
+  "footer": {
+    "copyright": "JOMOA. All rights reserved.",
+    "privacy": "Your privacy matters. We'll only use your email to notify you about the beta launch."
+  }
+}
+

@@ -1,0 +1,58 @@
+{
+  "hero": {
+    "eyebrow": "JOMOA Coach",
+    "h1": "Träna i rytm.",
+    "subheadline": "Drivet av cyklisk intelligens för smartare, mer empatisk träning.",
+    "cta": "Gå med i väntelistan",
+    "card": "JOMOA hjälper tränare att bygga strukturerade makro/meso/mikro program, följa framsteg över tid och lägga till cykelbaserade insikter när det är relevant."
+  },
+  "problemSolution": {
+    "cardA": {
+      "title": "Traditionella verktyg antar linjära kroppar.",
+      "body": "Kvinnlig fysiologi varierar över cykeln. De flesta plattformar ignorerar det—vilket gör hållbar träning svårare."
+    },
+    "cardB": {
+      "title": "JOMOA för cyklisk intelligens till träningen.",
+      "body": "Data + fysiologi + beteendeinsikter så att du kan anpassa träningen med självförtroende—inte gissningar."
+    }
+  },
+  "builtForCoaches": {
+    "h2": "Byggt för tränare",
+    "items": [
+      "Bygg program i makro / meso / mikro cykler",
+      "Spåra pass med set / reps / RPE + anteckningar",
+      "Valfritt cykelinsiktsmodul för klienter",
+      "Träna mer individuellt—utan extra administration"
+    ]
+  },
+  "howItWorks": {
+    "h2": "Så fungerar det",
+    "steps": [
+      "Skapa ett strukturerat program",
+      "Spåra träning och återhämtning över tid",
+      "Lägg till cykelbaserade insikter vid behov"
+    ],
+    "tagline": "JOMOA handlar inte om att träna kvinnor \"annorlunda\"—det handlar om smartare träning."
+  },
+  "waitlist": {
+    "intro": "Var först med att testa intern beta för tränare.",
+    "form": {
+      "title": "Gå med i väntelistan",
+      "description": "Var först med att få veta när vi lanserar",
+      "placeholder": "Ange din e-post",
+      "buttonIdle": "Gå med i väntelistan",
+      "buttonLoading": "Går med...",
+      "success": "Tillagd i väntelistan!",
+      "duplicateError": "Denna e-post finns redan i väntelistan",
+      "genericError": "Något gick fel. Försök igen.",
+      "validationError": "Vänligen ange en giltig e-postadress",
+      "emptyError": "Vänligen ange din e-postadress"
+    },
+    "privacy": "Din integritet är viktig. Vi använder bara din e-post för att meddela dig om betalanseringen."
+  },
+  "footer": {
+    "copyright": "JOMOA. Alla rättigheter förbehållna.",
+    "privacy": "Din integritet är viktig. Vi använder bara din e-post för att meddela dig om betalanseringen."
+  }
+}
+
