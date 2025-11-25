@@ -1,62 +1,58 @@
 {
   "hero": {
     "h1": "Train in rhythm.",
-    "subheadline": "The modern coaching platform that unites training, physiology, psychology, and cyclical health.",
-    "body": "Create training programs that work for everyone — and give women a fairer foundation by accounting for the body's natural variations.",
+    "subheadline": "A platform that supports coaches and clients by uniting training, physiology, and behavioral patterns.",
+    "body": "JOMOA makes it easier to understand how the body changes over time – and to adapt training to real conditions.",
     "cta": "Join the waitlist",
-    "ctaSecondary": "Discover why JOMOA is needed"
+    "ctaSubtext": "Get news and invitations to the beta launch."
   },
-  "value": {
-    "heading": "Training apps are built for linear bodies.\nPeople are not linear.",
-    "body1": "Most tools assume even energy, even recovery, and even performance.",
-    "body2": "But that's not how real people work — and least of all clients whose physiology is affected by hormonal variations.",
-    "body3": "With JOMOA, coaches get a tool that works for everyone,\nbut also gives women better conditions by making visible patterns that are often overlooked.",
-    "benefits": [
-      "Better results",
-      "Fewer injuries",
-      "Less stress",
-      "More sustainable development"
-    ]
+  "problem": {
+    "heading": "Today's training tools are built on linear assumptions.\nThe human body is not.",
+    "body1": "Traditional apps often assume that energy, recovery, and performance are stable from day to day.",
+    "body2": "In practice, the body varies – both due to physiology, life situation, and behavioral patterns.",
+    "body3": "With JOMOA, coaches get a tool that works for all clients,\nand that simultaneously makes it easier to understand variations that are particularly common in women."
   },
-  "insights": {
-    "heading": "Energy, motivation, and recovery vary — and that's completely normal.",
-    "subheading": "This is not a problem.\nIt's information that makes training smarter.",
+  "variation": {
+    "heading": "Energy, recovery, and motivation vary naturally.",
+    "subheading": "This is not a problem – it's important information.",
     "items": [
-      "Energy can shift 20–30% over a month",
-      "Recovery is affected by sleep, stress, and physiology",
-      "Motivation changes over time",
-      "Performance goes in curves, not in a line"
-    ]
+      "Energy can shift significantly over a month",
+      "Recovery is affected by sleep, load, and physiological factors",
+      "Motivation follows behavioral patterns and life situation",
+      "Performance goes in waves, not in a straight line"
+    ],
+    "footer": "JOMOA helps coaches and clients see these patterns – without simplifying or exaggerating."
   },
   "phases": {
-    "heading": "Support for different phases and conditions.",
-    "body1": "JOMOA is not a \"women-focused app\".",
-    "body2": "It's a tool that gives all clients the right support — and lets women get insights when they need them.",
-    "subheading": "Support for clients with:",
+    "heading": "Support for different phases and conditions",
+    "subheading": "A tool that accounts for reality.",
+    "body1": "JOMOA is not an app \"for women\".",
+    "body2": "It's a tool designed for everyone – but with the ability to handle variations that often affect women's daily life and training capacity.",
+    "examplesHeading": "Examples of situations where JOMOA adds value:",
     "items": [
       {
-        "title": "PMS and cyclical symptoms",
+        "title": "cyclical symptoms and recurring variations in energy",
         "icon": "calendar"
       },
       {
-        "title": "Periods with increased sensitivity or discomfort",
+        "title": "periods of increased sensitivity or discomfort",
         "icon": "heart"
       },
       {
-        "title": "Hormone-affected periods (PCOS, PMDD, endometriosis)",
+        "title": "hormone-related conditions that can affect load tolerance",
         "icon": "activity"
       },
       {
-        "title": "Effects of contraception",
+        "title": "changes related to contraception",
         "icon": "shield"
       },
       {
-        "title": "Postpartum and return to training",
+        "title": "return to training after pregnancy",
         "icon": "baby"
       }
     ],
-    "footer1": "The client gets the right dose of educational insights.",
-    "footer2": "The coach gets relevant decision support."
+    "footer1": "The client gets a comprehensible way to follow their patterns.",
+    "footer2": "The coach gets better foundation for adapting the approach."
   },
   "data": {
     "heading": "Data-driven — but human.",
@@ -67,85 +63,84 @@
       "sleep",
       "energy",
       "motivation",
-      "mood",
+      "emotional markers",
       "cyclical variations (optional)"
     ],
-    "insight": "The system presents the data in a way that is understandable, educational, and actionable.",
-    "client": "\"I'm starting to understand my body.\"",
-    "coach": "\"I can guide smarter and more confidently.\""
-  },
+    "insight": "The system presents the information in a way that is easy to understand – and practical to use.",
+    "client": "\"I see how my body reacts over time.\"",
+    "coach": "\"I can adapt training with more precision.\""
+      },
   "features": {
-    "heading": "A professional tool for coaches who want to work smart, sustainably, and personally.",
+    "heading": "A tool for coaches who work long-term.",
     "items": [
       {
         "title": "Structured programming",
-        "description": "Plan blocks, cycles, progression, and long-term development.",
+        "description": "Plan blocks, cycles, and progression in a way that's easy to adjust.",
         "icon": "calendar"
       },
       {
-        "title": "Session log and progression",
-        "description": "Sets, reps, RPE, comments, graphs.",
+        "title": "Session log and development over time",
+        "description": "Sets, reps, RPE, comments, trends, and graphs.",
         "icon": "trending-up"
       },
       {
-        "title": "Nutrition and adjustments",
-        "description": "Recipes, portion guidance, and support during low energy.",
+        "title": "Nutrition support and adjustments",
+        "description": "Simple recipes, portion guidance, and recommendations during low energy.",
         "icon": "utensils"
       },
       {
-        "title": "Psychological patterns",
-        "description": "Simple mood markers — no diagnoses, just understanding.",
+        "title": "Psychological markers",
+        "description": "Clients can log mood and energy – without it becoming a diagnostic tool.",
         "icon": "brain"
       },
       {
-        "title": "Cycle insights (optional)",
-        "description": "Activated only for clients who want it.",
+        "title": "Cycle module (optional)",
+        "description": "For clients where variation is relevant.",
         "icon": "waves"
       }
     ]
   },
-  "edge": {
-    "heading": "A tool for your entire customer base.\nAn extra edge for women.",
-    "body": "JOMOA is a training platform for:",
+  "forEveryone": {
+    "heading": "For all clients – but especially valuable for women",
+    "body": "JOMOA can be used with clients who:",
     "clients": [
-      "men",
-      "women",
-      "non-binary",
-      "beginners",
-      "athletes",
-      "clients with high stress",
-      "clients with hormone-affected periods",
-      "postpartum clients"
+      "are beginners or experienced",
+      "have high workload or insufficient recovery",
+      "experience recurring variations in energy or symptoms",
+      "train after pregnancy",
+      "want to understand their body better over time"
     ],
-    "footer": "Each individual gets a flow that fits their life. Not the other way around."
+    "footer": "The formulations are inclusive, scientifically cautious, and professionally neutral."
   },
   "steps": {
-    "heading": "How it works — three steps",
+    "heading": "How it works – three steps",
+    "intro": "A simple process for building, following, and adapting training over time.",
     "items": [
       {
-        "title": "Create the program",
-        "description": "JOMOA helps you structure blocks, cycles, and progression."
+        "title": "Build the program",
+        "description": "Create structured training blocks and progressions."
       },
       {
         "title": "Follow the patterns",
-        "description": "See how energy, recovery, and motivation change over time."
+        "description": "The client logs training and simple markers. JOMOA visualizes trends."
       },
       {
         "title": "Adapt at the right time",
-        "description": "Small adjustments → big results."
+        "description": "Small adjustments – clear effect in the long term."
       }
     ]
   },
   "ctaFooter": {
     "h1": "Train in rhythm.",
-    "h2": "Be first to test JOMOA Coach.",
+    "h2": "Join the waitlist",
     "cta": "Join the waitlist",
-    "ctaSecondary": "Join the beta (limited availability)",
-    "placeholder": "Enter your email address to receive news and beta invitations."
+    "subtext": "Get news and invitations to upcoming beta.",
+    "trust": "We'll contact you when something is relevant – no unwanted emails."
   },
   "waitlist": {
     "heading": "Join the beta",
     "intro": "Be first to try the internal beta for coaches.",
+    "trust": "We'll contact you when something is relevant – no unwanted emails.",
     "form": {
       "title": "Join the Waitlist",
       "description": "Be the first to know when we launch",
@@ -167,6 +162,6 @@
     "links": {
       "privacy": "Privacy Policy",
       "contact": "Contact"
-    }
   }
+}
 }

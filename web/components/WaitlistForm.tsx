@@ -4,11 +4,35 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+
+// EXACT JOMOA Brand Colors
+const colors = {
+  softPink: "#FFFBF7",
+  terracotta: "#D96D46",
+  sand: "#FEE7AB",
+  plum: "#462324",
+  mauve: "#BA8E90",
+  pinkLight: "#F0D6D7",
+  mauveDark: "#976568",
+  terracottaLight: "#FDB499",
+  border: "#E8D5D0",
+  text: "#462324",
+  textSecondary: "#4E4A48",
+};
+
+// JOMOA Spacing System
+const spacing = {
+  xs: "8px",
+  s: "12px",
+  m: "24px",
+  l: "32px",
+  xl: "48px",
+};
 
 type WaitlistFormProps = {
   locale: "en" | "sv";
+  inline?: boolean; // For inline layout on desktop (input + button on same row)
   labels: {
     title: string;
     description: string;
@@ -23,7 +47,7 @@ type WaitlistFormProps = {
   };
 };
 
-export default function WaitlistForm({ locale, labels }: WaitlistFormProps) {
+export default function WaitlistForm({ locale, labels, inline = false }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{
@@ -86,67 +110,81 @@ export default function WaitlistForm({ locale, labels }: WaitlistFormProps) {
   };
 
   return (
-    <Card className={cn(
-      "border-0 shadow-none",
-      "bg-transparent text-jomoa-text",
-      "w-full"
-    )}>
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-semibold text-jomoa-text">
-          {labels.title}
-        </CardTitle>
-        <CardDescription className="text-jomoa-muted">
-          {labels.description}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Input
-              type="email"
-              placeholder={labels.placeholder}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              className={cn(
-                "rounded-xl h-12",
-                "bg-white border-jomoa-muted/20",
-                "focus:border-jomoa-accent focus:ring-jomoa-accent/20",
-                "text-jomoa-text placeholder:text-jomoa-muted"
-              )}
-              required
-            />
-          </div>
-
-          {status.message && (
-            <div
-              className={cn(
-                "rounded-xl p-3 text-sm",
-                status.type === "success"
-                  ? "bg-green-50 text-green-700 border border-green-200"
-                  : "bg-red-50 text-red-700 border border-red-200"
-              )}
-            >
-              {status.message}
-            </div>
+    <form 
+      onSubmit={handleSubmit} 
+      className={cn(
+        "flex gap-4",
+        inline ? "flex-col md:flex-row" : "flex-col"
+      )}
+    >
+      <div className={cn("flex-1", inline && "md:flex-1")}>
+        <Input
+          type="email"
+          placeholder={labels.placeholder}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
+          className={cn(
+            "w-full rounded-[32px] font-league-spartan font-normal",
+            "bg-white border-2",
+            "focus:ring-2 focus:ring-offset-0 focus:ring-[#D96D46]",
+            "placeholder:text-[#725A5A] placeholder:opacity-60",
+            "transition-all duration-300 hover:border-[#D96D46]"
           )}
+          style={{ 
+            borderColor: colors.border,
+            color: colors.text,
+            padding: "18px 28px",
+            fontSize: "18px",
+            height: "64px",
+            lineHeight: "1.5",
+            backgroundColor: "#FFFFFF"
+          }}
+          required
+        />
+      </div>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className={cn(
-              "w-full rounded-xl h-12",
-              "bg-jomoa-accent hover:bg-jomoa-accent2",
-              "text-white font-medium",
-              "transition-colors duration-200",
-              "disabled:opacity-50 disabled:cursor-not-allowed"
-            )}
-          >
-            {loading ? labels.buttonLoading : labels.buttonIdle}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      <Button
+        type="submit"
+        disabled={loading}
+        className={cn(
+          "rounded-full font-league-spartan font-semibold",
+          "text-white",
+          "transition-all duration-200 ease-out hover:opacity-90 hover:scale-[1.02]",
+          "disabled:opacity-50 disabled:cursor-not-allowed",
+          inline ? "w-full md:w-auto md:flex-shrink-0" : "w-full"
+        )}
+        style={{ 
+          background: colors.terracotta,
+          boxShadow: `0 4px 16px ${colors.terracotta}30`,
+          padding: "18px 36px",
+          fontSize: "18px",
+          height: "64px",
+          lineHeight: "1.5"
+        }}
+      >
+        {loading ? labels.buttonLoading : labels.buttonIdle}
+      </Button>
+
+      {status.message && (
+        <div
+          className={cn(
+            "rounded-[24px] font-league-spartan font-normal w-full",
+            inline ? "md:col-span-2" : ""
+          )}
+          style={{
+            backgroundColor: status.type === "success" ? "#F0F9F4" : "#FEF2F2",
+            color: status.type === "success" ? "#166534" : "#991B1B",
+            borderColor: status.type === "success" ? "#BBF7D0" : "#FECACA",
+            borderWidth: "1px",
+            padding: spacing.m,
+            fontSize: "15px",
+            lineHeight: "1.5"
+          }}
+        >
+          {status.message}
+        </div>
+      )}
+    </form>
   );
 }
-

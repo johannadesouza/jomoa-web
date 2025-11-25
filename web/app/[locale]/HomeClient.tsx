@@ -1,59 +1,186 @@
 "use client";
 
 import WaitlistForm from "@/components/WaitlistForm";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { 
-  ChevronRight, 
   Check,
   Calendar,
-  Heart,
-  Activity,
-  Shield,
-  Baby,
   TrendingUp,
   Utensils,
   Brain,
   Waves,
-  Target,
-  Zap,
-  ShieldCheck,
-  TrendingDown
+  Activity,
+  Heart,
+  Shield,
+  Baby,
 } from "lucide-react";
 import Header from "@/components/Header";
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 },
+// JOMOA Brand Colors - matching jomoa.coach
+const colors = {
+  bg: "#FFFBF7",              // Main background
+  bgAlt: "#FFF8F4",           // Alternate background
+  primary: "#D96D46",         // Primary CTA buttons (terracotta)
+  text: "#462324",            // Headlines, strong text (plum)
+  textSecondary: "#4E4A48",   // Body text
+  textMuted: "#725A5A",       // Muted text
+  accent: "#BA8E90",          // Accents (mauve)
+  border: "#E8D5D0",          // Borders
+  card: "#FFFFFF",            // Card backgrounds
 };
 
-const staggerChildren = {
-  initial: { opacity: 0 },
-  animate: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
+// Typography System - simplified, relies on Tailwind defaults
+const typography = {
+  h1: {
+    mobile: "text-4xl",
+    tablet: "text-5xl",
+    desktop: "text-6xl",
+    xl: "text-7xl",
+  },
+  h2: {
+    mobile: "text-3xl",
+    tablet: "text-4xl",
+    desktop: "text-5xl",
+  },
+  h3: {
+    mobile: "text-xl",
+    tablet: "text-2xl",
+    desktop: "text-2xl",
+  },
+  subheading: {
+    mobile: "text-lg",
+    tablet: "text-xl",
+    desktop: "text-xl",
+  },
+  body: {
+    mobile: "text-base",
+    tablet: "text-lg",
+    desktop: "text-lg",
+  },
+  small: {
+    mobile: "text-sm",
+    tablet: "text-base",
+    desktop: "text-base",
   },
 };
 
+// Helper Components
+const PageSection = ({ 
+  children, 
+  bgColor = colors.bg, 
+  className = "",
+  id,
+  withDecorativeShapes = false
+}: { 
+  children: React.ReactNode; 
+  bgColor?: string; 
+  className?: string;
+  id?: string;
+  withDecorativeShapes?: boolean;
+}) => {
+  // Map known colors to Tailwind classes
+  const bgClass = bgColor === colors.bg ? "bg-[#FFFBF7]" : 
+                  bgColor === colors.bgAlt ? "bg-[#FFF8F4]" :
+                  bgColor === colors.text ? "bg-[#462324]" : 
+                  undefined;
+  const needsOverlay = bgColor !== colors.bg;
+  
+  return (
+    <section 
+      id={id}
+      className={cn("relative py-20 md:py-28 overflow-hidden", bgClass, className)}
+      style={bgClass ? undefined : { backgroundColor: bgColor }}
+    >
+      {needsOverlay && (
+        <div 
+          className={cn("absolute inset-0", bgClass)} 
+          style={bgClass ? undefined : { background: bgColor }}
+        />
+      )}
+      {withDecorativeShapes && (
+        <>
+          <div className="absolute top-20 right-0 w-64 h-64 bg-[#D96D46]/[0.08] rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute bottom-20 left-0 w-96 h-96 bg-[#BA8E90]/[0.06] rounded-full blur-3xl pointer-events-none"></div>
+        </>
+      )}
+      {children}
+    </section>
+  );
+};
+
+const SectionContainer = ({ 
+  children, 
+  maxWidth = "1040px",
+  className = ""
+}: { 
+  children: React.ReactNode; 
+  maxWidth?: string;
+  className?: string;
+}) => {
+  // Map common maxWidth values to Tailwind classes
+  const maxWidthClass = maxWidth === "1040px" ? "max-w-[1040px]" :
+                       maxWidth === "1200px" ? "max-w-[1200px]" :
+                       maxWidth === "560px" ? "max-w-[560px]" :
+                       maxWidth === "680px" ? "max-w-[680px]" :
+                       undefined;
+  
+  return (
+    <div 
+      className={cn("mx-auto px-4 md:px-8 relative z-10", maxWidthClass, className)}
+      style={maxWidthClass ? undefined : { maxWidth }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const TextContainer = ({ 
+  children, 
+  className = "" 
+}: { 
+  children: React.ReactNode; 
+  className?: string;
+}) => (
+  <div 
+    className={cn("mx-auto max-w-[680px]", className)}
+  >
+    {children}
+  </div>
+);
+
+// Subtle fade-in animation wrapper
+const SectionFadeIn = ({ 
+  children, 
+  delay = 0,
+  className = ""
+}: { 
+  children: React.ReactNode; 
+  delay?: number;
+  className?: string;
+}) => (
+  <motion.div
+    initial={{ opacity: 0, y: 16 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-100px" }}
+    transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+    className={className}
+  >
+    {children}
+  </motion.div>
+);
+
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   calendar: Calendar,
-  heart: Heart,
-  activity: Activity,
-  shield: Shield,
-  baby: Baby,
   "trending-up": TrendingUp,
   utensils: Utensils,
   brain: Brain,
   waves: Waves,
-  target: Target,
-  zap: Zap,
-  "shield-check": ShieldCheck,
-  "trending-down": TrendingDown,
+  activity: Activity,
+  heart: Heart,
+  shield: Shield,
+  baby: Baby,
 };
 
 type Dict = Awaited<ReturnType<typeof import("@/lib/i18n/getDictionary").getDictionary>>;
@@ -63,692 +190,674 @@ type Props = {
   locale: "en" | "sv";
 };
 
-export default function HomeClient({ dict, locale }: Props) {
-  const currentYear = new Date().getFullYear();
+// Consistent CTA Button Style
+const PrimaryCTA = ({ children, href = "#waitlist" }: { children: React.ReactNode; href?: string }) => (
+  <Button
+    asChild
+    className={cn(
+      "rounded-full font-league-spartan font-semibold",
+      "text-white bg-[#D96D46]",
+      "px-9 py-4 text-lg",
+      "transition-all duration-200 ease-out",
+      "hover:opacity-90 hover:scale-[1.02] hover:shadow-md",
+      "w-full sm:w-auto"
+    )}
+  >
+    <a 
+      href={href}
+      onClick={(e) => {
+        e.preventDefault();
+        document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }}
+    >
+      {children}
+    </a>
+  </Button>
+);
 
+// Section Components
+function HeroSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) {
   return (
-    <div className="min-h-screen bg-soft-pink">
-      {/* HEADER */}
-      <Header locale={locale} />
-
-      {/* HERO SECTION - Soft Light Pink with wave-form */}
-      <section className="relative overflow-hidden bg-soft-pink py-24 lg:py-32">
-        {/* Organic wave-form background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <svg className="absolute bottom-0 w-full h-64" viewBox="0 0 1200 400" preserveAspectRatio="none">
-            <path
-              d="M0,200 Q300,100 600,200 T1200,200 L1200,400 L0,400 Z"
-              fill="#976568"
-              fillOpacity="0.1"
-              style={{ animation: "wave 8s ease-in-out infinite" }}
-            />
-          </svg>
-        </div>
-        
-        <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <motion.div
-            initial="initial"
-            animate="animate"
-            variants={staggerChildren}
-            className="text-center space-y-8"
-          >
-            <motion.h1
-              variants={fadeInUp}
-              className="text-5xl sm:text-6xl lg:text-7xl font-the-seasons font-semibold text-plum leading-[1.15]"
-            >
-              {dict.hero.h1}
-            </motion.h1>
-            <motion.p
-              variants={fadeInUp}
-              className="text-xl sm:text-2xl leading-[1.25] text-plum max-w-3xl mx-auto font-league-spartan font-normal"
-            >
-              {dict.hero.subheadline}
-            </motion.p>
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-[#4E4A48] max-w-2xl mx-auto font-league-spartan font-normal"
-            >
-              {dict.hero.body}
-            </motion.p>
-            <motion.div variants={fadeInUp} className="pt-6 flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button
-                asChild
+    <PageSection className="pt-24 pb-20 md:pt-32 md:pb-24">
+      <SectionContainer>
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#FFF8F4]/60 to-transparent pointer-events-none"></div>
+          <div className="grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] gap-12 lg:gap-16 items-center relative z-10">
+            <SectionFadeIn className="space-y-4 max-w-2xl">
+              {/* Eyebrow label */}
+              <div className="mb-4">
+                <span className="inline-flex items-center rounded-full bg-[#D96D46]/[0.08] text-[#462324] text-xs md:text-sm px-4 py-1.5 font-league-spartan font-medium">
+                  {dict.forEveryone.heading}
+                </span>
+              </div>
+              
+              <h1
                 className={cn(
-                  "group relative rounded-[24px] h-16 px-12 text-lg font-league-spartan font-semibold",
-                  "bg-terracotta hover:bg-terracotta/95 text-white",
-                  "transition-all duration-300 ease-out",
-                  "shadow-[0_4px_20px_rgba(217,109,70,0.3)] hover:shadow-[0_8px_40px_rgba(217,109,70,0.4)]",
-                  "hover:scale-[1.02] active:scale-[0.98]",
-                  "overflow-hidden"
+                  typography.h1.mobile,
+                  typography.h1.tablet,
+                  typography.h1.desktop,
+                  "xl:text-6xl font-the-seasons font-semibold",
+                  "text-[#462324] mb-3"
                 )}
               >
-                <a 
-                  href="#waitlist" 
-                  className="inline-flex items-center gap-3 relative z-10"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }}
-                >
-                  <span>👉 {dict.hero.cta}</span>
-                  <ChevronRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-terracotta-light/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </a>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
+                {dict.hero.h1}
+              </h1>
+              
+              <p
                 className={cn(
-                  "group rounded-[24px] h-16 px-12 text-lg font-league-spartan font-semibold",
-                  "border-2 border-mauve text-mauve hover:bg-mauve/10 hover:border-mauve-dark",
-                  "transition-all duration-300 ease-out",
-                  "hover:scale-[1.02] active:scale-[0.98]",
-                  "bg-white/50 backdrop-blur-sm"
+                  typography.subheading.mobile,
+                  typography.subheading.tablet,
+                  typography.subheading.desktop,
+                  "font-league-spartan font-semibold",
+                  "text-[#462324] opacity-90 mb-6"
                 )}
               >
-                <a 
-                  href="#value" 
-                  className="inline-flex items-center gap-2"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById('value')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }}
-                >
-                  {dict.hero.ctaSecondary}
-                </a>
-              </Button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* VALUE SECTION - Sand 10% opacity */}
-      <section id="value" className="bg-sand/10 py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerChildren}
-          >
-            <motion.h2
-              variants={fadeInUp}
-              className="text-3xl sm:text-4xl font-league-spartan font-semibold text-plum leading-[1.15] mb-8 whitespace-pre-line"
-            >
-              {dict.value.heading}
-            </motion.h2>
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-[#4E4A48] mb-4 font-league-spartan font-normal"
-            >
-              {dict.value.body1}
-            </motion.p>
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-[#4E4A48] mb-8 font-league-spartan font-normal"
-            >
-              {dict.value.body2}
-            </motion.p>
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-[#4E4A48] mb-12 font-league-spartan font-normal whitespace-pre-line"
-            >
-              {dict.value.body3}
-            </motion.p>
-            
-            {/* 4 icon cards in terracotta */}
-            <motion.div
-              variants={fadeInUp}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-4"
-            >
-              {dict.value.benefits.map((benefit, idx) => {
-                const icons = [Target, ShieldCheck, Zap, TrendingUp];
-                const Icon = icons[idx] || Target;
-                return (
-                  <motion.div
-                    key={idx}
-                    whileHover={{ scale: 1.05, y: -4 }}
-                    className="group relative bg-gradient-to-br from-white/90 to-white/70 backdrop-blur-sm rounded-full p-6 border border-pink-light/50 text-center transition-all duration-300 hover:shadow-warm hover:border-terracotta/30 overflow-hidden aspect-square flex flex-col items-center justify-center"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-terracotta/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <Icon className="h-8 w-8 text-terracotta mb-3 relative z-10" />
-                    <p className="text-sm font-league-spartan font-semibold text-plum relative z-10">
-                      {benefit}
-                    </p>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* INSIGHTS BLOCK - Plum text on Soft Pink */}
-      <section className="bg-soft-pink py-20 relative overflow-hidden">
-        {/* Small graphic waves in background */}
-        <div className="absolute inset-0 opacity-5">
-          <svg className="absolute top-10 left-10 w-32 h-32" viewBox="0 0 100 100">
-            <path d="M0,50 Q25,20 50,50 T100,50" stroke="#462324" strokeWidth="2" fill="none" />
-          </svg>
-          <svg className="absolute bottom-20 right-20 w-40 h-40" viewBox="0 0 100 100">
-            <path d="M0,50 Q25,80 50,50 T100,50" stroke="#462324" strokeWidth="2" fill="none" />
-          </svg>
-        </div>
-        
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerChildren}
-          >
-            <motion.h2
-              variants={fadeInUp}
-              className="text-3xl sm:text-4xl font-league-spartan font-semibold text-plum leading-[1.15] mb-6"
-            >
-              {dict.insights.heading}
-            </motion.h2>
-            <motion.p
-              variants={fadeInUp}
-              className="text-xl leading-[1.25] text-plum mb-8 font-league-spartan font-semibold whitespace-pre-line"
-            >
-              {dict.insights.subheading}
-            </motion.p>
-            
-            <motion.ul
-              variants={fadeInUp}
-              className="space-y-4"
-            >
-              {dict.insights.items.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-4 text-lg text-plum leading-[1.25] font-league-spartan font-normal">
-                  <Check className="h-6 w-6 text-mauve mt-0.5 flex-shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </motion.ul>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* PHASES & CONDITIONS - Dusty Mauve 10% */}
-      <section className="bg-mauve-dark/10 py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerChildren}
-          >
-            <motion.h2
-              variants={fadeInUp}
-              className="text-3xl sm:text-4xl font-league-spartan font-semibold text-plum leading-[1.15] mb-6"
-            >
-              {dict.phases.heading}
-            </motion.h2>
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-[#4E4A48] mb-4 font-league-spartan font-normal"
-            >
-              {dict.phases.body1}
-            </motion.p>
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-[#4E4A48] mb-8 font-league-spartan font-normal"
-            >
-              {dict.phases.body2}
-            </motion.p>
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-plum mb-8 font-league-spartan font-semibold"
-            >
-              {dict.phases.subheading}
-            </motion.p>
-            
-            <div className="grid sm:grid-cols-2 gap-8">
-              {/* Left column - text list */}
-              <motion.ul
-                variants={fadeInUp}
-                className="space-y-4"
+                {dict.hero.subheadline}
+              </p>
+              
+              <p
+                className={cn(
+                  typography.body.mobile,
+                  typography.body.tablet,
+                  typography.body.desktop,
+                  "font-league-spartan font-normal",
+                  "text-[#4E4A48]"
+                )}
               >
+                {dict.hero.body}
+              </p>
+              
+              {/* Value chips */}
+              <div className="flex flex-wrap gap-2 mt-6">
+                <motion.span
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  className="inline-flex items-center rounded-full bg-[#D96D46]/[0.06] hover:bg-[#D96D46]/[0.12] border border-transparent hover:border-[#D96D46]/30 text-[#462324] text-xs md:text-sm px-3 py-1.5 font-league-spartan font-medium transition-all duration-200 cursor-pointer"
+                >
+                  {dict.data.heading}
+                </motion.span>
+                <motion.span
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  className="inline-flex items-center rounded-full bg-[#D96D46]/[0.06] hover:bg-[#D96D46]/[0.12] border border-transparent hover:border-[#D96D46]/30 text-[#462324] text-xs md:text-sm px-3 py-1.5 font-league-spartan font-medium transition-all duration-200 cursor-pointer"
+                >
+                  {dict.phases.heading}
+                </motion.span>
+              </div>
+            </SectionFadeIn>
+            
+            <SectionFadeIn delay={0.1} className="w-full max-w-md mx-auto lg:max-w-none">
+              <motion.div
+                whileHover={{ y: -4, scale: 1.01 }}
+                className="rounded-2xl bg-white border border-[#E8D5D0] shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 p-6 md:p-7 group relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#D96D46]/[0.05] rounded-full blur-2xl pointer-events-none"></div>
+                <h3 className="text-xl md:text-2xl font-the-seasons text-[#462324] text-center mb-4 relative z-10 group-hover:text-[#D96D46] transition-colors">
+                  {dict.waitlist.heading}
+                </h3>
+                <div className="relative z-10">
+                  <WaitlistForm
+                    locale={locale}
+                    inline={true}
+                    labels={{
+                      title: dict.waitlist.form.title,
+                      description: dict.waitlist.form.description,
+                      placeholder: dict.waitlist.form.placeholder,
+                      buttonIdle: dict.waitlist.form.buttonIdle,
+                      buttonLoading: dict.waitlist.form.buttonLoading,
+                      success: dict.waitlist.form.success,
+                      duplicateError: dict.waitlist.form.duplicateError,
+                      genericError: dict.waitlist.form.genericError,
+                      validationError: dict.waitlist.form.validationError,
+                      emptyError: dict.waitlist.form.emptyError,
+                    }}
+                  />
+                </div>
+              </motion.div>
+              <p 
+                className={cn(
+                  typography.small.mobile,
+                  typography.small.tablet,
+                  typography.small.desktop,
+                  "font-league-spartan font-normal text-center mt-4 opacity-75 text-[#4E4A48]"
+                )}
+              >
+                {dict.hero.ctaSubtext}
+              </p>
+            </SectionFadeIn>
+          </div>
+        </div>
+      </SectionContainer>
+    </PageSection>
+  );
+}
+
+function ProblemVariationSection({ dict }: { dict: Dict }) {
+  return (
+    <PageSection id="value" bgColor={colors.bgAlt} withDecorativeShapes={true}>
+      <SectionContainer className="space-y-12">
+        <div className="h-px w-full bg-[#E8D5D0] opacity-60 mb-12"></div>
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
+          {/* Left: Problem */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="pt-4 border-l-2 border-[#D96D46]/30 pl-4 relative"
+          >
+            <div className="absolute -left-1 top-8 w-3 h-3 bg-[#D96D46]/20 rounded-full"></div>
+            <h2 className={cn(typography.h2.mobile, typography.h2.tablet, typography.h2.desktop, "font-the-seasons font-semibold text-[#462324] mb-10")}>
+              {dict.problem.heading}
+            </h2>
+            <div className="space-y-5">
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48]")}
+              >
+                {dict.problem.body1}
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48]")}
+              >
+                {dict.problem.body2}
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48]")}
+              >
+                {dict.problem.body3}
+              </motion.p>
+            </div>
+          </motion.div>
+
+          {/* Right: Solution card */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            whileHover={{ y: -4 }}
+            className="relative"
+          >
+            <div className="bg-white border border-[#E8D5D0] rounded-2xl shadow-md hover:shadow-xl hover:border-[#D96D46]/40 p-8 transition-all duration-300 space-y-6 group">
+              <h3 className={cn(typography.h3.mobile, typography.h3.tablet, typography.h3.desktop, "font-the-seasons font-semibold mb-4 text-[#462324] group-hover:text-[#D96D46] transition-colors")}>
+                {dict.variation.heading}
+              </h3>
+              <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-semibold text-[#462324]")}>
+                {dict.variation.subheading}
+              </p>
+              
+              <div className="border-l-2 border-[#D96D46]/30 pl-4 space-y-4 group-hover:border-[#D96D46]/50 transition-colors">
+                <ul className="space-y-3">
+                  {dict.variation.items.map((item, idx) => (
+                    <motion.li
+                      key={idx}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.35, delay: idx * 0.08 }}
+                      whileHover={{ x: 4 }}
+                      className="flex items-start gap-4 group/item"
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.2, rotate: 5 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Check className="h-5 w-5 text-[#D96D46] flex-shrink-0 mt-1 [&>path]:stroke-[1.5] group-hover/item:text-[#D96D46]" />
+                      </motion.div>
+                      <span className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal flex-1 leading-relaxed text-[#4E4A48]")}>
+                        {item}
+                      </span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </div>
+              
+              <p className="text-sm opacity-80 mt-4 leading-relaxed font-league-spartan font-normal text-[#4E4A48]">
+                {dict.variation.footer}
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </SectionContainer>
+    </PageSection>
+  );
+}
+
+function PhasesDataSection({ dict }: { dict: Dict }) {
+  return (
+    <PageSection bgColor={colors.bgAlt} withDecorativeShapes={true}>
+      <SectionContainer className="space-y-12">
+        <div className="h-px w-full bg-[#E8D5D0] opacity-60 mb-12"></div>
+        <TextContainer>
+          <SectionFadeIn className="space-y-6">
+            <div className="space-y-4">
+              <h2 className={cn(typography.h2.mobile, typography.h2.tablet, typography.h2.desktop, "font-the-seasons font-semibold text-[#462324] mb-10")}>
+                {dict.phases.heading}
+              </h2>
+              <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48]")}>
+                {dict.phases.subheading}
+              </p>
+            </div>
+            
+            <div className="border-l-2 border-[#D96D46]/30 pl-4 space-y-4 group/list">
+              <ul className="space-y-4">
                 {dict.phases.items.map((item, idx) => {
                   const Icon = iconMap[item.icon] || Calendar;
                   return (
-                    <li key={idx} className="flex items-start gap-4">
-                      <div className="p-2 rounded-lg bg-plum/5">
-                        <Icon className="h-5 w-5 text-plum/60" />
-                      </div>
-                      <span className="text-lg text-[#4E4A48] leading-[1.25] font-league-spartan font-normal flex-1">
+                    <motion.li
+                      key={idx}
+                      initial={{ opacity: 0, x: -8 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: idx * 0.1 }}
+                      whileHover={{ x: 4 }}
+                      className="flex items-start gap-3 group/item cursor-pointer"
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.2, rotate: 5 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Icon className="h-6 w-6 text-[#D96D46] flex-shrink-0 mt-0.5 [&>path]:stroke-[1.5] group-hover/item:text-[#D96D46]" />
+                      </motion.div>
+                      <span className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal flex-1 text-[#4E4A48] group-hover/item:text-[#462324] transition-colors")}>
                         {item.title}
                       </span>
-                    </li>
+                    </motion.li>
                   );
                 })}
-              </motion.ul>
-              
-              {/* Right column - insight cards */}
-              <motion.div
-                variants={fadeInUp}
-                className="space-y-4"
-              >
-                <Card className="rounded-[24px] bg-white/80 backdrop-blur-sm border border-pink-light/50 p-6">
-                  <CardContent className="p-0">
-                    <p className="text-base font-league-spartan font-medium text-plum leading-relaxed">
-                      {dict.phases.footer1}
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card className="rounded-[24px] bg-white/80 backdrop-blur-sm border border-pink-light/50 p-6">
-                  <CardContent className="p-0">
-                    <p className="text-base font-league-spartan font-medium text-plum leading-relaxed">
-                      {dict.phases.footer2}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+              </ul>
             </div>
-          </motion.div>
-        </div>
-      </section>
+            
+            <div className="space-y-4 pt-2">
+              <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48]")}>
+                {dict.phases.body1}
+              </p>
+              <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48]")}>
+                {dict.phases.body2}
+              </p>
+            </div>
 
-      {/* DATA + HUMAN - Sand */}
-      <section className="bg-sand/20 py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerChildren}
-          >
-            <motion.h2
-              variants={fadeInUp}
-              className="text-3xl sm:text-4xl font-league-spartan font-semibold text-plum leading-[1.15] mb-6"
-            >
-              {dict.data.heading}
-            </motion.h2>
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-[#4E4A48] mb-6 font-league-spartan font-normal"
-            >
-              {dict.data.body}
-            </motion.p>
-            
-            <motion.div
-              variants={fadeInUp}
-              className="flex flex-wrap gap-3 mb-8"
-            >
-              {dict.data.patterns.map((pattern, idx) => (
-                <motion.span
-                  key={idx}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  className="group px-5 py-2.5 bg-gradient-to-br from-terracotta/15 to-terracotta/10 text-terracotta rounded-full text-base font-league-spartan font-medium border border-terracotta/20 hover:border-terracotta/40 transition-all duration-300 cursor-default"
-                >
-                  {pattern}
-                </motion.span>
-              ))}
-            </motion.div>
-            
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-[#4E4A48] mb-8 font-league-spartan font-normal"
-            >
-              {dict.data.insight}
-            </motion.p>
-            
-            {/* Microchart */}
-            <motion.div
-              variants={fadeInUp}
-              className="mb-8 bg-white/60 rounded-[24px] p-6 border border-pink-light/50"
-            >
-              <div className="h-32 flex items-end justify-center gap-2">
-                {[40, 60, 45, 70, 55, 80, 65].map((height, idx) => (
-                  <div
+            <div className="pt-8 space-y-6 border-t border-[#E8D5D0] mt-8">
+              <div>
+                <h3 className={cn(typography.h3.mobile, typography.h3.tablet, typography.h3.desktop, "font-the-seasons font-semibold mb-4 text-[#462324]")}>
+                  {dict.data.heading}
+                </h3>
+                <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal mb-6 text-[#4E4A48]")}>
+                  {dict.data.body}
+                </p>
+              </div>
+              
+              <div className="flex flex-wrap gap-2 md:gap-3">
+                {dict.data.patterns.map((pattern, idx) => (
+                  <motion.span
                     key={idx}
-                    className="w-8 bg-gradient-to-t from-terracotta to-terracotta-light rounded-t-lg transition-all duration-300 hover:opacity-80"
-                    style={{ height: `${height}%` }}
-                  />
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: idx * 0.1 }}
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    className="px-4 py-2 rounded-full font-league-spartan font-normal text-sm bg-[#D96D46]/[0.12] hover:bg-[#D96D46]/[0.20] text-[#D96D46] border border-[#D96D46]/[0.25] hover:border-[#D96D46]/50 transition-all duration-200 cursor-pointer"
+                  >
+                    {pattern}
+                  </motion.span>
                 ))}
               </div>
-            </motion.div>
-            
-            <div className="grid sm:grid-cols-2 gap-6">
-              <motion.div 
-                variants={fadeInUp} 
-                whileHover={{ scale: 1.02, y: -4 }}
-                className="group bg-gradient-to-br from-soft-pink to-white/80 rounded-[28px] p-8 border border-pink-light/50 hover:border-terracotta/30 hover:shadow-warm transition-all duration-300"
-              >
-                <p className="text-lg font-league-spartan font-medium text-plum mb-3">För klienten:</p>
-                <p className="text-xl font-league-spartan font-semibold text-terracotta italic leading-relaxed">
-                  {dict.data.client}
-                </p>
-              </motion.div>
-              <motion.div 
-                variants={fadeInUp} 
-                whileHover={{ scale: 1.02, y: -4 }}
-                className="group bg-gradient-to-br from-soft-pink to-white/80 rounded-[28px] p-8 border border-pink-light/50 hover:border-terracotta/30 hover:shadow-warm transition-all duration-300"
-              >
-                <p className="text-lg font-league-spartan font-medium text-plum mb-3">För coachen:</p>
-                <p className="text-xl font-league-spartan font-semibold text-terracotta italic leading-relaxed">
-                  {dict.data.coach}
-                </p>
-              </motion.div>
+              
+              <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48]")}>
+                {dict.data.insight}
+              </p>
+              
+              <div className="grid sm:grid-cols-2 gap-4 pt-2">
+                <motion.div
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  className="bg-white border border-[#E8D5D0] rounded-xl p-6 shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 group cursor-pointer"
+                >
+                  <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-semibold mb-2 text-[#462324] group-hover:text-[#D96D46] transition-colors")}>
+                    För klienten:
+                  </p>
+                  <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal italic text-[#D96D46]")}>
+                    {dict.data.client}
+                  </p>
+                </motion.div>
+                <motion.div
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  className="bg-white border border-[#E8D5D0] rounded-xl p-6 shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 group cursor-pointer"
+                >
+                  <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-semibold mb-2 text-[#462324] group-hover:text-[#D96D46] transition-colors")}>
+                    För tränaren:
+                  </p>
+                  <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal italic text-[#D96D46]")}>
+                    {dict.data.coach}
+                  </p>
+                </motion.div>
+              </div>
             </div>
-          </motion.div>
-        </div>
-      </section>
+          </SectionFadeIn>
+        </TextContainer>
+      </SectionContainer>
+    </PageSection>
+  );
+}
 
-      {/* FEATURES BLOCK - Soft Pink, icon color Terracotta/Mauve */}
-      <section className="bg-soft-pink py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerChildren}
-          >
-            <motion.h2
-              variants={fadeInUp}
-              className="text-3xl sm:text-4xl font-league-spartan font-semibold text-plum leading-[1.15] mb-12 text-center"
-            >
-              {dict.features.heading}
-            </motion.h2>
+function FeaturesSection({ dict }: { dict: Dict }) {
+  return (
+    <PageSection id="features" bgColor={colors.bgAlt} withDecorativeShapes={true}>
+      <SectionContainer className="space-y-12">
+        <div className="h-px w-full bg-[#E8D5D0] opacity-60 mb-12"></div>
+        <SectionFadeIn>
+          <div className="space-y-10">
+            <TextContainer className="text-center mb-10 max-w-2xl mx-auto">
+              <h2 className={cn(typography.h2.mobile, typography.h2.tablet, typography.h2.desktop, "font-the-seasons font-semibold text-[#462324] mb-10")}>
+                {dict.features.heading}
+              </h2>
+              <p className="mt-3 font-league-spartan text-base md:text-lg text-[#4E4A48]">
+                {dict.problem.body1}
+              </p>
+            </TextContainer>
             
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 mb-10">
               {dict.features.items.map((feature, idx) => {
                 const Icon = iconMap[feature.icon] || Calendar;
-                const iconColors = ["terracotta", "mauve", "terracotta", "mauve", "terracotta"];
-                const iconColor = iconColors[idx % iconColors.length];
                 return (
-                  <motion.div 
-                    key={idx} 
-                    variants={fadeInUp}
-                    whileHover={{ scale: 1.02, y: -4 }}
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                    whileHover={{ y: -4, scale: 1.02 }}
+                    className="h-full flex flex-col bg-white border border-[#E8D5D0] rounded-2xl p-6 md:p-7 shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 space-y-3 group cursor-pointer"
                   >
-                    <Card className="group rounded-[28px] bg-gradient-to-br from-white/90 to-white/70 backdrop-blur-sm border border-pink-light/50 h-full hover:shadow-warm hover:border-terracotta/30 transition-all duration-300 overflow-hidden">
-                      <CardContent className="p-6">
-                        <div className="space-y-4 relative z-10">
-                          <div className={cn(
-                            "p-3 rounded-xl bg-gradient-to-br w-fit",
-                            iconColor === "terracotta" ? "from-terracotta/15 to-terracotta/5" : "from-mauve/15 to-mauve/5"
-                          )}>
-                            <Icon className={cn("h-6 w-6", iconColor === "terracotta" ? "text-terracotta" : "text-mauve")} />
-                          </div>
-                          <div className="space-y-2">
-                            <h3 className="text-xl font-league-spartan font-semibold text-plum leading-[1.15]">
-                              {idx + 1}. {feature.title}
-                            </h3>
-                            <p className="text-base leading-[1.25] text-[#4E4A48] font-league-spartan font-normal">
-                              {feature.description}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-br from-terracotta/0 to-terracotta/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </CardContent>
-                    </Card>
+                    <div className="flex items-center justify-between">
+                      <motion.div
+                        whileHover={{ rotate: 5, scale: 1.1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Icon className="h-6 w-6 text-[#D96D46] group-hover:text-[#D96D46] [&>path]:stroke-[1.5]" />
+                      </motion.div>
+                      <span className="inline-flex items-center justify-center rounded-full border border-[#D96D46]/40 text-[#D96D46] text-xs font-league-spartan px-2 py-0.5 group-hover:bg-[#D96D46]/[0.08] transition-colors">
+                        {idx + 1}
+                      </span>
+                    </div>
+                    <h3 className={cn(typography.h3.mobile, typography.h3.tablet, typography.h3.desktop, "font-the-seasons font-semibold mb-4 text-[#462324] group-hover:text-[#D96D46] transition-colors")}>
+                      {feature.title}
+                    </h3>
+                    <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal flex-1 text-[#4E4A48]")}>
+                      {feature.description}
+                    </p>
                   </motion.div>
                 );
               })}
             </div>
-          </motion.div>
-        </div>
-      </section>
+            
+            <div className="text-center">
+              <PrimaryCTA>{dict.hero.cta}</PrimaryCTA>
+            </div>
+          </div>
+        </SectionFadeIn>
+      </SectionContainer>
+    </PageSection>
+  );
+}
 
-      {/* EDGE FOR WOMEN - Sand with plum text */}
-      <section className="bg-sand/20 py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerChildren}
-          >
-            <motion.h2
-              variants={fadeInUp}
-              className="text-3xl sm:text-4xl font-league-spartan font-semibold text-plum leading-[1.15] mb-6 whitespace-pre-line"
-            >
-              {dict.edge.heading}
-            </motion.h2>
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-[#4E4A48] mb-8 font-league-spartan font-normal"
-            >
-              {dict.edge.body}
-            </motion.p>
-            
-            <motion.div
-              variants={fadeInUp}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8"
-            >
-              {dict.edge.clients.map((client, idx) => (
-                <motion.div
-                  key={idx}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  className="group relative bg-gradient-to-br from-white/90 to-white/70 backdrop-blur-sm rounded-[24px] p-5 border border-pink-light/50 text-center transition-all duration-300 hover:shadow-soft hover:border-mauve/40 overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-mauve/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <p className="text-base font-league-spartan font-medium text-plum relative z-10">
-                    {client}
-                  </p>
-                </motion.div>
-              ))}
-            </motion.div>
-            
-            <motion.p
-              variants={fadeInUp}
-              className="text-lg leading-[1.25] text-[#4E4A48] font-league-spartan font-normal"
-            >
-              {dict.edge.footer}
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* STEPS - Terracotta accents on Soft Pink, vertical timeline */}
-      <section className="bg-soft-pink py-20">
-        <div className="max-w-4xl mx-auto px-6">
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerChildren}
-          >
-            <motion.h2
-              variants={fadeInUp}
-              className="text-3xl sm:text-4xl font-league-spartan font-semibold text-plum leading-[1.15] mb-12 text-center"
-            >
-              {dict.steps.heading}
-            </motion.h2>
-            
-            <div className="relative">
-              {/* Wavy timeline line */}
-              <div className="absolute left-8 top-0 bottom-0 w-0.5">
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 2 300" preserveAspectRatio="none">
-                  <path
-                    d="M1,0 Q1,50 1,100 T1,200 T1,300"
-                    stroke="#BA8E90"
-                    strokeWidth="2"
-                    fill="none"
-                    className="opacity-30"
-                  />
-                </svg>
+function ForEveryoneStepsSection({ dict }: { dict: Dict }) {
+  return (
+    <PageSection>
+      <SectionContainer className="space-y-12">
+        <div className="h-px w-full bg-[#E8D5D0] opacity-60 mb-12"></div>
+        <div className="grid gap-10 lg:gap-16 lg:grid-cols-2 items-start">
+          {/* Left column: forEveryone */}
+          <TextContainer className="space-y-6">
+            <SectionFadeIn className="space-y-6">
+              <div className="space-y-4">
+                <h2 className={cn(typography.h2.mobile, typography.h2.tablet, typography.h2.desktop, "font-the-seasons font-semibold text-[#462324] mb-3")}>
+                  {dict.forEveryone.heading}
+                </h2>
+                <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48]")}>
+                  {dict.forEveryone.body}
+                </p>
               </div>
               
-              <div className="space-y-12">
+              <div className="bg-white/60 border border-[#E8D5D0] rounded-2xl p-4 md:p-5 hover:bg-white/80 transition-colors duration-300">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+                  {dict.forEveryone.clients.map((client, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: idx * 0.05 }}
+                      whileHover={{ y: -2, scale: 1.05 }}
+                      className="flex items-center justify-center text-center bg-white border border-[#E8D5D0] rounded-xl p-4 shadow-sm hover:shadow-md hover:border-[#D96D46]/40 hover:bg-[#D96D46]/[0.03] transition-all duration-300 cursor-pointer group"
+                    >
+                      <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48] group-hover:text-[#D96D46] transition-colors")}>
+                        {client}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+              
+              <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal italic text-[#4E4A48] pt-2")}>
+                {dict.forEveryone.footer}
+              </p>
+            </SectionFadeIn>
+          </TextContainer>
+
+          {/* Right column: steps */}
+          <TextContainer className="space-y-6">
+            <SectionFadeIn className="space-y-6">
+              <div>
+                <h3 className={cn(typography.h3.mobile, typography.h3.tablet, typography.h3.desktop, "font-the-seasons font-semibold mb-3 text-[#462324]")}>
+                  {dict.steps.heading}
+                </h3>
+                {dict.steps.intro && (
+                  <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal mb-6 text-[#4E4A48]")}>
+                    {dict.steps.intro}
+                  </p>
+                )}
+              </div>
+              
+              <div className="space-y-4">
                 {dict.steps.items.map((step, idx) => (
                   <motion.div
                     key={idx}
-                    variants={fadeInUp}
-                    className="relative pl-20"
+                    initial={{ opacity: 0, x: -8 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: idx * 0.1 }}
+                    whileHover={{ x: 4, borderColor: "#D96D46" }}
+                    className="flex flex-col sm:flex-row gap-4 border-l-2 border-[#D96D46]/30 pl-4 group cursor-pointer transition-all duration-300"
                   >
-                    <div className="absolute left-0 top-0 w-16 h-16 rounded-full bg-gradient-to-br from-terracotta to-terracotta-light text-white text-xl font-league-spartan font-bold shadow-lg flex items-center justify-center">
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex-shrink-0 flex items-center justify-center font-the-seasons font-semibold w-10 h-10 text-lg text-[#D96D46] bg-[#D96D46]/[0.08] rounded-full group-hover:bg-[#D96D46]/[0.15] transition-colors"
+                    >
                       {idx + 1}
-                    </div>
-                    <div className="bg-white/80 backdrop-blur-sm rounded-[28px] p-6 border border-pink-light/50 hover:shadow-warm transition-all duration-300">
-                      <h3 className="text-xl font-league-spartan font-semibold text-plum leading-[1.15] mb-3">
+                    </motion.div>
+                    <div className="flex-1">
+                      <h4 className={cn(typography.h3.mobile, typography.h3.tablet, typography.h3.desktop, "font-the-seasons font-semibold mb-2 text-[#462324] group-hover:text-[#D96D46] transition-colors")}>
                         {step.title}
-                      </h3>
-                      <p className="text-base leading-[1.25] text-[#4E4A48] font-league-spartan font-normal">
+                      </h4>
+                      <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48]")}>
                         {step.description}
                       </p>
                     </div>
                   </motion.div>
                 ))}
               </div>
-            </div>
-          </motion.div>
+            </SectionFadeIn>
+          </TextContainer>
         </div>
-      </section>
+      </SectionContainer>
+    </PageSection>
+  );
+}
 
-      {/* BIG CTA - Plum with light sand elements */}
-      <section className="bg-plum py-24 relative overflow-hidden">
-        {/* Organic background wave */}
-        <div className="absolute inset-0 overflow-hidden opacity-10">
-          <svg className="absolute bottom-0 w-full h-48" viewBox="0 0 1200 200" preserveAspectRatio="none">
-            <path
-              d="M0,100 Q300,50 600,100 T1200,100 L1200,200 L0,200 Z"
-              fill="#FEE7AB"
-            />
-          </svg>
-        </div>
-        
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+function FinalCtaSection({ dict }: { dict: Dict }) {
+  return (
+    <PageSection bgColor={colors.text} withDecorativeShapes={true}>
+      <SectionContainer className="space-y-12">
+        <div className="h-px w-full bg-[#E8D5D0] opacity-60 mb-12"></div>
+        <SectionFadeIn>
           <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerChildren}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-xl mx-auto text-center space-y-5 relative"
           >
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-[#FEE7AB]/20 rounded-full"></div>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="font-league-spartan text-xs md:text-sm uppercase tracking-[0.18em] text-[#FEE7AB]/80 mb-2"
+            >
+              {dict.hero.subheadline}
+            </motion.p>
             <motion.h1
-              variants={fadeInUp}
-              className="text-5xl sm:text-6xl lg:text-7xl font-the-seasons font-semibold text-sand leading-[1.15] mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              className={cn(typography.h1.mobile, typography.h1.tablet, typography.h1.desktop, "xl:text-7xl font-the-seasons font-semibold text-[#FEE7AB] mb-3 leading-tight")}
             >
               {dict.ctaFooter.h1}
             </motion.h1>
-            <motion.h2
-              variants={fadeInUp}
-              className="text-2xl sm:text-3xl font-league-spartan font-semibold text-white leading-[1.15] mb-8"
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="space-y-4"
             >
-              {dict.ctaFooter.h2}
-            </motion.h2>
-            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <Button
-                asChild
-                className={cn(
-                  "group relative rounded-[24px] h-16 px-12 text-lg font-league-spartan font-semibold",
-                  "bg-terracotta hover:bg-terracotta/95 text-white",
-                  "transition-all duration-300 ease-out",
-                  "shadow-[0_4px_20px_rgba(217,109,70,0.4)] hover:shadow-[0_8px_40px_rgba(217,109,70,0.5)]",
-                  "hover:scale-[1.02] active:scale-[0.98]",
-                  "overflow-hidden"
-                )}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <a 
-                  href="#waitlist" 
-                  className="inline-flex items-center gap-3 relative z-10"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }}
-                >
-                  <span>👉 {dict.ctaFooter.cta}</span>
-                  <ChevronRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </a>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className={cn(
-                  "rounded-[24px] h-16 px-12 text-lg font-league-spartan font-semibold",
-                  "border-2 border-sand text-sand hover:bg-sand/10",
-                  "transition-all duration-300 ease-out",
-                  "hover:scale-[1.02] active:scale-[0.98]",
-                  "bg-plum/20 backdrop-blur-sm"
-                )}
-              >
-                <a href="#waitlist" className="inline-flex items-center gap-2">
-                  {dict.ctaFooter.ctaSecondary}
-                </a>
-              </Button>
-            </motion.div>
-            <motion.p
-              variants={fadeInUp}
-              className="text-base text-sand/80 font-league-spartan font-normal"
-            >
-              {dict.ctaFooter.placeholder}
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* WAITLIST SECTION */}
-      <section id="waitlist" className="bg-soft-pink py-20 scroll-mt-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerChildren}
-            className="max-w-xl mx-auto"
-          >
-            <motion.div variants={fadeInUp} className="text-center mb-8 space-y-3">
-              <h2 className="text-3xl font-league-spartan font-semibold text-plum sm:text-4xl leading-[1.15]">
-                {dict.waitlist.heading}
-              </h2>
-              <p className="text-lg text-[#4E4A48] leading-[1.25] font-league-spartan font-normal">
-                {dict.waitlist.intro}
+                <PrimaryCTA>{dict.ctaFooter.cta}</PrimaryCTA>
+              </motion.div>
+              <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#FEE7AB]")}>
+                {dict.ctaFooter.subtext}
+              </p>
+              <p className={cn(typography.small.mobile, typography.small.tablet, typography.small.desktop, "font-league-spartan font-normal opacity-90 text-[#FEE7AB]")}>
+                {dict.ctaFooter.trust}
               </p>
             </motion.div>
-            <motion.div variants={fadeInUp}>
-              <div
-                className={cn(
-                  "rounded-[24px] shadow-soft bg-white/80 backdrop-blur-sm",
-                  "border border-pink-light",
-                  "p-8",
-                  "hover:shadow-warm transition-all duration-300",
-                  "hover:border-terracotta/20"
-                )}
-              >
-                <WaitlistForm
-                  locale={locale}
-                  labels={{
-                    title: dict.waitlist.form.title,
-                    description: dict.waitlist.form.description,
-                    placeholder: dict.ctaFooter.placeholder,
-                    buttonIdle: dict.waitlist.form.buttonIdle,
-                    buttonLoading: dict.waitlist.form.buttonLoading,
-                    success: dict.waitlist.form.success,
-                    duplicateError: dict.waitlist.form.duplicateError,
-                    genericError: dict.waitlist.form.genericError,
-                    validationError: dict.waitlist.form.validationError,
-                    emptyError: dict.waitlist.form.emptyError,
-                  }}
-                />
-              </div>
-            </motion.div>
           </motion.div>
-        </div>
-      </section>
+        </SectionFadeIn>
+      </SectionContainer>
+    </PageSection>
+  );
+}
 
-      {/* FOOTER - Soft Pink */}
-      <footer className="bg-soft-pink border-t border-pink-light py-12">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col items-center justify-center gap-6 text-center">
-            <p className="text-sm text-mauve font-league-spartan font-normal max-w-2xl">
-              {dict.footer.research}
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-mauve font-league-spartan font-normal">
-              <p>© {currentYear} {dict.footer.copyright}</p>
-              <span>•</span>
-              <a href="#" className="hover:text-plum transition-colors">{dict.footer.links.privacy}</a>
-              <span>•</span>
-              <a href="#" className="hover:text-plum transition-colors">{dict.footer.links.contact}</a>
-            </div>
-            <p className="text-xs text-mauve/80 font-league-spartan font-normal max-w-md">
-              {dict.footer.privacy}
+function WaitlistSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) {
+  return (
+    <PageSection id="waitlist" bgColor={colors.bgAlt} className="scroll-mt-24">
+      <SectionContainer maxWidth="560px" className="space-y-12">
+        <div className="h-px w-full bg-[#E8D5D0] opacity-60 mb-12"></div>
+        <SectionFadeIn>
+          <div className="space-y-4 text-center mb-10 max-w-2xl mx-auto">
+            <h2 className={cn(typography.h2.mobile, typography.h2.tablet, typography.h2.desktop, "font-the-seasons font-semibold text-[#462324] mb-10")}>
+              {dict.waitlist.heading}
+            </h2>
+            <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal text-[#4E4A48]")}>
+              {dict.waitlist.intro}
             </p>
           </div>
+          <div className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              whileHover={{ y: -4, scale: 1.01 }}
+              className="rounded-2xl bg-white border border-[#E8D5D0] p-6 md:p-7 shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 space-y-3 group"
+            >
+              <h3 className="text-lg md:text-xl font-the-seasons text-[#462324] mb-3 text-center group-hover:text-[#D96D46] transition-colors">
+                {dict.waitlist.form.title}
+              </h3>
+              <WaitlistForm
+                locale={locale}
+                labels={{
+                  title: dict.waitlist.form.title,
+                  description: dict.waitlist.form.description,
+                  placeholder: dict.waitlist.form.placeholder,
+                  buttonIdle: dict.waitlist.form.buttonIdle,
+                  buttonLoading: dict.waitlist.form.buttonLoading,
+                  success: dict.waitlist.form.success,
+                  duplicateError: dict.waitlist.form.duplicateError,
+                  genericError: dict.waitlist.form.genericError,
+                  validationError: dict.waitlist.form.validationError,
+                  emptyError: dict.waitlist.form.emptyError,
+                }}
+              />
+            </motion.div>
+            {dict.waitlist.trust && (
+              <p className={cn(typography.small.mobile, typography.small.tablet, typography.small.desktop, "font-league-spartan font-normal text-center opacity-80 text-[#4E4A48]")}>
+                {dict.waitlist.trust}
+              </p>
+            )}
+          </div>
+        </SectionFadeIn>
+      </SectionContainer>
+    </PageSection>
+  );
+}
+
+function FooterSection({ dict, currentYear }: { dict: Dict; currentYear: number }) {
+  return (
+    <footer className="border-t border-[#E8D5D0] bg-[#FFFBF7] relative z-10 py-8 px-4 md:px-8">
+      <div className="max-w-[1200px] mx-auto">
+        <div className="h-px w-full bg-[#E8D5D0] opacity-70 mb-4"></div>
+        <div className="flex flex-col items-center justify-center text-center space-y-4 md:space-y-5">
+          <p className={cn(typography.body.mobile, typography.body.tablet, typography.body.desktop, "font-league-spartan font-normal max-w-3xl text-[#4E4A48] text-sm md:text-base leading-relaxed")}>
+            {dict.footer.research}
+          </p>
+          <div className="flex flex-wrap items-center justify-center font-league-spartan font-normal gap-4 text-base text-[#4E4A48]">
+            <p>© {currentYear} {dict.footer.copyright}</p>
+            <span>•</span>
+            <a href="#" className="hover:opacity-70 transition-opacity">{dict.footer.links.privacy}</a>
+            <span>•</span>
+            <a href="#" className="hover:opacity-70 transition-opacity">{dict.footer.links.contact}</a>
+          </div>
+          <p className={cn(typography.small.mobile, typography.small.tablet, typography.small.desktop, "font-league-spartan font-normal max-w-2xl opacity-70 text-[#4E4A48]")}>
+            {dict.footer.privacy}
+          </p>
         </div>
-      </footer>
+      </div>
+    </footer>
+  );
+}
+
+export default function HomeClient({ dict, locale }: Props) {
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <div className="min-h-screen relative bg-[#FFFBF7]">
+      <Header locale={locale} />
+      <HeroSection dict={dict} locale={locale} />
+      <ProblemVariationSection dict={dict} />
+      <PhasesDataSection dict={dict} />
+      <FeaturesSection dict={dict} />
+      <ForEveryoneStepsSection dict={dict} />
+      <FinalCtaSection dict={dict} />
+      <WaitlistSection dict={dict} locale={locale} />
+      <FooterSection dict={dict} currentYear={currentYear} />
     </div>
   );
 }

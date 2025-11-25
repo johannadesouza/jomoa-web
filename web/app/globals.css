@@ -66,9 +66,8 @@
   --radius-2xl: 1.5rem;
   --radius-3xl: 2rem;
   
-  /* JOMOA custom box shadow - warm shadows */
-  --shadow-soft: 0 4px 20px rgba(70, 35, 36, 0.08);
-  --shadow-warm: 0 6px 30px rgba(70, 35, 36, 0.10);
+  /* JOMOA custom box shadow - soft shadows */
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
   
   /* Custom fonts */
   --font-league-spartan: var(--font-league-spartan);
@@ -278,9 +277,9 @@
   color: var(--color-plum);
 }
 
-/* Body - 400-500, line-height: 1.25 */
+/* Body - 400/500, improved line-height for readability */
 .body-brand {
   font-weight: 400;
-  line-height: 1.25;
+  line-height: 1.6;
   color: #4E4A48;
 }
