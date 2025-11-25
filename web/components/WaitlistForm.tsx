@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { cn } from "@/lib/utils";
 
 type WaitlistFormProps = {
+  locale: "en" | "sv";
   labels: {
     title: string;
     description: string;
@@ -22,7 +23,7 @@ type WaitlistFormProps = {
   };
 };
 
-export default function WaitlistForm({ labels }: WaitlistFormProps) {
+export default function WaitlistForm({ locale, labels }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{
@@ -49,9 +50,10 @@ export default function WaitlistForm({ labels }: WaitlistFormProps) {
     setStatus({ type: null, message: "" });
 
     try {
+      const trimmedEmail = email.trim().toLowerCase();
       const { error } = await supabase
         .from("waitlist_emails")
-        .insert([{ email: email.trim().toLowerCase() }]);
+        .insert([{ email: trimmedEmail, locale }]);
 
       if (error) {
         // Handle duplicate email error (PostgreSQL unique constraint violation)
@@ -85,9 +87,9 @@ export default function WaitlistForm({ labels }: WaitlistFormProps) {
 
   return (
     <Card className={cn(
-      "rounded-2xl border-0 shadow-soft",
-      "bg-jomoa-bg text-jomoa-text",
-      "max-w-md w-full mx-auto"
+      "border-0 shadow-none",
+      "bg-transparent text-jomoa-text",
+      "w-full"
     )}>
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-semibold text-jomoa-text">

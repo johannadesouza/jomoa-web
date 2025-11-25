@@ -1,40 +1,150 @@
 {
   "hero": {
-    "eyebrow": "JOMOA Coach",
     "h1": "Train in rhythm.",
-    "subheadline": "Powered by cyclical intelligence for smarter, more empathetic coaching.",
+    "subheadline": "The modern coaching platform that unites training, physiology, psychology, and cyclical health.",
+    "body": "Create training programs that work for everyone — and give women a fairer foundation by accounting for the body's natural variations.",
     "cta": "Join the waitlist",
-    "card": "JOMOA helps coaches build structured macro/meso/micro programs, follow progress over time, and add cycle-informed insights when relevant."
+    "ctaSecondary": "Discover why JOMOA is needed"
   },
-  "problemSolution": {
-    "cardA": {
-      "title": "Traditional tools assume linear bodies.",
-      "body": "Female physiology varies across the cycle. Most platforms ignore that—making sustainable coaching harder."
-    },
-    "cardB": {
-      "title": "JOMOA brings cyclical intelligence into coaching.",
-      "body": "Data + physiology + behavior insights so you can adapt training with confidence—not guesswork."
-    }
-  },
-  "builtForCoaches": {
-    "h2": "Built for coaches",
-    "items": [
-      "Build programs in macro / meso / micro cycles",
-      "Track sessions with sets / reps / RPE + notes",
-      "Optional cycle insights module for clients",
-      "Coach more individually—without extra admin"
+  "value": {
+    "heading": "Training apps are built for linear bodies.\nPeople are not linear.",
+    "body1": "Most tools assume even energy, even recovery, and even performance.",
+    "body2": "But that's not how real people work — and least of all clients whose physiology is affected by hormonal variations.",
+    "body3": "With JOMOA, coaches get a tool that works for everyone,\nbut also gives women better conditions by making visible patterns that are often overlooked.",
+    "benefits": [
+      "Better results",
+      "Fewer injuries",
+      "Less stress",
+      "More sustainable development"
     ]
   },
-  "howItWorks": {
-    "h2": "How it works",
-    "steps": [
-      "Create a structured program",
-      "Track training and recovery over time",
-      "Add cycle-based insights when needed"
+  "insights": {
+    "heading": "Energy, motivation, and recovery vary — and that's completely normal.",
+    "subheading": "This is not a problem.\nIt's information that makes training smarter.",
+    "items": [
+      "Energy can shift 20–30% over a month",
+      "Recovery is affected by sleep, stress, and physiology",
+      "Motivation changes over time",
+      "Performance goes in curves, not in a line"
+    ]
+  },
+  "phases": {
+    "heading": "Support for different phases and conditions.",
+    "body1": "JOMOA is not a \"women-focused app\".",
+    "body2": "It's a tool that gives all clients the right support — and lets women get insights when they need them.",
+    "subheading": "Support for clients with:",
+    "items": [
+      {
+        "title": "PMS and cyclical symptoms",
+        "icon": "calendar"
+      },
+      {
+        "title": "Periods with increased sensitivity or discomfort",
+        "icon": "heart"
+      },
+      {
+        "title": "Hormone-affected periods (PCOS, PMDD, endometriosis)",
+        "icon": "activity"
+      },
+      {
+        "title": "Effects of contraception",
+        "icon": "shield"
+      },
+      {
+        "title": "Postpartum and return to training",
+        "icon": "baby"
+      }
     ],
-    "tagline": "JOMOA isn't about training women \"differently\"—it's about coaching smarter."
+    "footer1": "The client gets the right dose of educational insights.",
+    "footer2": "The coach gets relevant decision support."
+  },
+  "data": {
+    "heading": "Data-driven — but human.",
+    "body": "JOMOA analyzes patterns in:",
+    "patterns": [
+      "training",
+      "recovery",
+      "sleep",
+      "energy",
+      "motivation",
+      "mood",
+      "cyclical variations (optional)"
+    ],
+    "insight": "The system presents the data in a way that is understandable, educational, and actionable.",
+    "client": "\"I'm starting to understand my body.\"",
+    "coach": "\"I can guide smarter and more confidently.\""
+  },
+  "features": {
+    "heading": "A professional tool for coaches who want to work smart, sustainably, and personally.",
+    "items": [
+      {
+        "title": "Structured programming",
+        "description": "Plan blocks, cycles, progression, and long-term development.",
+        "icon": "calendar"
+      },
+      {
+        "title": "Session log and progression",
+        "description": "Sets, reps, RPE, comments, graphs.",
+        "icon": "trending-up"
+      },
+      {
+        "title": "Nutrition and adjustments",
+        "description": "Recipes, portion guidance, and support during low energy.",
+        "icon": "utensils"
+      },
+      {
+        "title": "Psychological patterns",
+        "description": "Simple mood markers — no diagnoses, just understanding.",
+        "icon": "brain"
+      },
+      {
+        "title": "Cycle insights (optional)",
+        "description": "Activated only for clients who want it.",
+        "icon": "waves"
+      }
+    ]
+  },
+  "edge": {
+    "heading": "A tool for your entire customer base.\nAn extra edge for women.",
+    "body": "JOMOA is a training platform for:",
+    "clients": [
+      "men",
+      "women",
+      "non-binary",
+      "beginners",
+      "athletes",
+      "clients with high stress",
+      "clients with hormone-affected periods",
+      "postpartum clients"
+    ],
+    "footer": "Each individual gets a flow that fits their life. Not the other way around."
+  },
+  "steps": {
+    "heading": "How it works — three steps",
+    "items": [
+      {
+        "title": "Create the program",
+        "description": "JOMOA helps you structure blocks, cycles, and progression."
+      },
+      {
+        "title": "Follow the patterns",
+        "description": "See how energy, recovery, and motivation change over time."
+      },
+      {
+        "title": "Adapt at the right time",
+        "description": "Small adjustments → big results."
+      }
+    ]
+  },
+  "ctaFooter": {
+    "h1": "Train in rhythm.",
+    "h2": "Be first to test JOMOA Coach.",
+    "cta": "Join the waitlist",
+    "ctaSecondary": "Join the beta (limited availability)",
+    "placeholder": "Enter your email address to receive news and beta invitations."
   },
   "waitlist": {
+    "heading": "Join the beta",
     "intro": "Be first to try the internal beta for coaches.",
     "form": {
       "title": "Join the Waitlist",
@@ -51,8 +161,12 @@
     "privacy": "Your privacy matters. We'll only use your email to notify you about the beta launch."
   },
   "footer": {
+    "research": "Based on research in exercise physiology, women's health, and behavior change.",
     "copyright": "JOMOA. All rights reserved.",
-    "privacy": "Your privacy matters. We'll only use your email to notify you about the beta launch."
+    "privacy": "Your privacy matters. We'll only use your email to notify you about the beta launch.",
+    "links": {
+      "privacy": "Privacy Policy",
+      "contact": "Contact"
+    }
   }
 }
-

@@ -16,17 +16,6 @@ export default function LanguageSwitcher() {
   return (
     <div className="flex items-center gap-2">
       <Link
-        href={`/en${pathWithoutLocale}`}
-        className={cn(
-          "px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200",
-          currentLocale === "en"
-            ? "bg-jomoa-accent/10 text-jomoa-accent font-semibold"
-            : "text-jomoa-text2 hover:text-jomoa-text hover:bg-jomoa-bg2"
-        )}
-      >
-        EN
-      </Link>
-      <Link
         href={`/sv${pathWithoutLocale}`}
         className={cn(
           "px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200",
@@ -36,6 +25,17 @@ export default function LanguageSwitcher() {
         )}
       >
         SV
+      </Link>
+      <Link
+        href={`/en${pathWithoutLocale}`}
+        className={cn(
+          "px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200",
+          currentLocale === "en"
+            ? "bg-jomoa-accent/10 text-jomoa-accent font-semibold"
+            : "text-jomoa-text2 hover:text-jomoa-text hover:bg-jomoa-bg2"
+        )}
+      >
+        EN
       </Link>
     </div>
   );

@@ -1,40 +1,150 @@
 {
   "hero": {
-    "eyebrow": "JOMOA Coach",
-    "h1": "Träna i rytm.",
-    "subheadline": "Drivet av cyklisk intelligens för smartare, mer empatisk träning.",
+    "h1": "Train in rhythm.",
+    "subheadline": "Den moderna coachingplattformen som förenar träning, fysiologi, psykologi och cyklisk hälsa.",
+    "body": "Skapa träningsprogram som fungerar för alla — och ge kvinnor en rättvisare förutsättning genom att ta hänsyn till kroppens naturliga variationer.",
     "cta": "Gå med i väntelistan",
-    "card": "JOMOA hjälper tränare att bygga strukturerade makro/meso/mikro program, följa framsteg över tid och lägga till cykelbaserade insikter när det är relevant."
+    "ctaSecondary": "Upptäck varför JOMOA behövs"
   },
-  "problemSolution": {
-    "cardA": {
-      "title": "Traditionella verktyg antar linjära kroppar.",
-      "body": "Kvinnlig fysiologi varierar över cykeln. De flesta plattformar ignorerar det—vilket gör hållbar träning svårare."
-    },
-    "cardB": {
-      "title": "JOMOA för cyklisk intelligens till träningen.",
-      "body": "Data + fysiologi + beteendeinsikter så att du kan anpassa träningen med självförtroende—inte gissningar."
-    }
-  },
-  "builtForCoaches": {
-    "h2": "Byggt för tränare",
-    "items": [
-      "Bygg program i makro / meso / mikro cykler",
-      "Spåra pass med set / reps / RPE + anteckningar",
-      "Valfritt cykelinsiktsmodul för klienter",
-      "Träna mer individuellt—utan extra administration"
+  "value": {
+    "heading": "Träningsappar är byggda för linjära kroppar.\nMänniskor är inte linjära.",
+    "body1": "De flesta verktyg antar jämn energi, jämn återhämtning och jämn prestation.",
+    "body2": "Men så fungerar inte verkliga människor — och allra minst klienter vars fysiologi påverkas av hormonella variationer.",
+    "body3": "Med JOMOA får coacher ett verktyg som fungerar för alla,\nmen som samtidigt ger kvinnor bättre förutsättningar genom att synliggöra mönster som ofta förbises.",
+    "benefits": [
+      "Bättre resultat",
+      "Färre skador",
+      "Mindre stress",
+      "Mer hållbar utveckling"
     ]
   },
-  "howItWorks": {
-    "h2": "Så fungerar det",
-    "steps": [
-      "Skapa ett strukturerat program",
-      "Spåra träning och återhämtning över tid",
-      "Lägg till cykelbaserade insikter vid behov"
+  "insights": {
+    "heading": "Energi, motivation och återhämtning varierar — och det är helt normalt.",
+    "subheading": "Det här är inte problem.\nDet är information som gör träningen smartare.",
+    "items": [
+      "Energi kan skifta 20–30% över en månad",
+      "Återhämtning påverkas av sömn, stress och fysiologi",
+      "Motivation förändras över tid",
+      "Prestation går i kurvor, inte i linje"
+    ]
+  },
+  "phases": {
+    "heading": "Stöd för olika faser och tillstånd.",
+    "body1": "JOMOA är inte en \"kvinnostyrd app\".",
+    "body2": "Det är ett verktyg som ger alla klienter rätt stöd — och som låter kvinnor få insikter när de behöver dem.",
+    "subheading": "Stöd för klienter med:",
+    "items": [
+      {
+        "title": "PMS och cykliska symtom",
+        "icon": "calendar"
+      },
+      {
+        "title": "Perioder med ökad känslighet eller obehag",
+        "icon": "heart"
+      },
+      {
+        "title": "Hormonpåverkade perioder (PCOS, PMDS, endometrios)",
+        "icon": "activity"
+      },
+      {
+        "title": "Effekter av preventivmedel",
+        "icon": "shield"
+      },
+      {
+        "title": "Postpartum och återgång till träning",
+        "icon": "baby"
+      }
     ],
-    "tagline": "JOMOA handlar inte om att träna kvinnor \"annorlunda\"—det handlar om smartare träning."
+    "footer1": "Klienten får lagom dos av pedagogiska insikter.",
+    "footer2": "Coachen får relevant beslutsunderlag."
+  },
+  "data": {
+    "heading": "Datadrivet — men mänskligt.",
+    "body": "JOMOA analyserar mönster i:",
+    "patterns": [
+      "träning",
+      "återhämtning",
+      "sömn",
+      "energi",
+      "motivation",
+      "humör",
+      "cykliska variationer (valbart)"
+    ],
+    "insight": "Systemet presenterar datan på ett sätt som är begripligt, pedagogiskt och agerbart.",
+    "client": "\"Jag börjar förstå min kropp.\"",
+    "coach": "\"Jag kan guida smartare och tryggare.\""
+  },
+  "features": {
+    "heading": "Ett professionellt verktyg för coacher som vill arbeta smart, hållbart och personligt.",
+    "items": [
+      {
+        "title": "Strukturerad programmering",
+        "description": "Planera block, cykler, progression och långsiktig utveckling.",
+        "icon": "calendar"
+      },
+      {
+        "title": "Passlogg och progression",
+        "description": "Sets, reps, RPE, kommentarer, grafer.",
+        "icon": "trending-up"
+      },
+      {
+        "title": "Kost och anpassningar",
+        "description": "Recept, portionsguidning och stöd vid låg energi.",
+        "icon": "utensils"
+      },
+      {
+        "title": "Psykologiska mönster",
+        "description": "Enkla stämningsmarkeringar — inga diagnoser, bara förståelse.",
+        "icon": "brain"
+      },
+      {
+        "title": "Cykelinsikter (valbart)",
+        "description": "Aktiveras endast för klienter som vill det.",
+        "icon": "waves"
+      }
+    ]
+  },
+  "edge": {
+    "heading": "Ett verktyg för hela din kundbas.\nEn extra edge för kvinnor.",
+    "body": "JOMOA är en träningsplattform för:",
+    "clients": [
+      "män",
+      "kvinnor",
+      "icke-binära",
+      "nybörjare",
+      "atleter",
+      "klienter med hög stress",
+      "klienter med hormonpåverkade perioder",
+      "postpartum-klienter"
+    ],
+    "footer": "Varje individ får ett flöde som passar deras liv. Inte tvärtom."
+  },
+  "steps": {
+    "heading": "Så funkar det — tre steg",
+    "items": [
+      {
+        "title": "Skapa programmet",
+        "description": "JOMOA hjälper dig strukturera block, cykler och progression."
+      },
+      {
+        "title": "Följ mönstren",
+        "description": "Se hur energi, återhämtning och motivation förändras över tid."
+      },
+      {
+        "title": "Anpassa vid rätt tidpunkt",
+        "description": "Små justeringar → stora resultat."
+      }
+    ]
+  },
+  "ctaFooter": {
+    "h1": "Train in rhythm.",
+    "h2": "Bli först med att testa JOMOA Coach.",
+    "cta": "Gå med i väntelistan",
+    "ctaSecondary": "Gå med i betan (begränsad platstillgång)",
+    "placeholder": "Ange din e-postadress för att få nyheter och beta-inbjudningar."
   },
   "waitlist": {
+    "heading": "Gå med i betan",
     "intro": "Var först med att testa intern beta för tränare.",
     "form": {
       "title": "Gå med i väntelistan",
@@ -51,8 +161,12 @@
     "privacy": "Din integritet är viktig. Vi använder bara din e-post för att meddela dig om betalanseringen."
   },
   "footer": {
+    "research": "Baserat på forskning inom träningsfysiologi, kvinnlig hälsa och beteendeförändring.",
     "copyright": "JOMOA. Alla rättigheter förbehållna.",
-    "privacy": "Din integritet är viktig. Vi använder bara din e-post för att meddela dig om betalanseringen."
+    "privacy": "Din integritet är viktig. Vi använder bara din e-post för att meddela dig om betalanseringen.",
+    "links": {
+      "privacy": "Integritetspolicy",
+      "contact": "Kontakt"
+    }
   }
 }
-

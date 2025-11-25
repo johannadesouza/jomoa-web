@@ -4,14 +4,22 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // If root path, redirect to /en
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL("/en", request.url));
+  // Skip middleware for API routes and static files
+  if (
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/_next")
+  ) {
+    return NextResponse.next();
   }
 
-  // If pathname doesn't start with /en or /sv, redirect to /en + pathname
+  // If root path, redirect to /sv (Swedish is default)
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/sv", request.url));
+  }
+
+  // If pathname doesn't start with /en or /sv, redirect to /sv + pathname
   if (!pathname.startsWith("/en") && !pathname.startsWith("/sv")) {
-    return NextResponse.redirect(new URL(`/en${pathname}`, request.url));
+    return NextResponse.redirect(new URL(`/sv${pathname}`, request.url));
   }
 
   return NextResponse.next();

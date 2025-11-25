@@ -42,21 +42,37 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   
-  /* Jomoa custom colors */
-  --color-jomoa-bg: #FFFBF7;
-  --color-jomoa-bg2: #FFFCF9;
-  --color-jomoa-text: #462324;
-  --color-jomoa-text2: #1E2D24;
-  --color-jomoa-accent: #D96D46;
-  --color-jomoa-accent2: #E7805B;
-  --color-jomoa-muted: #BA8E90;
+  /* JOMOA Brand Colors - From Branding Guide Page 9 */
+  --color-soft-pink: #FFFBF7;
+  --color-terracotta: #D96D46;
+  --color-sand: #FEE7AB;
+  --color-plum: #462324;
+  --color-mauve: #BA8E90;
+  --color-pink-light: #F0D6D7;
+  --color-mauve-dark: #976568;
+  --color-terracotta-light: #FDB499;
   
-  /* Jomoa custom border radius overrides */
-  --radius-xl: 1rem;
+  /* Legacy JOMOA colors (for backward compatibility) */
+  --color-jomoa-bg: var(--color-soft-pink);
+  --color-jomoa-bg2: var(--color-soft-pink);
+  --color-jomoa-text: var(--color-plum);
+  --color-jomoa-text2: #4E4A48;
+  --color-jomoa-accent: var(--color-terracotta);
+  --color-jomoa-accent2: var(--color-terracotta-light);
+  --color-jomoa-muted: var(--color-mauve);
+  
+  /* JOMOA custom border radius overrides - organic rounded shapes */
+  --radius-xl: 1.25rem;
   --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
   
-  /* Jomoa custom box shadow */
-  --shadow-soft: 0 6px 30px rgba(70,35,36,0.10);
+  /* JOMOA custom box shadow - warm shadows */
+  --shadow-soft: 0 4px 20px rgba(70, 35, 36, 0.08);
+  --shadow-warm: 0 6px 30px rgba(70, 35, 36, 0.10);
+  
+  /* Custom fonts */
+  --font-league-spartan: var(--font-league-spartan);
+  --font-the-seasons: Georgia, serif; /* Fallback until font files are added */
 }
 
 :root {
@@ -132,7 +148,139 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
+  html {
+    scroll-behavior: smooth;
   }
+  body {
+    @apply bg-soft-pink text-plum;
+    font-family: var(--font-league-spartan), system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* JOMOA visual effects and animations - warm, organic, human */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(217, 109, 70, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(217, 109, 70, 0.35);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes fade-in-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  font-family: var(--font-league-spartan), system-ui, -apple-system, sans-serif;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 8px 40px rgba(217, 109, 70, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
+.card-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.card-shimmer:hover::before {
+  left: 100%;
+}
+
+.gradient-animated {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* Typography - League Spartan for UI, The Seasons for emotional lines */
+.font-league-spartan {
+  font-family: var(--font-league-spartan), system-ui, -apple-system, sans-serif;
+}
+
+.font-the-seasons {
+  font-family: var(--font-the-seasons);
+  font-style: italic;
+}
+
+/* Headings - font-weight: 600, line-height: 1.15 */
+.heading-brand {
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--color-plum);
+}
+
+/* Body - 400-500, line-height: 1.25 */
+.body-brand {
+  font-weight: 400;
+  line-height: 1.25;
+  color: #4E4A48;
 }
