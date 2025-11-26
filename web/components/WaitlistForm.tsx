@@ -118,13 +118,13 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
       )}
     >
       <div className={cn("flex-1", inline && "md:flex-1")}>
-        <Input
-          type="email"
-          placeholder={labels.placeholder}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={loading}
-          className={cn(
+            <Input
+              type="email"
+              placeholder={labels.placeholder}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              className={cn(
             "w-full rounded-[32px] font-league-spartan font-normal",
             "bg-white border-2",
             "focus:ring-2 focus:ring-offset-0 focus:ring-[#D96D46]",
@@ -140,9 +140,9 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
             lineHeight: "1.5",
             backgroundColor: "#FFFFFF"
           }}
-          required
-        />
-      </div>
+              required
+            />
+          </div>
 
       <Button
         type="submit"
@@ -166,9 +166,9 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
         {loading ? labels.buttonLoading : labels.buttonIdle}
       </Button>
 
-      {status.message && (
-        <div
-          className={cn(
+          {status.message && (
+            <div
+              className={cn(
             "rounded-[24px] font-league-spartan font-normal w-full",
             inline ? "md:col-span-2" : ""
           )}
@@ -181,10 +181,10 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
             fontSize: "15px",
             lineHeight: "1.5"
           }}
-        >
-          {status.message}
-        </div>
-      )}
-    </form>
+            >
+              {status.message}
+            </div>
+          )}
+        </form>
   );
 }
