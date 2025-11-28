@@ -280,31 +280,31 @@ function HeroSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) {
             
             <SectionFadeIn delay={0.1} className="w-full max-w-md mx-auto lg:max-w-none mt-8 md:mt-0">
               <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
                 whileHover={{ y: -4, scale: 1.01 }}
-                className="rounded-xl sm:rounded-2xl bg-white border border-[#E8D5D0] shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 p-5 sm:p-6 md:p-7 lg:p-8 group relative overflow-hidden"
+                className="rounded-xl sm:rounded-2xl bg-white border border-[#E8D5D0] p-5 sm:p-6 md:p-7 lg:p-8 shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 space-y-3 sm:space-y-4 group"
               >
-                <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-[#D96D46]/[0.05] rounded-full blur-2xl pointer-events-none"></div>
-                <h3 className="text-lg sm:text-xl md:text-2xl font-the-seasons text-[#462324] text-center mb-3 sm:mb-4 md:mb-5 relative z-10 group-hover:text-[#D96D46] transition-colors">
-                  {dict.waitlist.heading}
+                <h3 className="text-base sm:text-lg md:text-xl font-the-seasons text-[#462324] mb-3 sm:mb-4 text-center group-hover:text-[#D96D46] transition-colors">
+                  {dict.waitlist.form.title}
                 </h3>
-                <div className="relative z-10">
-                  <WaitlistForm
-                    locale={locale}
-                    inline={true}
-                    labels={{
-                      title: dict.waitlist.form.title,
-                      description: dict.waitlist.form.description,
-                      placeholder: dict.waitlist.form.placeholder,
-                      buttonIdle: dict.waitlist.form.buttonIdle,
-                      buttonLoading: dict.waitlist.form.buttonLoading,
-                      success: dict.waitlist.form.success,
-                      duplicateError: dict.waitlist.form.duplicateError,
-                      genericError: dict.waitlist.form.genericError,
-                      validationError: dict.waitlist.form.validationError,
-                      emptyError: dict.waitlist.form.emptyError,
-                    }}
-                  />
-                </div>
+                <WaitlistForm
+                  locale={locale}
+                  labels={{
+                    title: dict.waitlist.form.title,
+                    description: dict.waitlist.form.description,
+                    placeholder: dict.waitlist.form.placeholder,
+                    buttonIdle: dict.waitlist.form.buttonIdle,
+                    buttonLoading: dict.waitlist.form.buttonLoading,
+                    success: dict.waitlist.form.success,
+                    duplicateError: dict.waitlist.form.duplicateError,
+                    genericError: dict.waitlist.form.genericError,
+                    validationError: dict.waitlist.form.validationError,
+                    emptyError: dict.waitlist.form.emptyError,
+                  }}
+                />
               </motion.div>
               <p 
                 className={cn(
