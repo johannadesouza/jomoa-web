@@ -793,7 +793,6 @@ function WaitlistSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) 
                   title: dict.waitlist.form.title,
                   description: dict.waitlist.form.description,
                   firstNamePlaceholder: dict.waitlist.form.firstNamePlaceholder,
-                  lastNamePlaceholder: dict.waitlist.form.lastNamePlaceholder,
                   emailPlaceholder: dict.waitlist.form.emailPlaceholder,
                   buttonIdle: dict.waitlist.form.buttonIdle,
                   buttonLoading: dict.waitlist.form.buttonLoading,
@@ -803,7 +802,6 @@ function WaitlistSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) 
                   validationError: dict.waitlist.form.validationError,
                   emptyError: dict.waitlist.form.emptyError,
                   firstNameError: dict.waitlist.form.firstNameError,
-                  lastNameError: dict.waitlist.form.lastNameError,
                 }}
               />
             </motion.div>
