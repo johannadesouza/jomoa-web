@@ -144,14 +144,16 @@
     "form": {
       "title": "Join the Waitlist",
       "description": "Be the first to know when we launch",
-      "placeholder": "Enter your email",
+      "firstNamePlaceholder": "First name",
+      "emailPlaceholder": "Email address",
       "buttonIdle": "Join Waitlist",
       "buttonLoading": "Joining...",
       "success": "Successfully added to waitlist!",
       "duplicateError": "This email is already on the waitlist",
       "genericError": "Something went wrong. Please try again.",
       "validationError": "Please enter a valid email address",
-      "emptyError": "Please enter your email address"
+      "emptyError": "Please fill in all fields",
+      "firstNameError": "Please enter your first name"
     },
     "privacy": "Your privacy matters. We'll only use your email to notify you about the beta launch."
   },
@@ -162,6 +164,245 @@
     "links": {
       "privacy": "Privacy Policy",
       "contact": "Contact"
+    },
+    "contactEmail": "info@jomoa.coach"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: December 2024",
+    "sections": [
+      {
+        "title": "1. Introduction",
+        "content": [
+          "JOMOA (\"we\", \"us\", \"our\") respects your privacy and is committed to protecting your personal data in accordance with the GDPR (General Data Protection Regulation) and applicable data protection laws.",
+          "This privacy policy explains how we collect, use, share, and protect your personal information when you use our website (jomoa.coach), sign up for our waitlist, or use our services.",
+          "By using our website or services, you agree to this privacy policy. If you do not agree with this policy, please do not use our website or services."
+        ]
+      },
+      {
+        "title": "2. Personal Data We Collect",
+        "content": [
+          "We collect the following types of personal data:",
+          "Contact information: First name and email address when you sign up for our waitlist, contact us via email, or use contact forms on our website.",
+          "Usage data: Automatically collected information about how you use our website, including IP address, browser type, operating system, referring website, pages you visit, time of visit, and duration.",
+          "Technical data: Information about your device, including device type, screen resolution, and browser settings.",
+          "Communication data: Messages, questions, and feedback you send to us via email, contact forms, or other communication channels.",
+          "Preference data: Your language choice (Swedish or English) when using our website."
+        ],
+        "list": [
+          "First name (when you sign up for the waitlist)",
+          "Email address (when you sign up for the waitlist)",
+          "IP address and usage data (automatically collected)",
+          "Language preference (Swedish/English)",
+          "Communications you send to us"
+        ]
+      },
+      {
+        "title": "3. Legal Basis and Purpose of Processing",
+        "content": [
+          "We process your personal data based on the following legal grounds:",
+          "Consent: When you sign up for our waitlist, you give your consent for us to process your email address to send you updates about our service.",
+          "Legitimate interest: We process usage data to improve our website, analyze usage patterns, and ensure website security.",
+          "Legal obligation: We may process personal data to comply with applicable laws and regulations.",
+          "We use your personal data for the following purposes:",
+          "To send you updates about our service, beta launches, and product news via email",
+          "To improve and optimize our website and user experience",
+          "To analyze usage patterns and understand how our website is used",
+          "To respond to your inquiries, provide customer support, and handle communications",
+          "To ensure website security and prevent fraud",
+          "To comply with legal obligations and protect our rights"
+        ]
+      },
+      {
+        "title": "4. Third-Party Services and Data Sharing",
+        "content": [
+          "We use the following third-party services to operate our business:",
+          "Mailchimp: We use Mailchimp to manage email subscriptions and send newsletters. When you sign up for our waitlist, your email address is added to our Mailchimp list. Mailchimp is GDPR certified and stores data in the USA with appropriate safeguards.",
+          "Supabase: We use Supabase as a database to store email addresses from the waitlist as a backup. Supabase is GDPR-compliant and stores data in the EU.",
+          "Vercel/Next.js: Our website is hosted on Vercel, which processes technical data (IP addresses, logs) to deliver the website. Vercel is GDPR-compliant.",
+          "We do not share your personal data with third parties for marketing or sales purposes. We only share personal data:",
+          "With our service providers (Mailchimp, Supabase, Vercel) who help us operate our business and are bound by confidentiality agreements",
+          "When required by law, court order, or government decision",
+          "To protect our rights, property, or security, or to protect users from fraud or harm",
+          "With your explicit consent in other cases"
+        ]
+      },
+      {
+        "title": "5. International Data Transfers",
+        "content": [
+          "Some of our service providers (particularly Mailchimp) may store and process personal data outside the EU/EEA, primarily in the USA.",
+          "We ensure that all international data transfers are made with appropriate safeguards, including:",
+          "Standard Contractual Clauses (SCC) in accordance with EU Commission decisions",
+          "Certifications and binding corporate rules",
+          "Service providers certified under GDPR or similar data protection standards",
+          "By using our website and signing up for our waitlist, you consent to these data transfers."
+        ]
+      },
+      {
+        "title": "6. Your Rights Under GDPR",
+        "content": [
+          "Under GDPR, you have the following rights:",
+          "Right to information: You have the right to receive information about how we process your personal data (which this policy provides you).",
+          "Right of access: You have the right to receive a copy of the personal data we have about you.",
+          "Right to rectification: You have the right to have inaccurate personal data corrected.",
+          "Right to erasure (\"right to be forgotten\"): You have the right to request deletion of your personal data when it is no longer needed.",
+          "Right to restrict processing: You have the right to request that processing of your personal data be restricted under certain circumstances.",
+          "Right to data portability: You have the right to receive your personal data in a structured, commonly used, and machine-readable format.",
+          "Right to object: You have the right to object to processing of your personal data based on legitimate interest.",
+          "Right to withdraw consent: If processing is based on consent, you have the right to withdraw your consent at any time.",
+          "To exercise any of these rights, contact us at info@jomoa.coach. We will respond to your request within one month.",
+          "You also have the right to file a complaint with your local data protection authority if you believe we are processing your personal data in violation of GDPR."
+        ],
+        "list": [
+          "Right to access your personal data",
+          "Right to rectification of inaccurate information",
+          "Right to erasure (\"right to be forgotten\")",
+          "Right to restrict processing",
+          "Right to data portability",
+          "Right to object to processing",
+          "Right to withdraw consent"
+        ]
+      },
+      {
+        "title": "7. Data Protection and Security",
+        "content": [
+          "We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, loss, destruction, or alteration:",
+          "Encryption: We use HTTPS (SSL/TLS) to encrypt data during transmission.",
+          "Secure storage: Personal data is stored in secure databases with access controls and firewalls.",
+          "Access control: Only authorized personnel have access to personal data, and access is logged.",
+          "Regular security updates: We keep our systems updated with the latest security patches.",
+          "Backup and recovery: We have procedures for backing up and recovering data.",
+          "Despite our efforts, no method of transmission over the internet or electronic storage is 100% secure. We cannot guarantee absolute security, but we actively work to protect your personal data."
+        ]
+      },
+      {
+        "title": "8. Retention Period",
+        "content": [
+          "We retain your personal data only for as long as necessary for the purposes for which it was collected:",
+          "Waitlist data: We retain your email address until you unsubscribe or request deletion, or until we no longer need it to send updates about our service.",
+          "Usage data: We retain technical data (IP addresses, logs) for up to 12 months for security and analysis purposes.",
+          "Communication data: We retain email correspondence for up to 3 years to be able to respond to follow-up questions.",
+          "When personal data is no longer needed, it is securely deleted or anonymized."
+        ]
+      },
+      {
+        "title": "9. Cookies and Tracking",
+        "content": [
+          "Our website uses cookies and similar technologies to improve user experience and analyze website usage.",
+          "Necessary cookies: These cookies are necessary for the website to function correctly and cannot be turned off. They are used to remember your language preferences and ensure website security.",
+          "Analytical cookies: We may use analytical cookies to understand how visitors use our website. This information helps us improve the website.",
+          "You can control and manage cookies in your browser settings. Note that if you block cookies, some features on the website may not work correctly.",
+          "We currently do not use marketing cookies or third-party tracking for advertising purposes."
+        ]
+      },
+      {
+        "title": "10. Children's Privacy",
+        "content": [
+          "Our website and services are not intended for persons under 16 years of age. We do not knowingly collect personal data from persons under 16 without parental or guardian consent.",
+          "If you are a parent or guardian and discover that your child has provided personal data to us, contact us at info@jomoa.coach and we will delete this data."
+        ]
+      },
+      {
+        "title": "11. Changes to This Privacy Policy",
+        "content": [
+          "We may update this privacy policy from time to time to reflect changes in our practices, technical changes, or legal requirements.",
+          "We will notify you of significant changes by:",
+          "Publishing the updated policy on this page with an updated \"Last updated\" date",
+          "Sending you an email if the changes are significant and affect how we process your personal data",
+          "We encourage you to regularly review this privacy policy to stay informed about how we protect your personal data."
+        ]
+      },
+      {
+        "title": "12. Additional Information",
+        "content": [
+          "If you have questions, concerns, or complaints about this privacy policy or our processing of personal data, please do not hesitate to contact us.",
+          "We strive to respond to all inquiries within a reasonable time and to help you exercise your rights."
+        ]
+      }
+    ],
+    "contact": {
+      "title": "Contact Us",
+      "description": "If you have questions about this privacy policy, wish to exercise your rights under GDPR, or have complaints about our processing of personal data, please contact us:",
+      "email": "info@jomoa.coach",
+      "supervisory": "You also have the right to file a complaint with your local data protection authority if you believe we are processing your personal data in violation of GDPR. Visit your local data protection authority's website for more information."
+    }
+  },
+  "knowledgeHub": {
+    "hero": {
+      "title": "Knowledge Hub",
+      "subtitle": "Evidence-based knowledge about female physiology, training, and sustainable health.",
+      "description": "Calm, safe, and research-based guidance — built on rhythm, variation, and the body's natural cycles.",
+      "cta": "Get articles directly in your inbox →"
+    },
+    "categories": {
+      "title": "Explore topics",
+      "items": [
+        {
+          "title": "Hormones & female physiology",
+          "tagline": "Understand the body's rhythms."
+        },
+        {
+          "title": "Training & performance",
+          "tagline": "Train smarter, not harder."
+        },
+        {
+          "title": "Nutrition & metabolism",
+          "tagline": "Fuel for body and energy."
+        },
+        {
+          "title": "Stress, sleep & behavior",
+          "tagline": "Recovery is performance."
+        },
+        {
+          "title": "Science & research",
+          "tagline": "Evidence-based guidance."
+        }
+      ]
+    },
+    "featured": {
+      "label": "Featured",
+      "title": "Training for the female body: what the research actually says",
+      "summary": "An evidence-based overview of how female physiology affects training, performance, and recovery.",
+      "readMore": "Read more"
+    },
+    "articles": {
+      "title": "All articles",
+      "readMore": "Read more →",
+      "items": [
+        {
+          "title": "Irregular periods: What does it really mean?",
+          "category": "Hormones & physiology",
+          "summary": "An evidence-based overview of variations, stress, HA, PCOS, and when to seek help."
+        },
+        {
+          "title": "Cycle-based training: Myth or reality?",
+          "category": "Training & performance",
+          "summary": "What does the research say about adapting training to the menstrual cycle?"
+        },
+        {
+          "title": "Recovery: More than just rest",
+          "category": "Stress, sleep & behavior",
+          "summary": "How sleep, stress, and lifestyle affect your training capacity."
+        }
+      ]
+    },
+    "sidebar": {
+      "mostRead": {
+        "title": "Most read"
+      },
+      "popularTopics": {
+        "title": "Popular topics"
+      },
+      "askJomoa": {
+        "title": "Ask JOMOA – ask your question"
+      },
+      "updates": {
+        "title": "What are we working on right now?"
+      }
+    },
+    "footer": {
+      "title": "What is JOMOA?",
+      "description": "JOMOA is an evidence-based digital platform that combines physiology, behavior, and cyclical health to create smarter, gentler, and more long-term results."
+    }
   }
-}
 }

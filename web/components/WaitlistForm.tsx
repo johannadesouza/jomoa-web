@@ -36,7 +36,8 @@ type WaitlistFormProps = {
   labels: {
     title: string;
     description: string;
-    placeholder: string;
+    firstNamePlaceholder: string;
+    emailPlaceholder: string;
     buttonIdle: string;
     buttonLoading: string;
     success: string;
@@ -44,10 +45,12 @@ type WaitlistFormProps = {
     genericError: string;
     validationError: string;
     emptyError: string;
+    firstNameError?: string;
   };
 };
 
 export default function WaitlistForm({ locale, labels, inline = false }: WaitlistFormProps) {
+  const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{
@@ -57,6 +60,12 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation
+    if (!firstName.trim()) {
+      setStatus({ type: "error", message: labels.firstNameError || labels.emptyError });
+      return;
+    }
     
     if (!email.trim()) {
       setStatus({ type: "error", message: labels.emptyError });
@@ -75,29 +84,100 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
 
     try {
       const trimmedEmail = email.trim().toLowerCase();
-      const { error } = await supabase
-        .from("waitlist_emails")
-        .insert([{ email: trimmedEmail, locale }]);
+      const trimmedFirstName = firstName.trim();
+      
+      // Step 1: Add to Mailchimp (primary)
+      let mailchimpSuccess = false;
+      let mailchimpDuplicate = false;
+      
+      try {
+        const mailchimpResponse = await fetch("/api/mailchimp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: trimmedEmail,
+            firstName: trimmedFirstName,
+            locale,
+            tags: ["waitlist"],
+          }),
+        });
 
-      if (error) {
+        const mailchimpData = await mailchimpResponse.json();
+        
+        if (mailchimpResponse.ok || mailchimpData.duplicate) {
+          mailchimpSuccess = true;
+          mailchimpDuplicate = mailchimpData.duplicate || false;
+        }
+      } catch (mailchimpError) {
+        // Mailchimp failed, but we'll still try Supabase as backup
+        console.warn("Mailchimp subscription failed, using Supabase backup:", mailchimpError);
+      }
+
+      // Step 2: Also save to Supabase (backup/database)
+      const { error: supabaseError } = await supabase
+        .from("waitlist_emails")
+        .insert([{ 
+          email: trimmedEmail, 
+          first_name: trimmedFirstName,
+          locale 
+        }]);
+
+      // Determine final status
+      if (supabaseError) {
         // Handle duplicate email error (PostgreSQL unique constraint violation)
-        if (error.code === "23505") {
+        if (supabaseError.code === "23505") {
+          // Email already exists in Supabase
+          if (mailchimpSuccess && !mailchimpDuplicate) {
+            // Mailchimp succeeded, but Supabase has duplicate - still show success
+            setStatus({
+              type: "success",
+              message: labels.success,
+            });
+            setEmail("");
+            setFirstName("");
+          } else {
+            // Both have duplicate or error
+            setStatus({
+              type: "error",
+              message: labels.duplicateError,
+            });
+          }
+        } else {
+          // Other Supabase error
+          if (mailchimpSuccess) {
+            // Mailchimp worked, Supabase failed - still show success
+            setStatus({
+              type: "success",
+              message: labels.success,
+            });
+            setEmail("");
+            setFirstName("");
+          } else {
+            // Both failed
+            setStatus({
+              type: "error",
+              message: labels.genericError,
+            });
+          }
+        }
+      } else {
+        // Supabase success
+        if (mailchimpSuccess && mailchimpDuplicate) {
+          // Mailchimp says duplicate but Supabase succeeded - show duplicate message
           setStatus({
             type: "error",
             message: labels.duplicateError,
           });
         } else {
+          // Both succeeded or Mailchimp failed but Supabase worked
           setStatus({
-            type: "error",
-            message: labels.genericError,
+            type: "success",
+            message: labels.success,
           });
+          setEmail("");
         }
-      } else {
-        setStatus({
-          type: "success",
-          message: labels.success,
-        });
-        setEmail("");
       }
     } catch (err) {
       setStatus({
@@ -117,14 +197,15 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
         inline ? "flex-col md:flex-row" : "flex-col"
       )}
     >
-      <div className={cn("flex-1", inline && "md:flex-1")}>
-            <Input
-              type="email"
-              placeholder={labels.placeholder}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              className={cn(
+      <div className={cn("flex-1", inline && "md:flex-1", "space-y-3")}>
+        {/* First Name */}
+        <Input
+          type="text"
+          placeholder={labels.firstNamePlaceholder}
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          disabled={loading}
+          className={cn(
             "w-full rounded-[32px] font-league-spartan font-normal",
             "bg-white border-2",
             "focus:ring-2 focus:ring-offset-0 focus:ring-[#D96D46]",
@@ -140,9 +221,35 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
             lineHeight: "1.5",
             backgroundColor: "#FFFFFF"
           }}
-              required
-            />
-          </div>
+          required
+        />
+        
+        {/* Email */}
+        <Input
+          type="email"
+          placeholder={labels.emailPlaceholder}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
+          className={cn(
+            "w-full rounded-[32px] font-league-spartan font-normal",
+            "bg-white border-2",
+            "focus:ring-2 focus:ring-offset-0 focus:ring-[#D96D46]",
+            "placeholder:text-[#725A5A] placeholder:opacity-60",
+            "transition-all duration-300 hover:border-[#D96D46]"
+          )}
+          style={{ 
+            borderColor: colors.border,
+            color: colors.text,
+            padding: "18px 28px",
+            fontSize: "18px",
+            height: "64px",
+            lineHeight: "1.5",
+            backgroundColor: "#FFFFFF"
+          }}
+          required
+        />
+      </div>
 
       <Button
         type="submit"

@@ -4,6 +4,7 @@ import WaitlistForm from "@/components/WaitlistForm";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { 
   Check,
   Calendar,
@@ -17,6 +18,7 @@ import {
   Baby,
 } from "lucide-react";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // JOMOA Brand Colors - matching jomoa.coach
 const colors = {
@@ -295,7 +297,8 @@ function HeroSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) {
                   labels={{
                     title: dict.waitlist.form.title,
                     description: dict.waitlist.form.description,
-                    placeholder: dict.waitlist.form.placeholder,
+                    firstNamePlaceholder: dict.waitlist.form.firstNamePlaceholder,
+                    emailPlaceholder: dict.waitlist.form.emailPlaceholder,
                     buttonIdle: dict.waitlist.form.buttonIdle,
                     buttonLoading: dict.waitlist.form.buttonLoading,
                     success: dict.waitlist.form.success,
@@ -303,6 +306,7 @@ function HeroSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) {
                     genericError: dict.waitlist.form.genericError,
                     validationError: dict.waitlist.form.validationError,
                     emptyError: dict.waitlist.form.emptyError,
+                    firstNameError: dict.waitlist.form.firstNameError,
                   }}
                 />
               </motion.div>
@@ -788,7 +792,9 @@ function WaitlistSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) 
                 labels={{
                   title: dict.waitlist.form.title,
                   description: dict.waitlist.form.description,
-                  placeholder: dict.waitlist.form.placeholder,
+                  firstNamePlaceholder: dict.waitlist.form.firstNamePlaceholder,
+                  lastNamePlaceholder: dict.waitlist.form.lastNamePlaceholder,
+                  emailPlaceholder: dict.waitlist.form.emailPlaceholder,
                   buttonIdle: dict.waitlist.form.buttonIdle,
                   buttonLoading: dict.waitlist.form.buttonLoading,
                   success: dict.waitlist.form.success,
@@ -796,6 +802,8 @@ function WaitlistSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) 
                   genericError: dict.waitlist.form.genericError,
                   validationError: dict.waitlist.form.validationError,
                   emptyError: dict.waitlist.form.emptyError,
+                  firstNameError: dict.waitlist.form.firstNameError,
+                  lastNameError: dict.waitlist.form.lastNameError,
                 }}
               />
             </motion.div>
@@ -811,34 +819,8 @@ function WaitlistSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) 
   );
 }
 
-function FooterSection({ dict, currentYear }: { dict: Dict; currentYear: number }) {
-  return (
-    <footer className="border-t border-[#E8D5D0] bg-[#FFFBF7] relative z-10 py-6 sm:py-8 md:py-10 px-4 sm:px-6 md:px-8">
-      <div className="max-w-[1200px] mx-auto">
-        <div className="h-px w-full bg-[#E8D5D0] opacity-70 mb-3 sm:mb-4 md:mb-5"></div>
-        <div className="flex flex-col items-center justify-center text-center space-y-3 sm:space-y-4 md:space-y-5">
-          <p className={cn(typography.body.mobile, "font-league-spartan font-normal max-w-3xl text-[#4E4A48] leading-relaxed")}>
-            {dict.footer.research}
-          </p>
-          <div className="flex flex-wrap items-center justify-center font-league-spartan font-normal gap-3 sm:gap-4 text-sm sm:text-base text-[#4E4A48]">
-            <p>© {currentYear} {dict.footer.copyright}</p>
-            <span>•</span>
-            <a href="#" className="hover:opacity-70 transition-opacity">{dict.footer.links.privacy}</a>
-            <span>•</span>
-            <a href="#" className="hover:opacity-70 transition-opacity">{dict.footer.links.contact}</a>
-          </div>
-          <p className={cn(typography.small.mobile, "font-league-spartan font-normal max-w-2xl opacity-70 text-[#4E4A48] leading-relaxed px-4")}>
-            {dict.footer.privacy}
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 export default function HomeClient({ dict, locale }: Props) {
-  const currentYear = new Date().getFullYear();
-
   return (
     <div className="min-h-screen relative bg-[#FFFBF7]">
       <Header locale={locale} />
@@ -849,7 +831,7 @@ export default function HomeClient({ dict, locale }: Props) {
       <ForEveryoneStepsSection dict={dict} />
       <FinalCtaSection dict={dict} />
       <WaitlistSection dict={dict} locale={locale} />
-      <FooterSection dict={dict} currentYear={currentYear} />
+      <Footer dict={dict} locale={locale} />
     </div>
   );
 }

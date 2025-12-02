@@ -49,17 +49,13 @@ export default function Header({ locale }: HeaderProps) {
             Funktioner
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
           </a>
-          <a 
-            href="#waitlist" 
+          <Link 
+            href={`/${locale}/knowledge-hub`}
             className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
           >
-            Väntelista
+            {locale === "sv" ? "Knowledge Hub" : "Knowledge Hub"}
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
-          </a>
+          </Link>
         </nav>
 
         {/* Right side: Language Switcher + CTA */}
