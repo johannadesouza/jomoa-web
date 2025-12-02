@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -10,6 +12,39 @@ type HeaderProps = {
 };
 
 export default function Header({ locale }: HeaderProps) {
+  const pathname = usePathname();
+
+  // Handle hash scrolling when navigating from other pages
+  useEffect(() => {
+    if (pathname?.includes("#")) {
+      const hash = pathname.split("#")[1];
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 100);
+    }
+  }, [pathname]);
+
+  // Navigation labels
+  const navLabels = {
+    sv: {
+      about: "Om JOMOA",
+      features: "Funktioner",
+      knowledgeHub: "Knowledge Hub",
+      waitlist: "Väntelista",
+    },
+    en: {
+      about: "About JOMOA",
+      features: "Features",
+      knowledgeHub: "Knowledge Hub",
+      waitlist: "Waitlist",
+    },
+  };
+
+  const labels = navLabels[locale];
+
   return (
     <header
       className={cn(
@@ -27,33 +62,25 @@ export default function Header({ locale }: HeaderProps) {
 
         {/* Navigation - Center */}
         <nav className="hidden md:flex items-center gap-8">
-          <a 
-            href="#value" 
+          <Link 
+            href={`/${locale}#value`}
             className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById('value')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
           >
-            Om JOMOA
+            {labels.about}
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
-          </a>
-          <a 
-            href="#features" 
+          </Link>
+          <Link 
+            href={`/${locale}#features`}
             className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById('features')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
           >
-            Funktioner
+            {labels.features}
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
-          </a>
+          </Link>
           <Link 
             href={`/${locale}/knowledge-hub`}
             className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
           >
-            {locale === "sv" ? "Knowledge Hub" : "Knowledge Hub"}
+            {labels.knowledgeHub}
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
           </Link>
         </nav>
@@ -69,15 +96,9 @@ export default function Header({ locale }: HeaderProps) {
               "transition-all duration-150 ease-out hover:scale-[1.03]"
             )}
           >
-            <a 
-              href="#waitlist"
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }}
-            >
-              Väntelista
-            </a>
+            <Link href={`/${locale}#waitlist`}>
+              {labels.waitlist}
+            </Link>
           </Button>
         </div>
       </div>

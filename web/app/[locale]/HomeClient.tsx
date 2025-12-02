@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import WaitlistForm from "@/components/WaitlistForm";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -819,6 +821,29 @@ function WaitlistSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) 
 
 
 export default function HomeClient({ dict, locale }: Props) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Handle hash scrolling on landing page
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (hash) {
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
+      }, 100);
+    }
+  }, [pathname, searchParams]);
+
   return (
     <div className="min-h-screen relative bg-[#FFFBF7]">
       <Header locale={locale} />
