@@ -109,20 +109,27 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
         if (mailchimpResponse.ok || mailchimpData.duplicate) {
           mailchimpSuccess = true;
           mailchimpDuplicate = mailchimpData.duplicate || false;
+        } else {
+          // Log error for debugging
+          console.error("Mailchimp API error:", {
+            status: mailchimpResponse.status,
+            data: mailchimpData,
+          });
         }
       } catch (mailchimpError) {
         // Mailchimp failed, but we'll still try Supabase as backup
-        console.warn("Mailchimp subscription failed, using Supabase backup:", mailchimpError);
+        console.error("Mailchimp subscription failed, using Supabase backup:", mailchimpError);
       }
 
       // Step 2: Also save to Supabase (backup/database)
-      const { error: supabaseError } = await supabase
+      const { data: supabaseData, error: supabaseError } = await supabase
         .from("waitlist_emails")
         .insert([{ 
           email: trimmedEmail, 
           first_name: trimmedFirstName,
           locale 
-        }]);
+        }])
+        .select();
 
       // Determine final status
       if (supabaseError) {
@@ -146,6 +153,18 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
           }
         } else {
           // Other Supabase error
+          console.error("Supabase error:", {
+            code: supabaseError.code,
+            message: supabaseError.message,
+            details: supabaseError.details,
+            hint: supabaseError.hint,
+          });
+          
+          // Check if it's a column/table issue
+          if (supabaseError.code === "42P01" || supabaseError.message?.includes("does not exist")) {
+            console.error("Table or column does not exist. Check Supabase schema.");
+          }
+          
           if (mailchimpSuccess) {
             // Mailchimp worked, Supabase failed - still show success
             setStatus({
@@ -155,10 +174,13 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
             setEmail("");
             setFirstName("");
           } else {
-            // Both failed
+            // Both failed - show error with more details in dev mode
+            const errorMessage = process.env.NODE_ENV === "development" 
+              ? `${labels.genericError} (${supabaseError.message || supabaseError.code || "Unknown error"})`
+              : labels.genericError;
             setStatus({
               type: "error",
-              message: labels.genericError,
+              message: errorMessage,
             });
           }
         }
@@ -177,6 +199,7 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
             message: labels.success,
           });
           setEmail("");
+          setFirstName("");
         }
       }
     } catch (err) {
