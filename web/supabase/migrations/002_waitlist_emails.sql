@@ -1,6 +1,9 @@
 -- Migration: Create waitlist_emails table if it doesn't exist
 -- This ensures the table has the correct structure for the waitlist form
 
+-- Drop table if it exists with wrong structure (optional - comment out if you have data)
+-- DROP TABLE IF EXISTS public.waitlist_emails CASCADE;
+
 -- Create table if it doesn't exist
 CREATE TABLE IF NOT EXISTS public.waitlist_emails (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -10,6 +13,19 @@ CREATE TABLE IF NOT EXISTS public.waitlist_emails (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Add first_name column if table exists but column is missing
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'waitlist_emails' 
+    AND column_name = 'first_name'
+  ) THEN
+    ALTER TABLE public.waitlist_emails ADD COLUMN first_name TEXT;
+  END IF;
+END $$;
 
 -- Create index on email for faster lookups
 CREATE INDEX IF NOT EXISTS idx_waitlist_emails_email ON public.waitlist_emails(email);

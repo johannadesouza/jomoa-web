@@ -122,14 +122,39 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
       }
 
       // Step 2: Also save to Supabase (backup/database)
-      const { data: supabaseData, error: supabaseError } = await supabase
+      // Try with first_name, if that fails, try without it (for backwards compatibility)
+      let supabaseData = null;
+      let supabaseError = null;
+      
+      // First try with first_name
+      const insertData: any = { 
+        email: trimmedEmail,
+        locale 
+      };
+      
+      // Only add first_name if it exists in the table
+      // We'll try with it first, and if it fails with column error, retry without it
+      const { data: dataWithName, error: errorWithName } = await supabase
         .from("waitlist_emails")
         .insert([{ 
-          email: trimmedEmail, 
+          ...insertData,
           first_name: trimmedFirstName,
-          locale 
         }])
         .select();
+      
+      if (errorWithName && errorWithName.code === "PGRST204" && errorWithName.message?.includes("first_name")) {
+        // Column doesn't exist, try without first_name
+        console.warn("first_name column not found, inserting without it");
+        const { data: dataWithoutName, error: errorWithoutName } = await supabase
+          .from("waitlist_emails")
+          .insert([insertData])
+          .select();
+        supabaseData = dataWithoutName;
+        supabaseError = errorWithoutName;
+      } else {
+        supabaseData = dataWithName;
+        supabaseError = errorWithName;
+      }
 
       // Determine final status
       if (supabaseError) {

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Menu, X } from "lucide-react";
@@ -12,6 +13,40 @@ import { cn } from "@/lib/utils";
 type HeaderProps = {
   locale: "en" | "sv";
 };
+
+// Logo component with fallback to text
+function LogoWithFallback() {
+  const [imageError, setImageError] = useState(false);
+  const [logoSrc, setLogoSrc] = useState<string>("/logo.png"); // Try PNG first, then SVG
+
+  // Try to load logo.png first, then logo.svg, then fallback to text
+  if (imageError) {
+    return (
+      <span className="font-the-seasons text-lg sm:text-xl font-semibold text-plum">
+        JOMOA
+      </span>
+    );
+  }
+
+  return (
+    <Image
+      src={logoSrc}
+      alt="JOMOA"
+      width={180}
+      height={60}
+      className="h-10 sm:h-12 md:h-14 w-auto"
+      onError={() => {
+        // Try alternative format
+        if (logoSrc === "/logo.png") {
+          setLogoSrc("/logo.svg");
+        } else {
+          setImageError(true);
+        }
+      }}
+      priority
+    />
+  );
+}
 
 export default function Header({ locale }: HeaderProps) {
   const pathname = usePathname();
@@ -67,10 +102,11 @@ export default function Header({ locale }: HeaderProps) {
           {/* JOMOA Logo - Left */}
           <Link 
             href={`/${locale}`} 
-            className="font-the-seasons text-lg sm:text-xl font-semibold text-plum hover:opacity-80 transition-opacity"
+            className="flex items-center hover:opacity-80 transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           >
-            JOMOA
+            {/* Logo image - will show text fallback if image doesn't exist */}
+            <LogoWithFallback />
           </Link>
 
           {/* Desktop Navigation - Center */}
