@@ -52,9 +52,26 @@ const typography = {
 
 type Dict = Awaited<ReturnType<typeof import("@/lib/i18n/getDictionary").getDictionary>>;
 
+type Article = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  cover_image_url?: string | null;
+  status: string;
+  category?: string | null;
+  tags?: string[] | null;
+  reading_time_minutes?: number | null;
+  published_at?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 type Props = {
   dict: Dict;
   locale: "en" | "sv";
+  initialArticles?: Article[];
 };
 
 // Helper Components
@@ -176,16 +193,106 @@ function HeroSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) {
             >
               {dict.knowledgeHub.hero.description}
             </p>
-            
-            <div className="pt-4 sm:pt-6">
-              <p className={cn(typography.body.mobile, "font-league-spartan font-normal text-[#FFFBF7] opacity-75 italic")}>
-                {locale === "sv" ? "Kommer snart..." : "Coming soon..."}
-              </p>
-            </div>
           </SectionFadeIn>
         </div>
       </SectionContainer>
     </PageSection>
+  );
+}
+
+// Articles Grid Component
+function ArticlesGrid({ articles, locale, dict }: { articles: Article[]; locale: "en" | "sv"; dict: Dict }) {
+  if (articles.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className={cn(typography.body.mobile, "font-league-spartan font-normal text-[#4E4A48]")}>
+          {locale === "sv" ? "Inga artiklar publicerade ännu." : "No articles published yet."}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8 sm:space-y-10 md:space-y-12">
+      <h2 className={cn(typography.h2.mobile, "font-the-seasons font-semibold text-[#462324] text-center mb-8 sm:mb-10")}>
+        {dict.knowledgeHub.articles.title}
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      {articles.map((article) => (
+        <motion.article
+          key={article.id}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          whileHover={{ y: -4, scale: 1.01 }}
+          className="group bg-white border border-[#E8D5D0] rounded-3xl overflow-hidden shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 cursor-pointer"
+        >
+          <Link href={`/${locale}/knowledge-hub/${article.slug}`}>
+            {/* Cover Image */}
+            {article.cover_image_url ? (
+              <div className="relative h-48 bg-gradient-to-br from-[#462324] to-[#4E4A48] overflow-hidden">
+                <img
+                  src={article.cover_image_url}
+                  alt={article.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+              </div>
+            ) : (
+              <div className="relative h-48 bg-gradient-to-br from-[#462324] to-[#4E4A48]">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+              </div>
+            )}
+            
+            {/* Content */}
+            <div className="p-5 sm:p-6 space-y-4">
+              {/* Category tag */}
+              {article.category && (
+                <span className="inline-flex items-center rounded-full bg-[#BA8E90]/[0.15] text-[#462324] text-xs px-3 py-1 font-league-spartan font-medium">
+                  {article.category}
+                </span>
+              )}
+              
+              {/* Title */}
+              <h3 className={cn(typography.h3.mobile, "font-the-seasons font-semibold text-[#462324] leading-tight group-hover:text-[#D96D46] transition-colors line-clamp-2")}>
+                {article.title}
+              </h3>
+              
+              {/* Excerpt */}
+              {article.excerpt && (
+                <p className={cn(typography.body.mobile, "font-league-spartan font-normal text-[#4E4A48] leading-relaxed line-clamp-2")}>
+                  {article.excerpt}
+                </p>
+              )}
+              
+              {/* Meta info */}
+              <div className="flex items-center justify-between text-xs text-[#725A5A] font-league-spartan">
+                {article.reading_time_minutes && (
+                  <span>{article.reading_time_minutes} {locale === "sv" ? "min läsning" : "min read"}</span>
+                )}
+                {article.published_at && (
+                  <span>
+                    {new Date(article.published_at).toLocaleDateString(locale === "sv" ? "sv-SE" : "en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                )}
+              </div>
+              
+              {/* Read more */}
+              <div className="flex items-center gap-2 text-[#D96D46] font-league-spartan font-semibold text-sm group-hover:gap-3 transition-all pt-2">
+                {dict.knowledgeHub.articles.readMore}
+                <ArrowRight className="h-4 w-4" />
+              </div>
+            </div>
+          </Link>
+        </motion.article>
+      ))}
+      </div>
+    </div>
   );
 }
 
@@ -299,59 +406,6 @@ function FeaturedSection({ dict }: { dict: Dict }) {
   );
 }
 
-// All Articles Grid
-function ArticlesGrid({ dict }: { dict: Dict }) {
-  return (
-    <div className="space-y-8 sm:space-y-10 md:space-y-12">
-      <h2 className={cn(typography.h2.mobile, "font-the-seasons font-semibold text-[#462324] text-center mb-8 sm:mb-10")}>
-        {dict.knowledgeHub.articles.title}
-      </h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        {dict.knowledgeHub.articles.items.map((article, idx) => (
-          <motion.article
-            key={idx}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: idx * 0.1 }}
-            whileHover={{ y: -4, scale: 1.01 }}
-            className="group bg-white border border-[#E8D5D0] rounded-3xl overflow-hidden shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 cursor-pointer"
-          >
-            {/* Image - 50% of card */}
-            <div className="relative h-48 bg-gradient-to-br from-[#462324] to-[#4E4A48]">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-            </div>
-            
-            {/* Content */}
-            <div className="p-5 sm:p-6 space-y-4">
-              {/* Category tag */}
-              <span className="inline-flex items-center rounded-full bg-[#BA8E90]/[0.15] text-[#462324] text-xs px-3 py-1 font-league-spartan font-medium">
-                {article.category}
-              </span>
-              
-              {/* Title */}
-              <h3 className={cn(typography.h3.mobile, "font-the-seasons font-semibold text-[#462324] leading-tight group-hover:text-[#D96D46] transition-colors")}>
-                {article.title}
-              </h3>
-              
-              {/* Summary - 2 lines */}
-              <p className={cn(typography.body.mobile, "font-league-spartan font-normal text-[#4E4A48] leading-relaxed line-clamp-2")}>
-                {article.summary}
-              </p>
-              
-              {/* Read more */}
-              <div className="flex items-center gap-2 text-[#D96D46] font-league-spartan font-semibold text-sm group-hover:gap-3 transition-all">
-                {dict.knowledgeHub.articles.readMore}
-                <ArrowRight className="h-4 w-4" />
-              </div>
-            </div>
-          </motion.article>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // Sidebar Component
 function Sidebar({ dict }: { dict: Dict }) {
@@ -444,11 +498,21 @@ function KnowledgeHubFooterSection({ dict }: { dict: Dict }) {
 }
 
 // Main Component
-export default function KnowledgeHubClient({ dict, locale }: Props) {
+export default function KnowledgeHubClient({ dict, locale, initialArticles = [] }: Props) {
   return (
     <div className="min-h-screen relative bg-[#FFFBF7]">
       <Header locale={locale} />
       <HeroSection dict={dict} locale={locale} />
+      
+      {/* Articles Section */}
+      <PageSection bgColor={colors.bg}>
+        <SectionContainer>
+          <SectionFadeIn>
+            <ArticlesGrid articles={initialArticles} locale={locale} dict={dict} />
+          </SectionFadeIn>
+        </SectionContainer>
+      </PageSection>
+      
       <KnowledgeHubFooterSection dict={dict} />
       <Footer dict={dict} locale={locale} />
     </div>
