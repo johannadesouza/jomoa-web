@@ -1,0 +1,27 @@
+# dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+pnpm-debug.*
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
