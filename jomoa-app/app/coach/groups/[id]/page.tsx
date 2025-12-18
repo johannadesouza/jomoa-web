@@ -32,7 +32,6 @@ interface AvailableClient {
   profile: {
     id: string;
     full_name: string | null;
-    email: string | null;
   } | null;
 }
 
@@ -148,7 +147,6 @@ export default function GroupDetailPage() {
             profile: profile ? {
               id: profile.id,
               full_name: profile.full_name,
-              email: profile.email,
             } : null,
           } : null,
         };
@@ -202,13 +200,12 @@ export default function GroupDetailPage() {
           id: c.id,
           profile_id: c.profile_id,
           profile: profile ? {
-            id: (profile as { id: string; full_name: string | null; email: string | null }).id,
-            full_name: (profile as { id: string; full_name: string | null; email: string | null }).full_name || null,
-            email: (profile as { id: string; full_name: string | null; email: string | null }).email || null,
+            id: (profile as { id: string; full_name: string | null }).id,
+            full_name: (profile as { id: string; full_name: string | null }).full_name || null,
           } : null,
         };
       });
-      setAvailableClients(normalizedAvailable as AvailableClient[]);
+      setAvailableClients(normalizedAvailable);
     } catch (err) {
       console.error("Error fetching available clients:", err);
       // Tyst fel - det är okej om detta misslyckas

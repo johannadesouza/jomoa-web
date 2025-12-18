@@ -206,7 +206,7 @@ export default function CreateProgramPage() {
         .insert({
           name: draft.name.trim(),
           description: draft.description.trim() || null,
-          created_by_profile_id: user.id,
+          created_by_coach_id: user.id,
           target_goal: draft.target_goal,
           target_duration_weeks: draft.target_duration_weeks,
           is_template: false,

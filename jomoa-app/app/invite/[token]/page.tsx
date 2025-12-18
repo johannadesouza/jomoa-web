@@ -175,55 +175,22 @@ export default function InviteAcceptancePage() {
         // Fortsätt ändå, namn kan uppdateras senare
       }
 
-      // 3. Hämta coach_id från invite och skapa client
-      const { data: inviteData, error: inviteDataError } = await supabase
-        .from("invites")
-        .select("invited_by_profile_id, organization_id")
-        .eq("token", token)
-        .single();
+      // 3. Använd API route för att acceptera invite och skapa client (använder service role för att bypassa RLS)
+      const response = await fetch("/api/invite/accept", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token,
+          user_id: authData.user.id,
+        }),
+      });
 
-      if (inviteDataError || !inviteData) {
-        throw new Error("Kunde inte hämta inbjudningsinformation.");
-      }
+      const data = await response.json();
 
-      // Uppdatera profile
-      const { error: updateProfileError } = await supabase
-        .from("profiles")
-        .update({
-          role: "client",
-          onboarding_stage: "started",
-        })
-        .eq("id", authData.user.id);
-
-      if (updateProfileError) {
-        throw updateProfileError;
-      }
-
-      // Skapa client record
-      const { error: clientError } = await supabase
-        .from("clients")
-        .insert({
-          profile_id: authData.user.id,
-          primary_coach_id: inviteData.invited_by_profile_id,
-          status: "active",
-          onboarding_stage: "started",
-        });
-
-      if (clientError) {
-        throw clientError;
-      }
-
-      // Markera invite som accepterad
-      const { error: acceptError } = await supabase
-        .from("invites")
-        .update({
-          accepted_at: new Date().toISOString(),
-        })
-        .eq("token", token);
-
-      if (acceptError) {
-        console.error("Error marking invite as accepted:", acceptError);
-        // Fortsätt ändå, client är skapad
+      if (!response.ok) {
+        throw new Error(data.error || "Kunde inte acceptera inbjudan");
       }
 
       // 4. Lyckades! Redirect till client dashboard
@@ -249,63 +216,22 @@ export default function InviteAcceptancePage() {
     setError(null);
 
     try {
-      // Hämta coach_id från invite
-      const { data: inviteData, error: inviteDataError } = await supabase
-        .from("invites")
-        .select("invited_by_profile_id, organization_id")
-        .eq("token", token)
-        .single();
+      // Använd API route för att acceptera invite (använder service role för att bypassa RLS)
+      const response = await fetch("/api/invite/accept", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token,
+          user_id: user.id,
+        }),
+      });
 
-      if (inviteDataError || !inviteData) {
-        throw new Error("Kunde inte hämta inbjudningsinformation.");
-      }
+      const data = await response.json();
 
-      // Uppdatera profile
-      const { error: updateProfileError } = await supabase
-        .from("profiles")
-        .update({
-          role: "client",
-          onboarding_stage: "started",
-        })
-        .eq("id", user.id);
-
-      if (updateProfileError) {
-        throw updateProfileError;
-      }
-
-      // Skapa client record om den inte finns
-      const { data: existingClient } = await supabase
-        .from("clients")
-        .select("id")
-        .eq("profile_id", user.id)
-        .single();
-
-      if (!existingClient) {
-        const { error: clientError } = await supabase
-          .from("clients")
-          .insert({
-            profile_id: user.id,
-            primary_coach_id: inviteData.invited_by_profile_id,
-            status: "active",
-            onboarding_stage: "started",
-          });
-
-        if (clientError) {
-          throw clientError;
-        }
-      }
-
-      // Markera invite som accepterad
-      const { error: acceptError } = await supabase
-        .from("invites")
-        .update({
-          accepted_at: new Date().toISOString(),
-        })
-        .eq("token", token);
-
-      if (acceptError) {
-        console.error("Error marking invite as accepted:", acceptError);
-        // Fortsätt ändå, client är skapad
+      if (!response.ok) {
+        throw new Error(data.error || "Kunde inte acceptera inbjudan");
       }
 
       // Lyckades! Redirect till client dashboard

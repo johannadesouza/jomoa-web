@@ -24,7 +24,6 @@ export interface Client {
   profile?: {
     id: string;
     full_name: string | null;
-    email: string | null;
   } | null;
 }
 

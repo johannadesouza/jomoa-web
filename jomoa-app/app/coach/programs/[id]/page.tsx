@@ -388,7 +388,7 @@ export default function ProgramDetailPage() {
     try {
       const { data, error: fetchError } = await supabase
         .from("training_programs")
-        .select("id, created_by_coach_id, name, description, target_goal, target_duration_weeks, is_template, use_cycle_aware, created_at, updated_at")
+        .select("id, created_by_coach_id, name, description, target_goal, target_duration_weeks, is_template, created_at, updated_at")
         .eq("id", programId)
         .eq("created_by_coach_id", user.id)
         .single();
@@ -840,8 +840,7 @@ export default function ProgramDetailPage() {
           created_at,
           profile:profiles!clients_profile_id_fkey (
             id,
-            full_name,
-            email
+            full_name
           )
         `)
         .eq("primary_coach_id", user.id)
@@ -862,7 +861,6 @@ export default function ProgramDetailPage() {
           profile: profile ? {
             id: profile.id,
             full_name: profile.full_name,
-            email: profile.email || null,
           } : null,
         };
       });
@@ -935,8 +933,7 @@ export default function ProgramDetailPage() {
             id,
             profile:profiles!clients_profile_id_fkey (
               id,
-              full_name,
-              email
+              full_name
             )
           )
         `)
@@ -965,7 +962,6 @@ export default function ProgramDetailPage() {
             profile: profile ? {
               id: profile.id,
               full_name: profile.full_name,
-              email: profile.email || null,
             } : null,
           } : undefined,
         };
