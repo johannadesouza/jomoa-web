@@ -1,0 +1,31 @@
+===============================================================================
+SUPABASE MIGRATIONS - KÖRORDNING
+===============================================================================
+
+Kör migrations i EXAKT denna ordning i Supabase SQL Editor:
+
+1. 20251216091014_remote_schema.sql
+   → Huvudschema (alla tabeller, extensions, functions)
+
+2. create_notifications_triggers.sql
+   → Notifications system (tabell, functions, triggers)
+
+3. 20250120000000_seed_onboarding_tasks.sql
+   → Seed data för onboarding tasks
+
+4. 20250120000001_add_rls_policies.sql
+   → RLS policies för alla kritiska tabeller
+
+5. 20250120000002_fix_rls_clients.sql
+   → Fix för clients RLS policies
+
+6. 20250120000003_add_cycle_phases_rls.sql
+   → RLS policies för cycle_phases och cycle_symptoms
+
+===============================================================================
+VIKTIGT:
+- Kör migrations i ordning (varje steg bygger på tidigare)
+- Verifiera att varje migration kördes utan fel innan nästa
+- Se docs/guides/MIGRATION_ORDER.md för detaljerad guide
+===============================================================================
+

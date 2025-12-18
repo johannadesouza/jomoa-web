@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const category = searchParams.get("category");
+    const locale = searchParams.get("locale") || "sv"; // Default to Swedish
     const limit = parseInt(searchParams.get("limit") || "20", 10);
     const offset = parseInt(searchParams.get("offset") || "0", 10);
 
@@ -22,6 +23,7 @@ export async function GET(request: NextRequest) {
       .from("articles")
       .select("*")
       .eq("status", "published")
+      .eq("locale", locale) // Filter by locale
       .order("published_at", { ascending: false })
       .range(offset, offset + limit - 1);
 

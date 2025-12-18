@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { CoachSidebar } from "./CoachSidebar";
 
 export function CoachTopbar() {
@@ -47,6 +47,7 @@ export function CoachTopbar() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="p-0 w-64 max-w-sm">
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           <div className="h-full overflow-auto">
             <CoachSidebar />
           </div>

@@ -219,11 +219,11 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
           });
         } else {
           // Both succeeded or Mailchimp failed but Supabase worked
-          setStatus({
-            type: "success",
-            message: labels.success,
-          });
-          setEmail("");
+        setStatus({
+          type: "success",
+          message: labels.success,
+        });
+        setEmail("");
           setFirstName("");
         }
       }
@@ -273,13 +273,13 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
         />
         
         {/* Email */}
-        <Input
-          type="email"
+            <Input
+              type="email"
           placeholder={labels.emailPlaceholder}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={loading}
-          className={cn(
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              className={cn(
             "w-full rounded-[32px] font-league-spartan font-normal",
             "bg-white border-2",
             "focus:ring-2 focus:ring-offset-0 focus:ring-[#D96D46]",
@@ -295,9 +295,9 @@ export default function WaitlistForm({ locale, labels, inline = false }: Waitlis
             lineHeight: "1.5",
             backgroundColor: "#FFFFFF"
           }}
-          required
-        />
-      </div>
+              required
+            />
+          </div>
 
       <Button
         type="submit"

@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { getErrorMessage } from "@/lib/utils/normalizeSupabase";
 
 // This should be called periodically (e.g., via cron job or scheduled task)
-export async function POST(request: Request) {
+export async function POST() {
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

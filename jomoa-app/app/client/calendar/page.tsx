@@ -4,16 +4,15 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import { getErrorMessage } from "@/lib/utils/normalizeSupabase";
-import { normalizeRelation } from "@/lib/types/supabase";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { Card, CardHeader, CardTitle, CardContent, Chip } from "@/components/ui/Card";
+import { Card, CardContent, Chip } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CycleIndicator } from "@/components/ui/CycleIndicator";
 import { calculateCyclePhase, getCycleColorClasses } from "@/lib/utils/cycleColors";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/Drawer";
-import { Dumbbell, Calendar as CalendarIcon } from "lucide-react";
+import { Dumbbell } from "lucide-react";
 
 interface DayData {
   date: Date;
@@ -169,9 +168,6 @@ export default function ClientCalendar() {
         .single();
 
       if (assignment) {
-        // Normalize program data
-        const program = Array.isArray(assignment.program) ? assignment.program[0] : assignment.program;
-
         // Hämta sessions för veckan (baserat på day_of_week)
         const dayNumbers = days.map((d) => d.dayOfWeek);
         const { data: sessionsData } = await supabase

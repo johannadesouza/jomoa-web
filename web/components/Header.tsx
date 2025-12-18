@@ -90,16 +90,16 @@ export default function Header({ locale }: HeaderProps) {
 
   return (
     <>
-      <header
-        className={cn(
-          "sticky top-0 z-50",
-          "bg-soft-pink/95 backdrop-blur-sm",
-          "border-b border-pink-light/50",
+    <header
+      className={cn(
+        "sticky top-0 z-50",
+        "bg-soft-pink/95 backdrop-blur-sm",
+        "border-b border-pink-light/50",
           "py-3 px-4 sm:px-6"
-        )}
-      >
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          {/* JOMOA Logo - Left */}
+      )}
+    >
+      <div className="max-w-6xl mx-auto flex items-center justify-between">
+        {/* JOMOA Logo - Left */}
           <Link 
             href={`/${locale}`} 
             className="flex items-center hover:opacity-80 transition-opacity"
@@ -107,44 +107,44 @@ export default function Header({ locale }: HeaderProps) {
           >
             {/* Logo image - will show text fallback if image doesn't exist */}
             <LogoWithFallback />
-          </Link>
+        </Link>
 
           {/* Desktop Navigation - Center */}
           <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
             <Link 
               href={`/${locale}#value`}
-              className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
-            >
+            className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
+          >
               {labels.about}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
             </Link>
             <Link 
               href={`/${locale}#features`}
-              className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
-            >
+            className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
+          >
               {labels.features}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
             </Link>
             <Link 
               href={`/${locale}/knowledge-hub`}
-              className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
-            >
+            className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
+          >
               {labels.knowledgeHub}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
             </Link>
-          </nav>
+        </nav>
 
           {/* Right side: Desktop - Language Switcher + CTA */}
           <div className="hidden lg:flex items-center gap-4 xl:gap-6">
-            <LanguageSwitcher />
-            <Button
-              asChild
-              className={cn(
+          <LanguageSwitcher />
+          <Button
+            asChild
+            className={cn(
                 "rounded-full h-9 px-4 xl:px-6 text-xs xl:text-sm font-league-spartan font-medium",
-                "bg-terracotta hover:bg-[#C85A3A] text-white",
-                "transition-all duration-150 ease-out hover:scale-[1.03]"
-              )}
-            >
+              "bg-terracotta hover:bg-[#C85A3A] text-white",
+              "transition-all duration-150 ease-out hover:scale-[1.03]"
+            )}
+          >
               <Link href={`/${locale}#waitlist`}>
                 {labels.waitlist}
               </Link>
@@ -211,11 +211,11 @@ export default function Header({ locale }: HeaderProps) {
                   "bg-terracotta hover:bg-[#C85A3A] text-white",
                   "transition-all duration-150 ease-out"
                 )}
-              >
+            >
                 <Link href={`/${locale}#waitlist`} onClick={() => setMobileMenuOpen(false)}>
                   {labels.waitlist}
                 </Link>
-              </Button>
+          </Button>
             </div>
           </nav>
         </div>

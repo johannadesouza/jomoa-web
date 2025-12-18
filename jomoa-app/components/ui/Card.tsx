@@ -20,9 +20,9 @@ export function Card({
   variant = "default"
 }: CardProps) {
   const radiusClasses = {
-    default: "rounded-card",
-    hero: "rounded-hero",
-    large: "rounded-large",
+    default: "rounded-[20px]",
+    hero: "rounded-[24px]",
+    large: "rounded-[28px]",
   };
 
   return (

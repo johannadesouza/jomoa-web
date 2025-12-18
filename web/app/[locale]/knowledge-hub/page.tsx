@@ -10,13 +10,14 @@ export default async function KnowledgeHubPage({ params }: Props) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
   
-  // Fetch published articles
+  // Fetch published articles for the current locale
   let articles: any[] = [];
   try {
     const { data, error } = await supabase
       .from("articles")
       .select("*")
       .eq("status", "published")
+      .eq("locale", locale) // Filter by locale
       .order("published_at", { ascending: false })
       .limit(20);
 

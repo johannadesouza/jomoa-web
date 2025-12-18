@@ -11,11 +11,14 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
+    const searchParams = request.nextUrl.searchParams;
+    const locale = searchParams.get("locale") || "sv"; // Default to Swedish
 
     const { data, error } = await supabase
       .from("articles")
       .select("*")
       .eq("slug", slug)
+      .eq("locale", locale) // Filter by locale
       .eq("status", "published")
       .single();
 
