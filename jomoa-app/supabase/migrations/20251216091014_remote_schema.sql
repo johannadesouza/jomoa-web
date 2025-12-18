@@ -52,6 +52,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
 
 
 
+DROP TYPE IF EXISTS "public"."calendar_event_type_enum" CASCADE;
 CREATE TYPE "public"."calendar_event_type_enum" AS ENUM (
     'coaching_session',
     'checkin',
@@ -63,6 +64,7 @@ CREATE TYPE "public"."calendar_event_type_enum" AS ENUM (
 ALTER TYPE "public"."calendar_event_type_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."checkin_question_type_enum" CASCADE;
 CREATE TYPE "public"."checkin_question_type_enum" AS ENUM (
     'scale_1_10',
     'yes_no',
@@ -73,6 +75,7 @@ CREATE TYPE "public"."checkin_question_type_enum" AS ENUM (
 ALTER TYPE "public"."checkin_question_type_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."client_status_enum" CASCADE;
 CREATE TYPE "public"."client_status_enum" AS ENUM (
     'active',
     'paused',
@@ -83,6 +86,7 @@ CREATE TYPE "public"."client_status_enum" AS ENUM (
 ALTER TYPE "public"."client_status_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."cycle_event_type_enum" CASCADE;
 CREATE TYPE "public"."cycle_event_type_enum" AS ENUM (
     'period_start',
     'period_end',
@@ -94,6 +98,7 @@ CREATE TYPE "public"."cycle_event_type_enum" AS ENUM (
 ALTER TYPE "public"."cycle_event_type_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."cycle_phase_enum" CASCADE;
 CREATE TYPE "public"."cycle_phase_enum" AS ENUM (
     'menstruation',
     'follicular',
@@ -106,6 +111,7 @@ CREATE TYPE "public"."cycle_phase_enum" AS ENUM (
 ALTER TYPE "public"."cycle_phase_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."cycle_source_enum" CASCADE;
 CREATE TYPE "public"."cycle_source_enum" AS ENUM (
     'client',
     'coach',
@@ -116,6 +122,7 @@ CREATE TYPE "public"."cycle_source_enum" AS ENUM (
 ALTER TYPE "public"."cycle_source_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."gender_enum" CASCADE;
 CREATE TYPE "public"."gender_enum" AS ENUM (
     'female',
     'male',
@@ -127,6 +134,7 @@ CREATE TYPE "public"."gender_enum" AS ENUM (
 ALTER TYPE "public"."gender_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."intensity_type_enum" CASCADE;
 CREATE TYPE "public"."intensity_type_enum" AS ENUM (
     'none',
     'rpe',
@@ -137,6 +145,7 @@ CREATE TYPE "public"."intensity_type_enum" AS ENUM (
 ALTER TYPE "public"."intensity_type_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."nutrition_goal_enum" CASCADE;
 CREATE TYPE "public"."nutrition_goal_enum" AS ENUM (
     'fat_loss',
     'muscle_gain',
@@ -148,6 +157,7 @@ CREATE TYPE "public"."nutrition_goal_enum" AS ENUM (
 ALTER TYPE "public"."nutrition_goal_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."nutrition_period_type_enum" CASCADE;
 CREATE TYPE "public"."nutrition_period_type_enum" AS ENUM (
     'deficit',
     'maintenance',
@@ -158,6 +168,7 @@ CREATE TYPE "public"."nutrition_period_type_enum" AS ENUM (
 ALTER TYPE "public"."nutrition_period_type_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."onboarding_stage_enum" CASCADE;
 CREATE TYPE "public"."onboarding_stage_enum" AS ENUM (
     'not_started',
     'started',
@@ -168,6 +179,7 @@ CREATE TYPE "public"."onboarding_stage_enum" AS ENUM (
 ALTER TYPE "public"."onboarding_stage_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."org_member_role_enum" CASCADE;
 CREATE TYPE "public"."org_member_role_enum" AS ENUM (
     'owner',
     'coach',
@@ -178,6 +190,7 @@ CREATE TYPE "public"."org_member_role_enum" AS ENUM (
 ALTER TYPE "public"."org_member_role_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."subscription_status_enum" CASCADE;
 CREATE TYPE "public"."subscription_status_enum" AS ENUM (
     'trial',
     'active',
@@ -189,6 +202,7 @@ CREATE TYPE "public"."subscription_status_enum" AS ENUM (
 ALTER TYPE "public"."subscription_status_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."tip_category_enum" CASCADE;
 CREATE TYPE "public"."tip_category_enum" AS ENUM (
     'training',
     'nutrition',
@@ -200,6 +214,7 @@ CREATE TYPE "public"."tip_category_enum" AS ENUM (
 ALTER TYPE "public"."tip_category_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."tip_context_enum" CASCADE;
 CREATE TYPE "public"."tip_context_enum" AS ENUM (
     'low_energy',
     'high_stress',
@@ -211,6 +226,7 @@ CREATE TYPE "public"."tip_context_enum" AS ENUM (
 ALTER TYPE "public"."tip_context_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."training_goal_enum" CASCADE;
 CREATE TYPE "public"."training_goal_enum" AS ENUM (
     'strength',
     'hypertrophy',
@@ -224,6 +240,7 @@ CREATE TYPE "public"."training_goal_enum" AS ENUM (
 ALTER TYPE "public"."training_goal_enum" OWNER TO "postgres";
 
 
+DROP TYPE IF EXISTS "public"."user_role_enum" CASCADE;
 CREATE TYPE "public"."user_role_enum" AS ENUM (
     'coach',
     'client',
