@@ -431,7 +431,7 @@ function ProblemVariationSection({ dict }: { dict: Dict }) {
   );
 }
 
-function PhasesDataSection({ dict }: { dict: Dict }) {
+function PhasesDataSection({ dict, locale }: { dict: Dict; locale: "en" | "sv" }) {
   return (
     <PageSection bgColor={colors.bgAlt} withDecorativeShapes={true}>
       <SectionContainer className="space-y-8 sm:space-y-10 md:space-y-12">
@@ -521,7 +521,7 @@ function PhasesDataSection({ dict }: { dict: Dict }) {
                   className="bg-white border border-[#E8D5D0] rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 group cursor-pointer"
                 >
                   <p className={cn(typography.body.mobile, "font-league-spartan font-semibold mb-2 sm:mb-3 text-[#462324] group-hover:text-[#D96D46] transition-colors")}>
-                    För klienten:
+                    {locale === "sv" ? "I din kropp:" : "In your body:"}
                   </p>
                   <p className={cn(typography.body.mobile, "font-league-spartan font-normal italic text-[#D96D46] leading-relaxed")}>
                     {dict.data.client}
@@ -532,7 +532,7 @@ function PhasesDataSection({ dict }: { dict: Dict }) {
                   className="bg-white border border-[#E8D5D0] rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-sm hover:shadow-lg hover:border-[#D96D46]/30 transition-all duration-300 group cursor-pointer"
                 >
                   <p className={cn(typography.body.mobile, "font-league-spartan font-semibold mb-2 sm:mb-3 text-[#462324] group-hover:text-[#D96D46] transition-colors")}>
-                    För tränaren:
+                    {locale === "sv" ? "I appen:" : "In the app:"}
                   </p>
                   <p className={cn(typography.body.mobile, "font-league-spartan font-normal italic text-[#D96D46] leading-relaxed")}>
                     {dict.data.coach}
@@ -849,7 +849,7 @@ export default function HomeClient({ dict, locale }: Props) {
       <Header locale={locale} />
       <HeroSection dict={dict} locale={locale} />
       <ProblemVariationSection dict={dict} />
-      <PhasesDataSection dict={dict} />
+      <PhasesDataSection dict={dict} locale={locale} />
       <FeaturesSection dict={dict} />
       <ForEveryoneStepsSection dict={dict} />
       <FinalCtaSection dict={dict} />

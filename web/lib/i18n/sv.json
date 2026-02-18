@@ -1,161 +1,166 @@
 {
   "hero": {
-    "h1": "Train in rhythm.",
-    "subheadline": "Ett smart coachingsystem som stödjer tränare och klienter genom att förena träning, fysiologi och beteendemönster.",
-    "body": "JOMOA gör det enklare att förstå hur kroppen förändras över tid – och att anpassa träningen efter verkliga förutsättningar.",
+    "h1": "Din styrka. Din cykel. Ditt liv.",
+    "subheadline": "Du tränar seriöst. Appen håller din plan tydlig, även när livet rör sig.",
+    "body": "Ett ställe för styrka, cykel och livsfaser – utan extrema upplägg eller skuld.",
     "cta": "Gå med i väntelistan",
-    "ctaSubtext": "Få nyheter och inbjudan till betalanseringen."
+    "ctaSubtext": "Få uppdateringar och inbjudan när vi öppnar betan."
   },
   "problem": {
-    "heading": "Dagens träningsverktyg bygger på linjära antaganden.\nMänniskokroppen gör inte det.",
-    "body1": "Traditionella appar utgår ofta från att energi, återhämtning och prestation är stabila från dag till dag.",
-    "body2": "I praktiken varierar kroppen – både på grund av fysiologi, livssituation och beteendemönster.",
-    "body3": "Med JOMOA får tränare ett verktyg som fungerar för alla klienter,\noch som samtidigt gör det lättare att förstå variationer som är särskilt vanliga hos kvinnor."
+    "heading": "Du tränar seriöst. Din app ser dig inte.",
+    "body1": "De flesta appar förväntar sig samma prestation varje vecka. De tar inte hänsyn till hur din cykel, livsfaser och vardag faktiskt påverkar styrka och återhämtning.",
+    "body2": "Du vill ha struktur som förstår din kropp, inte en plan som passar alla.",
+    "body3": ""
   },
   "variation": {
-    "heading": "Energi, återhämtning och motivation varierar naturligt.",
-    "subheading": "Det här är inte problem – det är viktig information.",
+    "heading": "Din styrka går i vågor.",
+    "subheading": "Så fungerar kroppen.",
     "items": [
-      "Energi kan skifta betydligt över en månad",
-      "Återhämtning påverkas av sömn, belastning och fysiologiska faktorer",
-      "Motivation följer beteendemönster och livssituation",
-      "Prestation går i vågor, inte i en rak linje"
+      "Vissa veckor känns kroppen skarp och stark",
+      "Andra veckor känns allt tyngre",
+      "Livsfaser ändrar hur träningen landar i kroppen",
+      "Utebliven mens eller ständig trötthet är en signal, inte ett karaktärsdrag"
     ],
-    "footer": "JOMOA hjälper tränare och klienter att se dessa mönster – utan att förenkla eller överdriva."
+    "footer": "JOMOA hjälper dig sätta ord på det du känner, istället för att lägga skuld på dig."
   },
   "phases": {
-    "heading": "Stöd för olika faser och tillstånd",
-    "subheading": "Ett verktyg som tar höjd för verkligheten.",
-    "body1": "JOMOA är inte en app \"för kvinnor\".",
-    "body2": "Det är ett verktyg designat för alla – men med möjlighet att hantera variationer som ofta påverkar kvinnors vardag och träningskapacitet.",
-    "examplesHeading": "Exempel på situationer där JOMOA tillför värde:",
+    "heading": "En app för alla dina faser.",
+    "subheading": "Från första mens till klimakteriet.",
+    "body1": "Du ska inte behöva en app för styrka, en för mens och en för livsfaser.",
+    "body2": "JOMOA samlar allt på samma ställe, så att du ser hela bilden över tid.",
+    "examplesHeading": "Centrala faser och situationer:",
     "items": [
       {
-        "title": "cykliska symtom och återkommande variationer i energi",
+        "title": "menscykel – hur styrka och symtom skiftar över månaden",
         "icon": "calendar"
       },
       {
-        "title": "perioder av ökad känslighet eller obehag",
-        "icon": "heart"
-      },
-      {
-        "title": "hormonrelaterade tillstånd som kan påverka belastningstolerans",
+        "title": "utebliven mens eller låg energitillgänglighet",
         "icon": "activity"
       },
       {
-        "title": "förändringar kopplade till preventivmedel",
+        "title": "bygga stabil styrkebas inför graviditet",
         "icon": "shield"
       },
       {
-        "title": "återgång till träning efter graviditet",
+        "title": "återgång till lyft och löpning postpartum",
         "icon": "baby"
+      },
+      {
+        "title": "träning genom perimenopaus och klimakteriet",
+        "icon": "waves"
       }
     ],
-    "footer1": "Klienten får ett begripligt sätt att följa sina mönster.",
-    "footer2": "Tränaren får bättre underlag för att anpassa upplägget."
-      },
+    "footer1": "Du ser hur kroppen svarar i varje fas.",
+    "footer2": "Träningen anpassas istället för att du börjar om från noll varje gång."
+  },
   "data": {
-    "heading": "Datadrivet — men mänskligt.",
-    "body": "JOMOA analyserar mönster i:",
+    "heading": "Data som hjälper dig ta kloka beslut.",
+    "body": "Appen kopplar din styrketräning till:",
     "patterns": [
-      "träning",
-      "återhämtning",
-      "sömn",
-      "energi",
-      "motivation",
-      "känslomässiga markörer",
-      "cykliska variationer (valbart)"
+      "passdata (set, reps, belastning, RPE)",
+      "cykelfas och symtom",
+      "sömn och återhämtning",
+      "stress och arbetsbelastning",
+      "alkohol och sena kvällar"
     ],
-    "insight": "Systemet presenterar informationen på ett sätt som är lätt att förstå – och praktiskt att använda.",
-    "client": "\"Jag ser hur min kropp reagerar över tid.\"",
-    "coach": "\"Jag kan anpassa träningen med mer precision.\""
+    "insight": "Du får enkel, neutral information: när du kan gå tungt, när du ska ligga kvar och hur sömn, stress och alkohol påverkar dig över tid.",
+    "client": "\"Jag kan träna hårt, gå ut och äta middag och ändå veta exakt vad min kropp behöver sen.\"",
+    "coach": "Hälsa betyder inte restriktion. Det betyder medvetenhet. Appen ger dig tydlig information. Du väljer hur du vill leva."
   },
   "features": {
-    "heading": "Ett verktyg för tränare som arbetar långsiktigt.",
+    "heading": "I appen får du:",
     "items": [
       {
-        "title": "Strukturerad programmering",
-        "description": "Planera block, cykler och progression på ett sätt som är lätt att justera.",
+        "title": "Strukturerade styrkeupplägg",
+        "description": "Välj bland progressiva program med tydliga set, reps och föreslagna vikter. Få rekommendationer baserade på dina mål.",
         "icon": "calendar"
       },
       {
-        "title": "Passlogg och utveckling över tid",
-        "description": "Sets, reps, RPE, kommentarer, trender och grafer.",
-        "icon": "trending-up"
+        "title": "Integrerad cykelspårning",
+        "description": "Logga din cykel i appen. Se förväntad ägglossning, mensdag och när något ser avvikande ut.",
+        "icon": "calendar"
       },
       {
-        "title": "Koststöd och anpassningar",
-        "description": "Enkla recept, portionsguidning och rekommendationer vid låg energi.",
-        "icon": "utensils"
+        "title": "Anpassade justeringar",
+        "description": "Appen anpassar ditt upplägg utifrån readiness, cykelfas, ålder och hur livsstilsfaktorer — resor, sena kvällar, sociala planer — påverkar dig.",
+        "icon": "activity"
       },
       {
-        "title": "Psykologiska markörer",
-        "description": "Klienter kan logga humör och energi – utan att det blir ett diagnosverktyg.",
+        "title": "Logik för olika livsfaser",
+        "description": "Mjuka spår vid utebliven mens, graviditetsförberedelse, postpartum eller peri/klimakteriet.",
+        "icon": "heart"
+      },
+      {
+        "title": "Enkel loggning",
+        "description": "Logga träning, cykel, sömn och stress på några sekunder.",
         "icon": "brain"
       },
       {
-        "title": "Cykelmodul (valbar)",
-        "description": "För klienter där variationen är relevant.",
-        "icon": "waves"
+        "title": "Tydliga, neutrala insikter",
+        "description": "Se hur livsstilsfaktorer påverkar dig över tid. Appen ger dig information. Du fattar besluten.",
+        "icon": "trending-up"
       }
     ]
   },
   "forEveryone": {
-    "heading": "För alla klienter – men extra värdefullt för kvinnor",
-    "body": "JOMOA kan användas med klienter som:",
+    "heading": "Är JOMOA för dig?",
+    "body": "Appen är byggd för dig som:",
     "clients": [
-      "är nybörjare eller erfarna",
-      "har hög arbetsbelastning eller bristande återhämtning",
-      "upplever återkommande variationer i energi eller symtom",
-      "tränar efter graviditet",
-      "vill förstå sin kropp bättre över tid"
+      "bryr dig om styrka, prestation eller kroppsmål",
+      "vill ha struktur utan att anlita personlig tränare",
+      "vill ha ett ställe för styrka, cykel och livsfaser"
     ],
-    "footer": "Formuleringarna är inkluderande, vetenskapligt försiktiga, och professionellt neutrala."
+    "footer": "Tonen är neutral, evidensbaserad och praktisk – utan hype, dömande eller \"feminin energi\"-språk."
   },
   "steps": {
-    "heading": "Så funkar det – tre steg",
-    "intro": "En enkel process för att bygga, följa och anpassa träning över tid.",
+    "heading": "Så funkar appen.",
+    "intro": "Ett lugnt, strukturerat sätt att fortsätta utvecklas – även när livet inte är linjärt.",
     "items": [
       {
-        "title": "Bygg programmet",
-        "description": "Skapa strukturerade träningsblock och progressioner."
+        "title": "Sätt din utgångspunkt",
+        "description": "Fyll i träningsbakgrund, nuvarande nivå, mål, ålder och livsfas."
       },
       {
-        "title": "Följ mönstren",
-        "description": "Klienten loggar träning och enkla markörer. JOMOA visualiserar trender."
+        "title": "Välj ditt program",
+        "description": "Välj ett styrkeprogram som passar dig, med rekommendationer baserade på dina mål."
       },
       {
-        "title": "Anpassa vid rätt läge",
-        "description": "Små justeringar – tydlig effekt på lång sikt."
+        "title": "Träna, logga, anpassa",
+        "description": "Logga träning, cykel, energi, sömn och stress. Appen anpassar ditt upplägg utifrån readiness, cykelfas, ålder och hur livsstilsfaktorer — resor, sena kvällar, sociala planer — påverkar dig."
+      },
+      {
+        "title": "Se mönstren",
+        "description": "Se när du ska öka, ligga kvar och hur kroppen svarar över tid."
       }
     ]
   },
   "ctaFooter": {
-    "h1": "Train in rhythm.",
+    "h1": "Träna smart. Vila när du behöver. Lev fullt ut.",
     "h2": "Gå med i väntelistan",
     "cta": "Gå med i väntelistan",
-    "subtext": "Få nyheter och inbjudningar till kommande beta.",
-    "trust": "Vi hör av oss när något är relevant – inga oönskade utskick."
+    "subtext": "För kvinnor som vill ha seriös styrka, tydlig struktur och plats för resten av livet.",
+    "trust": "Vi hör bara av oss när något är relevant – ingen spam, inget tjat."
   },
   "waitlist": {
-    "heading": "Gå med i betan",
-    "intro": "Var först med att testa intern beta för tränare.",
-    "trust": "Vi hör av oss när något är relevant – inga oönskade utskick.",
+    "heading": "Gå med i väntelistan",
+    "intro": "Var först med att testa JOMOA när vi lanserar.",
+    "trust": "Vi använder bara din e-post för att skicka uppdateringar om appen och betan.",
     "form": {
       "title": "Gå med i väntelistan",
-      "description": "Var först med att få veta när vi lanserar",
+      "description": "Få tidig åtkomst till appen",
       "firstNamePlaceholder": "Förnamn",
       "emailPlaceholder": "E-postadress",
-      "buttonIdle": "Gå med i väntelistan",
+      "buttonIdle": "Gå med på väntelistan",
       "buttonLoading": "Går med...",
-      "success": "Tillagd i väntelistan!",
-      "duplicateError": "Denna e-post finns redan i väntelistan",
+      "success": "Tillagd i väntelistan.",
+      "duplicateError": "Denna e-post finns redan i väntelistan.",
       "genericError": "Något gick fel. Försök igen.",
-      "validationError": "Vänligen ange en giltig e-postadress",
-      "emptyError": "Vänligen fyll i alla fält",
-      "firstNameError": "Vänligen ange ditt förnamn"
+      "validationError": "Vänligen ange en giltig e-postadress.",
+      "emptyError": "Vänligen fyll i alla fält.",
+      "firstNameError": "Vänligen ange ditt förnamn."
     },
-    "privacy": "Din integritet är viktig. Vi använder bara din e-post för att meddela dig om betalanseringen."
+    "privacy": "Din integritet är viktig. Vi använder bara din e-post för att meddela dig om JOMOA och betalanseringen."
   },
   "footer": {
     "research": "Baserat på forskning inom träningsfysiologi, kvinnlig hälsa och beteendeförändring.",
@@ -402,7 +407,7 @@
     },
     "footer": {
       "title": "Vad är JOMOA?",
-      "description": "JOMOA är en evidensbaserad digital plattform som kombinerar fysiologi, beteende och cyklisk hälsa för att skapa smartare, mjukare och mer långsiktiga resultat."
-  }
+      "description": "JOMOA är en styrkeapp för kvinnor som kombinerar kvinnlig fysiologi, beteende och cyklisk hälsa för att skapa smart, hållbar progression."
+    }
 }
 }
