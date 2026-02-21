@@ -200,10 +200,10 @@ Persist dagligen.
 - `useCalendar`, `useDashboard` – använd date-bound planeringslogik
 
 ### Definition of Done
-- [ ] Schema definieras i migrations (jomoa-mobile eller monorepo-root)
+- [x] Schema dokumenteras (se [SCHEMA_REFERENCE.md](SCHEMA_REFERENCE.md))
 - [ ] Planerade pass mappas till datum (vecka + dag → datum)
-- [ ] Finish kollar om passet redan är completat för dag + session; blockerar vid dubblering
-- [ ] Overall RPE sparas i `workout_sessions_log`
+- [x] Finish kollar om passet redan är completat för dag + session; blockerar vid dubblering
+- [x] Overall RPE sparas i `workout_sessions_log`
 - [ ] Kalender och progress visar korrekt planerad vs genomförd per datum
 
 ### Komplexitet
