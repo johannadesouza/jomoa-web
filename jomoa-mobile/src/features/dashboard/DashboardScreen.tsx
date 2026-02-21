@@ -21,6 +21,7 @@ import { useCycle } from "../../lib/hooks/useCycle";
 import { useReadiness } from "../../lib/hooks/useReadiness";
 import { useReadinessHistory } from "../../lib/hooks/useReadinessHistory";
 import { useDailyInsight } from "../../lib/hooks/useDailyInsight";
+import { useTrainingAdaptation } from "../../lib/hooks/useTrainingAdaptation";
 import { getAdjustmentRecommendation } from "../../lib/services/adjustmentService";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { CycleGraphSection } from "../cycle/CycleGraphSection";
@@ -63,6 +64,7 @@ export function DashboardScreen() {
   const { readiness } = useReadiness(client?.id);
   const { records: readinessHistory } = useReadinessHistory(client?.id, 7);
   const { insight } = useDailyInsight(client?.id);
+  const adaptation = useTrainingAdaptation(client?.id);
   const recommendation = getAdjustmentRecommendation(phase ?? undefined, readiness);
 
   const getGreeting = () => {
@@ -109,6 +111,31 @@ export function DashboardScreen() {
             )}
           </XStack>
         </Section>
+
+        {(adaptation.volumeModifier !== 1 || adaptation.rpeModifier !== 0) && todaySession && !todaySessionCompleted && (
+          <Section title="Dagens beslut">
+            <Card pressable onPress={() => navigation.navigate("WorkoutSession", { sessionId: todaySession.id })}>
+              <Card.Content>
+                <YStack gap="$2">
+                  <AppText variant="small" color="$accent" fontWeight="600">
+                    {adaptation.rpeModifier !== 0 &&
+                      `${adaptation.rpeModifier > 0 ? "+" : ""}${adaptation.rpeModifier} RPE`}
+                    {adaptation.rpeModifier !== 0 && adaptation.volumeModifier !== 1 && " · "}
+                    {adaptation.volumeModifier !== 1 &&
+                      (adaptation.volumeModifier < 1
+                        ? `−${Math.round((1 - adaptation.volumeModifier) * 100)}% volym`
+                        : `+${Math.round((adaptation.volumeModifier - 1) * 100)}% volym`)}
+                  </AppText>
+                  {adaptation.topDrivers.length > 0 && (
+                    <AppText variant="caption" muted>
+                      Varför: {adaptation.topDrivers.join(" ")}
+                    </AppText>
+                  )}
+                </YStack>
+              </Card.Content>
+            </Card>
+          </Section>
+        )}
 
         {(insight || recommendation) && (
           <Section title="Idag">

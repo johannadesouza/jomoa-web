@@ -249,11 +249,33 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
               Fokus: {session.focus}
             </AppText>
           )}
-          {adaptation.reason && (
-            <AppText variant="small" muted>
-              Idag: {adaptation.reason}
-              {adaptation.suggestRecovery && " Överväg ett lättare pass."}
-            </AppText>
+          {(adaptation.volumeModifier !== 1 || adaptation.rpeModifier !== 0 || adaptation.reason) && (
+            <YStack gap="$1" marginTop="$1" padding="$2" backgroundColor="$surface3" borderRadius="$2">
+              <AppText variant="small" color="$accent" fontWeight="600">
+                Dagens beslut:
+              </AppText>
+              {(adaptation.volumeModifier !== 1 || adaptation.rpeModifier !== 0) && (
+                <AppText variant="small" muted>
+                  {adaptation.rpeModifier !== 0 &&
+                    `${adaptation.rpeModifier > 0 ? "+" : ""}${adaptation.rpeModifier} RPE`}
+                  {adaptation.rpeModifier !== 0 && adaptation.volumeModifier !== 1 && " · "}
+                  {adaptation.volumeModifier !== 1 &&
+                    (adaptation.volumeModifier < 1
+                      ? `−${Math.round((1 - adaptation.volumeModifier) * 100)}% volym`
+                      : `+${Math.round((adaptation.volumeModifier - 1) * 100)}% volym`)}
+                </AppText>
+              )}
+              {adaptation.topDrivers.length > 0 && (
+                <AppText variant="caption" muted>
+                  Varför: {adaptation.topDrivers.join(" ")}
+                </AppText>
+              )}
+              {adaptation.suggestRecovery && (
+                <AppText variant="caption" color="$warning">
+                  Överväg ett lättare pass.
+                </AppText>
+              )}
+            </YStack>
           )}
           <XStack gap="$2" alignItems="center" marginTop="$2">
             <AppText variant="small" muted>

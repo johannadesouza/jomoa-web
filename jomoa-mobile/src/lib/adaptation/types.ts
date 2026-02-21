@@ -18,6 +18,8 @@ export interface AdaptationResult {
   suggestRecovery: boolean;
   reason: string;
   appliedRules: string[];
+  /** Top 2 drivers for adjustment (WHY) */
+  topDrivers: string[];
 }
 
 export interface AdaptationContext {

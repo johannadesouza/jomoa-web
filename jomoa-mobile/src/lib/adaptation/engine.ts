@@ -39,6 +39,8 @@ export function computeAdaptation(
   volumeModifier = Math.max(0.5, Math.min(1.2, volumeModifier));
   rpeModifier = Math.max(-2, Math.min(1, rpeModifier));
 
+  const topDrivers = [...new Set(reasons)].slice(0, 2);
+
   return {
     volumeModifier,
     rpeModifier,
@@ -46,5 +48,6 @@ export function computeAdaptation(
     suggestRecovery,
     reason: reasons.length > 0 ? reasons[0] : "",
     appliedRules,
+    topDrivers,
   };
 }
