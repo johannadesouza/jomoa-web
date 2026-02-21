@@ -10,6 +10,7 @@ import {
   Card,
   Section,
   Badge,
+  LoadingScreen,
   EmptyState,
   ErrorState,
 } from "../../shared/ui";
@@ -82,15 +83,7 @@ export function ProgramListScreen({ navigation }: Props) {
     );
   };
 
-  if (isLoading) {
-    return (
-      <Screen padded centered>
-        <AppText variant="body" muted>
-          Laddar program...
-        </AppText>
-      </Screen>
-    );
-  }
+  if (isLoading) return <LoadingScreen message="Laddar program..." />;
 
   if (error) {
     return (

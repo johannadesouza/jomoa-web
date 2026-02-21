@@ -10,6 +10,7 @@ import {
   Card,
   Section,
   Badge,
+  LoadingScreen,
 } from "../../shared/ui";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { useAuth } from "../../shared/context/AuthContext";
@@ -91,15 +92,7 @@ export function ProgramDetailScreen({ navigation, route }: Props) {
     );
   };
 
-  if (isLoading || !structure) {
-    return (
-      <Screen padded centered>
-        <AppText variant="body" muted>
-          Laddar...
-        </AppText>
-      </Screen>
-    );
-  }
+  if (isLoading || !structure) return <LoadingScreen />;
 
   const { program: prog, blocks, weeks, sessions } = structure;
 

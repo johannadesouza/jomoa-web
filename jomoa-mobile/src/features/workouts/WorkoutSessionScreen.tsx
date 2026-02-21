@@ -10,6 +10,7 @@ import {
   Card,
   Section,
   AppInput,
+  LoadingScreen,
 } from "../../shared/ui";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { useAuth } from "../../shared/context/AuthContext";
@@ -188,15 +189,7 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
     );
   };
 
-  if (isLoading) {
-    return (
-      <Screen padded centered>
-        <AppText variant="body" muted>
-          Laddar pass...
-        </AppText>
-      </Screen>
-    );
-  }
+  if (isLoading) return <LoadingScreen message="Laddar pass..." />;
 
   if (!session) {
     return (

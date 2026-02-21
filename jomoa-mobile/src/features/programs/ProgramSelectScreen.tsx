@@ -3,7 +3,7 @@ import { YStack, XStack } from "tamagui";
 import { Alert, Pressable } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { Screen, AppText, AppButton, Card, Section } from "../../shared/ui";
+import { Screen, AppText, AppButton, Card, Section, LoadingScreen } from "../../shared/ui";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { useAuth } from "../../shared/context/AuthContext";
 import { usePrograms, useProgramSelect } from "../../lib/hooks/usePrograms";
@@ -40,15 +40,7 @@ export function ProgramSelectScreen({ navigation }: Props) {
     }
   };
 
-  if (isLoading) {
-    return (
-      <Screen padded centered>
-        <AppText variant="body" muted>
-          Laddar program...
-        </AppText>
-      </Screen>
-    );
-  }
+  if (isLoading) return <LoadingScreen message="Laddar program..." />;
 
   return (
     <Screen scroll padded>

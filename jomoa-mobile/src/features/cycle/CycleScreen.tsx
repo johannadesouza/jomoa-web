@@ -8,6 +8,7 @@ import {
   AppText,
   AppButton,
   AppInput,
+  LoadingScreen,
   EmptyState,
   ErrorState,
 } from "../../shared/ui";
@@ -72,15 +73,7 @@ export function CycleScreen() {
     if (match) handleLogPeriod(customDate);
   };
 
-  if (isLoading) {
-    return (
-      <Screen padded centered>
-        <AppText variant="body" muted>
-          Laddar...
-        </AppText>
-      </Screen>
-    );
-  }
+  if (isLoading) return <LoadingScreen />;
 
   if (error) {
     return (

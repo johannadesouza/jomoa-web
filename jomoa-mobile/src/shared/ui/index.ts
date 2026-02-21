@@ -33,6 +33,7 @@ export { AppButton } from "./AppButton";
 export { AppInput } from "./AppInput";
 
 // States
+export { LoadingScreen } from "./LoadingScreen";
 export { EmptyState } from "./EmptyState";
 export { ErrorState } from "./ErrorState";
 
@@ -44,6 +45,7 @@ export type { BadgeProps } from "./Badge";
 export type { AppTextProps } from "./AppText";
 export type { AppButtonProps } from "./AppButton";
 export type { AppInputProps } from "./AppInput";
+export type { LoadingScreenProps } from "./LoadingScreen";
 export type { EmptyStateProps } from "./EmptyState";
 export type { ErrorStateProps } from "./ErrorState";
 export type { DividerProps } from "./Divider";

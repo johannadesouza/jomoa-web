@@ -11,6 +11,7 @@ import {
   AppText,
   AppButton,
   Badge,
+  LoadingScreen,
   EmptyState,
 } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
@@ -40,15 +41,7 @@ export function WorkoutsScreen() {
     }, [refetch])
   );
 
-  if (isLoading) {
-    return (
-      <Screen padded centered>
-        <AppText variant="body" muted>
-          Laddar...
-        </AppText>
-      </Screen>
-    );
-  }
+  if (isLoading) return <LoadingScreen />;
 
   if (sessions.length === 0) {
     return (

@@ -12,6 +12,7 @@ import {
   AppButton,
   Badge,
   Divider,
+  LoadingScreen,
   ErrorState,
 } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
@@ -73,15 +74,7 @@ export function DashboardScreen() {
 
   const firstName = user?.user_metadata?.full_name?.split(" ")[0] || "du";
 
-  if (isLoading) {
-    return (
-      <Screen padded centered>
-        <AppText variant="body" muted>
-          Laddar...
-        </AppText>
-      </Screen>
-    );
-  }
+  if (isLoading) return <LoadingScreen />;
 
   if (dashboardError) {
     return (

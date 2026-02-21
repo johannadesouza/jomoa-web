@@ -8,6 +8,7 @@ import {
   AppText,
   AppButton,
   AppInput,
+  LoadingScreen,
 } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useReadiness } from "../../lib/hooks/useReadiness";
@@ -64,15 +65,7 @@ export function ReadinessScreen() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <Screen padded centered>
-        <AppText variant="body" muted>
-          Laddar...
-        </AppText>
-      </Screen>
-    );
-  }
+  if (isLoading) return <LoadingScreen />;
 
   return (
     <Screen scroll padded>

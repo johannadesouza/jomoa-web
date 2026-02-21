@@ -10,6 +10,7 @@ import {
   AppText,
   AppButton,
   Badge,
+  LoadingScreen,
 } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useCalendar } from "../../lib/hooks/useCalendar";
@@ -30,15 +31,7 @@ export function CalendarScreen() {
     goToToday,
   } = useCalendar(client?.id);
 
-  if (isLoading) {
-    return (
-      <Screen padded centered>
-        <AppText variant="body" muted>
-          Laddar...
-        </AppText>
-      </Screen>
-    );
-  }
+  if (isLoading) return <LoadingScreen />;
 
   return (
     <Screen scroll padded>

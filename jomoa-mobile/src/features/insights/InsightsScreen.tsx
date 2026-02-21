@@ -7,6 +7,7 @@ import {
   Card,
   AppText,
   Divider,
+  LoadingScreen,
 } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useInsights } from "../../lib/hooks/useInsights";
@@ -15,15 +16,7 @@ export function InsightsScreen() {
   const { client } = useAuth();
   const { stats, isLoading } = useInsights(client?.id);
 
-  if (isLoading) {
-    return (
-      <Screen padded centered>
-        <AppText variant="body" muted>
-          Laddar insikter...
-        </AppText>
-      </Screen>
-    );
-  }
+  if (isLoading) return <LoadingScreen message="Laddar insikter..." />;
 
   const statCards = [
     {
