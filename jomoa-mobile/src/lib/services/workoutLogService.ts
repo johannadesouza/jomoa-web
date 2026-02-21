@@ -131,6 +131,13 @@ export async function createWorkoutLogWithSets(
 ): Promise<{ workoutLogId?: string; error: Error | null }> {
   const today = new Date().toISOString().split("T")[0];
 
+  const existing = await fetchTodayCompletedSession(clientId, programSessionId);
+  if (existing) {
+    return {
+      error: new Error("Detta pass är redan genomfört idag. Du kan inte logga samma pass flera gånger samma dag."),
+    };
+  }
+
   const { data: sessionLog, error: insertError } = await supabase
     .from("workout_sessions_log")
     .insert({
@@ -171,8 +178,14 @@ export async function createWorkoutLog(
   programSessionId: string,
   completedSets: CompletedSet[]
 ): Promise<{ error: Error | null }> {
-  const today = new Date().toISOString().split("T")[0];
+  const existing = await fetchTodayCompletedSession(clientId, programSessionId);
+  if (existing) {
+    return {
+      error: new Error("Detta pass är redan genomfört idag. Du kan inte logga samma pass flera gånger samma dag."),
+    };
+  }
 
+  const today = new Date().toISOString().split("T")[0];
   const { data: sessionLog, error: insertError } = await supabase
     .from("workout_sessions_log")
     .insert({

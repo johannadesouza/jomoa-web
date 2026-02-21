@@ -160,7 +160,16 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
     restTimer,
   } = useWorkoutSession(sessionId, client?.id);
 
+  const [overallRpe, setOverallRpe] = useState("");
+
   const handleFinishWorkout = () => {
+    const rpeValue = overallRpe.trim()
+      ? (() => {
+          const n = parseFloat(overallRpe);
+          return !isNaN(n) && n >= 1 && n <= 10 ? n : undefined;
+        })()
+      : undefined;
+
     Alert.alert(
       "Avsluta pass",
       "Vill du spara och avsluta passet?",
@@ -169,9 +178,9 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
         {
           text: "Avsluta",
           onPress: async () => {
-            const { error } = await completeWorkout();
+            const { error } = await completeWorkout(rpeValue);
             if (error) {
-              Alert.alert("Fel", "Kunde inte spara passet. Försök igen.");
+              Alert.alert("Fel", error.message);
             } else {
               const totalVolume = setLogs.reduce(
                 (sum, l) => sum + (l.reps ?? 0) * (l.weight ?? 0),
@@ -246,6 +255,19 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
               {adaptation.suggestRecovery && " Överväg ett lättare pass."}
             </AppText>
           )}
+          <XStack gap="$2" alignItems="center" marginTop="$2">
+            <AppText variant="small" muted>
+              Overall RPE (1–10):
+            </AppText>
+            <AppInput
+              size="sm"
+              placeholder="valfritt"
+              keyboardType="decimal-pad"
+              value={overallRpe}
+              onChangeText={setOverallRpe}
+              minWidth={72}
+            />
+          </XStack>
         </YStack>
 
         <YStack gap="$2">
