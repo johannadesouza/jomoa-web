@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useCycle } from "./useCycle";
 import { useReadiness } from "./useReadiness";
 import {
@@ -6,6 +6,8 @@ import {
   getTodayInsight,
   type DailyInsight,
 } from "../services/insightService";
+
+const REFETCH_DEBOUNCE_MS = 300;
 
 function readinessToTier(
   readiness: { readiness_score?: number | null; energy_level?: number | null } | null
@@ -58,8 +60,14 @@ export function useDailyInsight(clientId: string | undefined) {
   }, [clientId, phase, cycleDay, readiness?.readiness_score, readiness?.energy_level]);
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (!clientId) return;
+
+    const timeout = setTimeout(() => {
+      refetch();
+    }, REFETCH_DEBOUNCE_MS);
+
+    return () => clearTimeout(timeout);
+  }, [clientId, refetch]);
 
   return { insight, isLoading, refetch };
 }
