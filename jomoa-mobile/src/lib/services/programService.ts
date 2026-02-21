@@ -86,6 +86,38 @@ export async function getFirstWeekId(programId: string): Promise<string | null> 
   return data?.id ?? null;
 }
 
+/**
+ * Get week ID for a specific date, based on assignment start_date.
+ * Program week 1 = startDate to startDate+6, week 2 = startDate+7 to startDate+13, etc.
+ */
+export async function getWeekIdForDate(
+  programId: string,
+  startDate: string,
+  targetDate: string
+): Promise<string | null> {
+  const start = new Date(startDate).getTime();
+  const target = new Date(targetDate).getTime();
+  const daysSinceStart = Math.floor((target - start) / 86400000);
+
+  if (daysSinceStart < 0) {
+    return getFirstWeekId(programId);
+  }
+
+  const weekNumber = Math.floor(daysSinceStart / 7) + 1;
+
+  const { data: weeks } = await supabase
+    .from("program_weeks")
+    .select("id, week_number")
+    .eq("program_id", programId)
+    .order("week_number", { ascending: true });
+
+  if (!weeks || weeks.length === 0) return null;
+
+  const cappedIndex = Math.min(weekNumber - 1, weeks.length - 1);
+  const week = weeks[cappedIndex];
+  return week?.id ?? null;
+}
+
 export async function assignProgram(
   clientId: string,
   programId: string

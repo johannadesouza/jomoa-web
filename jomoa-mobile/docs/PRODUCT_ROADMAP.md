@@ -201,10 +201,10 @@ Persist dagligen.
 
 ### Definition of Done
 - [x] Schema dokumenteras (se [SCHEMA_REFERENCE.md](SCHEMA_REFERENCE.md))
-- [ ] Planerade pass mappas till datum (vecka + dag → datum)
+- [x] Planerade pass mappas till datum (vecka + dag → datum) via getWeekIdForDate
 - [x] Finish kollar om passet redan är completat för dag + session; blockerar vid dubblering
 - [x] Overall RPE sparas i `workout_sessions_log`
-- [ ] Kalender och progress visar korrekt planerad vs genomförd per datum
+- [x] Kalender och progress visar korrekt planerad vs genomförd per datum (multi-week support)
 
 ### Komplexitet
 Medium–High

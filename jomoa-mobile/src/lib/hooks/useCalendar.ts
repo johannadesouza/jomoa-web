@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { fetchActiveAssignment, getFirstWeekId } from "../services/programService";
+import { fetchActiveAssignment, getWeekIdForDate } from "../services/programService";
 import { fetchSessionsByWeekId } from "../services/workoutService";
 import {
   fetchLoggedWorkoutsForRange,
@@ -82,7 +82,11 @@ export function useCalendar(clientId: string | undefined) {
 
     let sessions: ProgramSessionData[] = [];
     if (assignmentData) {
-      const weekId = await getFirstWeekId(assignmentData.program_id);
+      const weekId = await getWeekIdForDate(
+        assignmentData.program_id,
+        assignmentData.start_date,
+        startDate
+      );
       if (weekId) {
         sessions = await fetchSessionsByWeekId(weekId);
       }

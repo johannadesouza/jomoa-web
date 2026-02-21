@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { fetchActiveAssignment, getFirstWeekId } from "../services/programService";
+import { fetchActiveAssignment, getWeekIdForDate } from "../services/programService";
 import { fetchWeeklyStats, fetchTodayCompletedSession } from "../services/workoutLogService";
 import { fetchSessionsByWeekId } from "../services/workoutService";
 import { ProgramAssignmentData } from "../services/programService";
@@ -59,7 +59,12 @@ export function useDashboard(clientId: string | undefined) {
         if (assignmentData) {
           setAssignment(assignmentData);
 
-          const weekId = await getFirstWeekId(assignmentData.program_id);
+          const todayStr = new Date().toISOString().split("T")[0];
+          const weekId = await getWeekIdForDate(
+            assignmentData.program_id,
+            assignmentData.start_date,
+            todayStr
+          );
           if (weekId) {
             const sessions = await fetchSessionsByWeekId(weekId);
             const todayJs = new Date().getDay();

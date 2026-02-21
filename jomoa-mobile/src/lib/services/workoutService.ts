@@ -1,5 +1,5 @@
 import { supabase } from "../../config/supabase";
-import { getFirstWeekId } from "./programService";
+import { getWeekIdForDate } from "./programService";
 
 export interface SessionExercise {
   id: string;
@@ -29,6 +29,7 @@ export async function fetchSessionsForWorkouts(
     .select(`
       id,
       program_id,
+      start_date,
       program:training_programs (id, name)
     `)
     .eq("client_id", clientId)
@@ -41,7 +42,12 @@ export async function fetchSessionsForWorkouts(
 
   const program = assignmentData.program;
   const programName = (Array.isArray(program) ? program[0] : program)?.name ?? null;
-  const weekId = await getFirstWeekId(assignmentData.program_id);
+  const today = new Date().toISOString().split("T")[0];
+  const weekId = await getWeekIdForDate(
+    assignmentData.program_id,
+    assignmentData.start_date,
+    today
+  );
 
   if (!weekId) {
     return { sessions: [], programName };
