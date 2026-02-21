@@ -58,7 +58,9 @@ export function WorkoutSummaryScreen({ navigation, route }: Props) {
             variant="primary"
             size="lg"
             fullWidth
-            onPress={() => navigation.navigate("Main")}
+            onPress={() =>
+              navigation.navigate("Main", { screen: "DashboardTab" })
+            }
           >
             Tillbaka till hem
           </AppButton>

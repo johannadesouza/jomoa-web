@@ -20,7 +20,7 @@ export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   Onboarding: undefined;
-  Main: undefined;
+  Main: { screen?: "DashboardTab" | "WorkoutsTab" | "CalendarTab" | "InsightsTab" | "SettingsTab" } | undefined;
   WorkoutSession: { sessionId: string };
   WorkoutSummary: { sessionName: string; totalSets: number; totalVolume: number };
   ProgramSelect: undefined;
