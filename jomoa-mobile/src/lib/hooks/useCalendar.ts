@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { fetchActiveAssignment, getFirstWeekId } from "../services/programService";
 import { fetchSessionsByWeekId } from "../services/workoutService";
 import {
@@ -9,6 +9,17 @@ import { getLatestPeriodStart } from "../services/cycleService";
 import { calculateCyclePhase, type CyclePhase } from "../utils/cycleUtils";
 import type { ProgramSessionData } from "../services/workoutService";
 import { getLocalDateString } from "../utils/date";
+
+const LOAD_TIMEOUT_MS = 15_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error("Timeout")), ms)
+    ),
+  ]);
+}
 
 export interface CalendarDay {
   date: string;
@@ -48,15 +59,7 @@ export function useCalendar(clientId: string | undefined) {
   const [days, setDays] = useState<CalendarDay[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (clientId) {
-      load();
-    } else {
-      setIsLoading(false);
-    }
-  }, [clientId, weekStart]);
-
-  async function load() {
+  const load = useCallback(async () => {
     if (!clientId) return;
 
     setIsLoading(true);
@@ -66,11 +69,14 @@ export function useCalendar(clientId: string | undefined) {
     const endDate = weekDates[6];
 
     const [assignmentData, loggedWorkouts, { data: latestPeriodStart }] =
-      await Promise.all([
-        fetchActiveAssignment(clientId),
-        fetchLoggedWorkoutsForRange(clientId, startDate, endDate),
-        getLatestPeriodStart(clientId),
-      ]);
+      await withTimeout(
+        Promise.all([
+          fetchActiveAssignment(clientId),
+          fetchLoggedWorkoutsForRange(clientId, startDate, endDate),
+          getLatestPeriodStart(clientId),
+        ]),
+        LOAD_TIMEOUT_MS
+      );
 
     const logMap = new Map(loggedWorkouts.map((w) => [w.date, w]));
 
@@ -106,7 +112,15 @@ export function useCalendar(clientId: string | undefined) {
     } finally {
     setIsLoading(false);
     }
-  }
+  }, [clientId, weekStart]);
+
+  useEffect(() => {
+    if (clientId) {
+      load();
+    } else {
+      setIsLoading(false);
+    }
+  }, [clientId, load]);
 
   const goToPrevWeek = () => {
     const next = new Date(weekStart);
