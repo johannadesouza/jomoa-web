@@ -1,6 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import { themeColors } from "../../shared/theme/colors";
 import { OnboardingProvider } from "./OnboardingContext";
 import { WelcomeScreen } from "./WelcomeScreen";
 import { GoalsScreen } from "./GoalsScreen";
@@ -26,7 +27,7 @@ export function OnboardingNavigator() {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: "#141012" },
+          contentStyle: { backgroundColor: themeColors.background },
           animation: "slide_from_right",
         }}
       >

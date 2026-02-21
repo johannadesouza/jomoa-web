@@ -2,6 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text, YStack } from "tamagui";
 
+import { themeColors } from "../shared/theme/colors";
 import { DashboardScreen } from "../features/dashboard/DashboardScreen";
 import { WorkoutsScreen } from "../features/workouts/WorkoutsScreen";
 import { CalendarScreen } from "../features/calendar/CalendarScreen";
@@ -46,8 +47,8 @@ export function TabNavigator() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: "#1A1315",
-          borderTopColor: "rgba(244, 237, 230, 0.12)",
+          backgroundColor: themeColors.card,
+          borderTopColor: themeColors.borderSoft,
           borderTopWidth: 1,
           height: 80,
           paddingTop: 8,

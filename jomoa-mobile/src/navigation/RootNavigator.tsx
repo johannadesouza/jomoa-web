@@ -2,6 +2,7 @@ import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import { themeColors } from "../shared/theme/colors";
 import { useAuth } from "../shared/context/AuthContext";
 import { LoginScreen } from "../features/auth/LoginScreen";
 import { RegisterScreen } from "../features/auth/RegisterScreen";
@@ -43,10 +44,10 @@ export function RootNavigator() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#141012",
+          backgroundColor: themeColors.background,
         }}
       >
-        <ActivityIndicator size="large" color="#D06A52" />
+        <ActivityIndicator size="large" color={themeColors.accent} />
       </View>
     );
   }
@@ -55,7 +56,7 @@ export function RootNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: "#141012" },
+        contentStyle: { backgroundColor: themeColors.background },
         animation: "slide_from_right",
       }}
     >
@@ -81,8 +82,8 @@ export function RootNavigator() {
                 headerTitle: "Pass klart",
                 headerBackTitle: "",
                 headerLeft: () => null,
-                headerStyle: { backgroundColor: "#141012" },
-                headerTintColor: "#F4EDE6",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
                 headerTitleStyle: { fontWeight: "600" },
               }}
             />
@@ -100,8 +101,8 @@ export function RootNavigator() {
                 headerShown: true,
                 headerTitle: "Mina program",
                 headerBackTitle: "Tillbaka",
-                headerStyle: { backgroundColor: "#141012" },
-                headerTintColor: "#F4EDE6",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
                 headerTitleStyle: { fontWeight: "600" },
               }}
             />
@@ -112,8 +113,8 @@ export function RootNavigator() {
                 headerShown: true,
                 headerTitle: "Program",
                 headerBackTitle: "Tillbaka",
-                headerStyle: { backgroundColor: "#141012" },
-                headerTintColor: "#F4EDE6",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
                 headerTitleStyle: { fontWeight: "600" },
               }}
             />
@@ -124,8 +125,8 @@ export function RootNavigator() {
                 headerShown: true,
                 headerTitle: "Hur mår du idag?",
                 headerBackTitle: "Tillbaka",
-                headerStyle: { backgroundColor: "#141012" },
-                headerTintColor: "#F4EDE6",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
                 headerTitleStyle: { fontWeight: "600" },
               }}
             />
@@ -136,8 +137,8 @@ export function RootNavigator() {
                 headerShown: true,
                 headerTitle: "Menscykel",
                 headerBackTitle: "Tillbaka",
-                headerStyle: { backgroundColor: "#141012" },
-                headerTintColor: "#F4EDE6",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
                 headerTitleStyle: { fontWeight: "600" },
               }}
             />

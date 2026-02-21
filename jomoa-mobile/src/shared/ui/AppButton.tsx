@@ -1,5 +1,7 @@
 import { ActivityIndicator } from "react-native";
 import { XStack, styled, GetProps } from "tamagui";
+
+import { themeColors } from "../theme/colors";
 import { AppText } from "./AppText";
 
 /**
@@ -173,7 +175,7 @@ export function AppButton({
         opacity={loading ? 1 : 0}
         pointerEvents="none"
       >
-        <ActivityIndicator size="small" color="#F4EDE6" />
+        <ActivityIndicator size="small" color={themeColors.textPrimary} />
       </XStack>
       <XStack
         alignItems="center"
