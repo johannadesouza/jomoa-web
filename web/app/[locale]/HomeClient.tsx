@@ -22,17 +22,18 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-// JOMOA Brand Colors - matching jomoa.coach
+// JOMOA Brand Colors v1.0 - Launch Version
+// Dark Theme: 70% dark base, 20% neutral, 10% accent
 const colors = {
-  bg: "#FFFBF7",              // Main background
-  bgAlt: "#FFF8F4",           // Alternate background
-  primary: "#D96D46",         // Primary CTA buttons (terracotta)
-  text: "#462324",            // Headlines, strong text (plum)
-  textSecondary: "#4E4A48",   // Body text
-  textMuted: "#725A5A",       // Muted text
-  accent: "#BA8E90",          // Accents (mauve)
-  border: "#E8D5D0",          // Borders
-  card: "#FFFFFF",            // Card backgrounds
+  bg: "#141012",              // Deep Plum Black - Primary Background
+  bgAlt: "#1E1A1C",           // Warm Charcoal - Secondary Background
+  primary: "#D96D46",         // Warm Terracotta - Primary Accent (CTA buttons, active states)
+  text: "#EDE8E6",            // Soft Light - Primary Text
+  textSecondary: "#8A7F7A",    // Muted Warm - Secondary Text
+  textMuted: "#8A7F7A",       // Muted Warm - Muted text
+  accent: "#D96D46",          // Warm Terracotta - Accents
+  border: "rgba(30, 26, 28, 0.4)", // Subtle dividers
+  card: "#1E1A1C",            // Warm Charcoal - Card backgrounds
 };
 
 // Typography System - enhanced responsive scaling

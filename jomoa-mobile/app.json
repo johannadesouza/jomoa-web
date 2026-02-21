@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "JOMOA",
+    "slug": "jomoa",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#141012"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.jomoa.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#141012"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.jomoa.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

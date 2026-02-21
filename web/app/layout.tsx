@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
-import { League_Spartan } from "next/font/google";
+import { Inter, Cormorant } from "next/font/google";
 import "./globals.css";
 
-// League Spartan from Google Fonts
-const leagueSpartan = League_Spartan({
-  variable: "--font-league-spartan",
+// Inter - Primary UI & body text (Regular, Medium, Semibold)
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+// Cormorant - Headings & hero text (elegant serif)
+const cormorant = Cormorant({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "JOMOA Coach - Train in rhythm",
-  description: "Smarter, more empathetic training — powered by cyclical intelligence.",
+  title: "JOMOA – Träningsapp för kvinnor",
+  description: "Datadriven & cykelanpassad",
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -51,9 +59,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="sv" className="dark">
       <body
-        className={`${leagueSpartan.variable} antialiased`}
+        className={`${inter.variable} ${cormorant.variable} antialiased`}
       >
         {children}
       </body>

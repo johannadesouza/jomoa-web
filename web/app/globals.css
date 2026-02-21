@@ -42,7 +42,36 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   
-  /* JOMOA Brand Colors - From Branding Guide Page 9 */
+  /* JOMOA Branding Guide v1.0 - Launch Version */
+  /* Brand Colors - Dark Theme (70% dark base, 20% neutral, 10% accent) */
+  --color-deep-plum-black: #141012; /* Primary Background */
+  --color-warm-charcoal: #1E1A1C; /* Secondary Background */
+  --color-warm-terracotta: #D96D46; /* Primary Accent - CTA buttons, active states, progress */
+  --color-soft-light: #EDE8E6; /* Primary Text */
+  --color-muted-warm: #8A7F7A; /* Secondary Text */
+  
+  /* Tailwind color classes for new branding */
+  --color-bg-deep-plum-black: var(--color-deep-plum-black);
+  --color-bg-warm-charcoal: var(--color-warm-charcoal);
+  --color-text-soft-light: var(--color-soft-light);
+  --color-text-muted-warm: var(--color-muted-warm);
+  --color-accent-warm-terracotta: var(--color-warm-terracotta);
+  
+  /* Border Radius - 12-16px per branding guide */
+  --radius-xl: 0.75rem; /* 12px */
+  --radius-2xl: 1rem; /* 16px */
+  --radius-3xl: 1rem; /* 16px */
+  
+  /* Shadow Scale - Minimal, subtle shadows */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-large: 0 8px 24px rgba(0, 0, 0, 0.2);
+  
+  /* Typography - Inter for UI/body, Cormorant for headings */
+  --font-inter: var(--font-inter);
+  --font-cormorant: var(--font-cormorant);
+  
+  /* Legacy JOMOA colors (for backward compatibility during transition) */
   --color-soft-pink: #FFFBF7;
   --color-terracotta: #D96D46;
   --color-sand: #FEE7AB;
@@ -51,62 +80,53 @@
   --color-pink-light: #F0D6D7;
   --color-mauve-dark: #976568;
   --color-terracotta-light: #FDB499;
-  
-  /* Legacy JOMOA colors (for backward compatibility) */
-  --color-jomoa-bg: var(--color-soft-pink);
-  --color-jomoa-bg2: var(--color-soft-pink);
-  --color-jomoa-text: var(--color-plum);
-  --color-jomoa-text2: #4E4A48;
-  --color-jomoa-accent: var(--color-terracotta);
+  --color-jomoa-bg: var(--color-deep-plum-black);
+  --color-jomoa-bg2: var(--color-warm-charcoal);
+  --color-jomoa-text: var(--color-soft-light);
+  --color-jomoa-text2: var(--color-muted-warm);
+  --color-jomoa-accent: var(--color-warm-terracotta);
   --color-jomoa-accent2: var(--color-terracotta-light);
-  --color-jomoa-muted: var(--color-mauve);
+  --color-jomoa-muted: var(--color-muted-warm);
   
-  /* JOMOA custom border radius overrides - organic rounded shapes */
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.5rem;
-  --radius-3xl: 2rem;
-  
-  /* JOMOA custom box shadow - soft shadows */
-  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
-  
-  /* Custom fonts */
+  /* Legacy fonts (for backward compatibility) */
   --font-league-spartan: var(--font-league-spartan);
-  --font-the-seasons: Georgia, serif; /* Fallback until font files are added */
+  --font-the-seasons: Georgia, serif;
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --radius: 0.75rem; /* 12px per branding guide */
+  /* Dark theme as default - per branding guide */
+  --background: #141012; /* Deep Plum Black */
+  --foreground: #EDE8E6; /* Soft Light */
+  --card: #1E1A1C; /* Warm Charcoal */
+  --card-foreground: #EDE8E6; /* Soft Light */
+  --popover: #1E1A1C; /* Warm Charcoal */
+  --popover-foreground: #EDE8E6; /* Soft Light */
+  --primary: #D96D46; /* Warm Terracotta */
+  --primary-foreground: #EDE8E6; /* Soft Light */
+  --secondary: #1E1A1C; /* Warm Charcoal */
+  --secondary-foreground: #EDE8E6; /* Soft Light */
+  --muted: #1E1A1C; /* Warm Charcoal */
+  --muted-foreground: #8A7F7A; /* Muted Warm */
+  --accent: #D96D46; /* Warm Terracotta */
+  --accent-foreground: #EDE8E6; /* Soft Light */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: rgba(30, 26, 28, 0.4); /* Subtle dividers */
+  --input: rgba(30, 26, 28, 0.6);
+  --ring: rgba(217, 109, 70, 0.5); /* Warm Terracotta with opacity */
+  --chart-1: #D96D46; /* Warm Terracotta */
+  --chart-2: #8A7F7A; /* Muted Warm */
+  --chart-3: #1E1A1C; /* Warm Charcoal */
+  --chart-4: #EDE8E6; /* Soft Light */
+  --chart-5: rgba(217, 109, 70, 0.7); /* Warm Terracotta muted */
+  --sidebar: #1E1A1C; /* Warm Charcoal */
+  --sidebar-foreground: #EDE8E6; /* Soft Light */
+  --sidebar-primary: #D96D46; /* Warm Terracotta */
+  --sidebar-primary-foreground: #EDE8E6; /* Soft Light */
+  --sidebar-accent: #1E1A1C; /* Warm Charcoal */
+  --sidebar-accent-foreground: #EDE8E6; /* Soft Light */
+  --sidebar-border: rgba(30, 26, 28, 0.4);
+  --sidebar-ring: rgba(217, 109, 70, 0.5);
 }
 
 .dark {
@@ -151,8 +171,45 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-soft-pink text-plum;
-    font-family: var(--font-league-spartan), system-ui, -apple-system, sans-serif;
+    @apply bg-deep-plum-black text-soft-light;
+    font-family: var(--font-inter), Inter, system-ui, -apple-system, sans-serif;
+    line-height: 1.35; /* Per branding guide */
+  }
+  
+  /* Typography hierarchy per branding guide */
+  h1 {
+    font-family: var(--font-cormorant), Cormorant, Georgia, serif;
+    font-size: 2.125rem; /* 34px */
+    line-height: 1.25;
+    color: var(--color-soft-light);
+  }
+  
+  h2 {
+    font-family: var(--font-inter), Inter, system-ui, sans-serif;
+    font-weight: 600; /* Semibold */
+    line-height: 1.25;
+    color: var(--color-soft-light);
+  }
+  
+  h3, h4, h5, h6 {
+    font-family: var(--font-inter), Inter, system-ui, sans-serif;
+    font-weight: 600; /* Semibold */
+    line-height: 1.35;
+    color: var(--color-soft-light);
+  }
+  
+  p {
+    font-family: var(--font-inter), Inter, system-ui, sans-serif;
+    font-weight: 400; /* Regular */
+    line-height: 1.35;
+    color: var(--color-soft-light);
+  }
+  
+  small {
+    font-family: var(--font-inter), Inter, system-ui, sans-serif;
+    font-weight: 500; /* Medium */
+    line-height: 1.35;
+    color: var(--color-muted-warm);
   }
 }
 
@@ -260,7 +317,16 @@
   animation: gradient-shift 8s ease infinite;
 }
 
-/* Typography - League Spartan for UI, The Seasons for emotional lines */
+/* Typography - Inter for UI/body, Cormorant for headings */
+.font-inter {
+  font-family: var(--font-inter), Inter, system-ui, -apple-system, sans-serif;
+}
+
+.font-cormorant {
+  font-family: var(--font-cormorant), Cormorant, Georgia, serif;
+}
+
+/* Legacy typography classes (for backward compatibility) */
 .font-league-spartan {
   font-family: var(--font-league-spartan), system-ui, -apple-system, sans-serif;
 }
@@ -270,16 +336,17 @@
   font-style: italic;
 }
 
-/* Headings - font-weight: 600, line-height: 1.15 */
+/* Brand typography classes */
 .heading-brand {
+  font-family: var(--font-cormorant), Cormorant, Georgia, serif;
   font-weight: 600;
-  line-height: 1.15;
-  color: var(--color-plum);
+  line-height: 1.25;
+  color: var(--color-soft-light);
 }
 
-/* Body - 400/500, improved line-height for readability */
 .body-brand {
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
   font-weight: 400;
-  line-height: 1.6;
-  color: #4E4A48;
+  line-height: 1.35;
+  color: var(--color-soft-light);
 }

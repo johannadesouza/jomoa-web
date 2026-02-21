@@ -1,0 +1,207 @@
+---
+alwaysApply: true
+description: JOMOA Design System - Unified visual language and hierarchy rules
+---
+
+# JOMOA Design System
+
+## Core Principles
+- **One surface scale**: deep-plum-black → warm-charcoal → surface-3
+- **One accent color**: warm-terracotta (#D06A52)
+- **One spacing scale**: 4px base unit (4, 8, 12, 16, 20, 24, 32, 40, 48, 64)
+- **One typography hierarchy**: Cormorant (H1) → Inter (H2-H6, body)
+- **No visual exceptions**: All components must follow these rules
+
+## Three-Level Hierarchy
+
+### 1. Sections (Layout Level)
+Large structural blocks that divide a page.
+
+**Rules:**
+- Separated by vertical spacing only (space-y-8 = 32px)
+- NO borders between sections
+- NO background color changes per section
+- All sections use `bg-deep-plum-black` (page background)
+- Sections define layout structure only
+
+**Examples:**
+- Hero area
+- "Dagens fokus" section
+- "Denna vecka" section
+- Calendar area
+
+**Spacing:**
+- Section container: `space-y-8` (32px between sections)
+- Section padding: `py-8` (32px top/bottom)
+
+### 2. Cards (Content Containers)
+Cards live INSIDE sections. They group related information.
+
+**Rules:**
+- ALL cards use `bg-warm-charcoal` (same surface level)
+- Border radius: `rounded-card` (12px)
+- Padding: `p-6` (24px) - consistent everywhere
+- Border: `border border-border-soft` (subtle, consistent)
+- NO strong white outlines
+- NO inconsistent styling between cards
+- Shadow: `shadow-soft` (minimal)
+
+**Examples:**
+- "Dagens fokus" card
+- Weekly summary card
+- Each day cell in calendar (if treated as cards)
+- Status cards
+
+**Card Variants:**
+- Default: `bg-warm-charcoal border border-border-soft rounded-card p-6 shadow-soft`
+- No hero/large variants - all cards are equal
+
+### 3. Components (Building Blocks)
+Reusable UI elements.
+
+**Rules:**
+- Must look identical everywhere
+- All states defined: default, hover, active, focus, disabled
+- NO hardcoded colors inside components
+- Use design tokens only
+- Minimum 44px tap targets
+- Accessible contrast (AA)
+
+**Component List:**
+- Button (one system, all variants)
+- Input (one system)
+- Chip/Badge (one system)
+- Progress bar (one system)
+- Navigation item (one system)
+- Icon + label (one system)
+
+## Spacing Scale
+
+Base unit: 4px
+
+```
+1 = 4px   (0.25rem)
+2 = 8px   (0.5rem)
+3 = 12px  (0.75rem)
+4 = 16px  (1rem)
+5 = 20px  (1.25rem)
+6 = 24px  (1.5rem)
+8 = 32px  (2rem)
+10 = 40px (2.5rem)
+12 = 48px (3rem)
+16 = 64px (4rem)
+```
+
+**Usage:**
+- Section spacing: `space-y-8` (32px)
+- Card padding: `p-6` (24px)
+- Component gaps: `gap-4` (16px)
+- Text spacing: `mb-4` (16px between paragraphs)
+
+## Typography Scale
+
+**H1 (Page Title):**
+- Font: `font-cormorant` (Cormorant)
+- Size: `text-4xl` (36px)
+- Weight: `font-semibold` (600)
+- Line height: `leading-tight` (1.25)
+- Color: `text-soft-light`
+
+**H2 (Section Title):**
+- Font: `font-inter`
+- Size: `text-xl` (20px)
+- Weight: `font-semibold` (600)
+- Line height: `leading-tight` (1.25)
+- Color: `text-soft-light`
+
+**H3 (Card Title):**
+- Font: `font-inter`
+- Size: `text-base` (16px)
+- Weight: `font-semibold` (600)
+- Line height: `leading-normal` (1.35)
+- Color: `text-soft-light`
+
+**Body:**
+- Font: `font-inter`
+- Size: `text-base` (16px) - minimum for accessibility
+- Weight: `font-normal` (400)
+- Line height: `leading-normal` (1.35)
+- Color: `text-soft-light`
+
+**Small/Secondary:**
+- Font: `font-inter`
+- Size: `text-sm` (14px)
+- Weight: `font-medium` (500)
+- Line height: `leading-normal` (1.35)
+- Color: `text-muted-warm`
+
+## Color System
+
+**Surfaces:**
+- Page background: `bg-deep-plum-black` (#3A1F24)
+- Cards/sections: `bg-warm-charcoal` (#4A262C)
+- Inputs/hover: `bg-surface-3` (#5A2F36)
+
+**Text:**
+- Primary: `text-soft-light` (#F4EDE6)
+- Secondary: `text-muted-warm` (#C6B8B2)
+
+**Accent:**
+- Primary: `bg-warm-terracotta` (#D06A52)
+- Hover: `bg-accent-hover` (#E27B62)
+- Pressed: `bg-accent-pressed` (#B95A45)
+
+**Borders:**
+- Soft: `border-border-soft` (rgba(244, 237, 230, 0.12))
+- Strong: `border-border-strong` (rgba(244, 237, 230, 0.18))
+
+## Component Specifications
+
+### Button
+- Height: `h-10` (40px) default, `h-8` (32px) sm, `h-12` (48px) lg
+- Padding: `px-4 py-2` (16px horizontal, 8px vertical)
+- Border radius: `rounded-button` (16px)
+- States: default, hover, active, focus, disabled
+- Focus ring: `focus-visible:ring-2 focus-visible:ring-warm-terracotta/50`
+
+### Input
+- Height: `h-10` (40px)
+- Padding: `px-3 py-2` (12px horizontal, 8px vertical)
+- Background: `bg-surface-3`
+- Border: `border border-border-soft`
+- Border radius: `rounded-card` (12px)
+- Focus: `focus-visible:ring-2 focus-visible:ring-warm-terracotta/50`
+
+### Chip/Badge
+- Padding: `px-3 py-1` (12px horizontal, 4px vertical)
+- Border radius: `rounded-full`
+- Font: `text-xs` (12px)
+- Weight: `font-medium` (500)
+
+### Progress Bar
+- Height: `h-3` (12px)
+- Background: `bg-warm-charcoal`
+- Fill: `bg-warm-terracotta` (or semantic colors)
+- Border radius: `rounded-full`
+
+## Navigation
+
+**Sidebar/Topbar:**
+- Background: `bg-warm-charcoal`
+- Border: `border-border-soft`
+- Active state: `bg-surface-3 text-warm-terracotta`
+- Hover: `bg-surface-3`
+- Stable position, no visual jumps
+
+## Implementation Checklist
+
+- [ ] 0 hardcoded colors (use tokens only)
+- [ ] 0 random spacing (use scale only)
+- [ ] 0 inconsistent components (one system)
+- [ ] Only one accent color (warm-terracotta)
+- [ ] Visual consistency across all screens
+- [ ] Clear structural hierarchy (Sections → Cards → Components)
+- [ ] Minimum 16px body text
+- [ ] Minimum 44px tap targets
+- [ ] Accessible contrast (AA)
+- [ ] Clear hover, focus, selected states
