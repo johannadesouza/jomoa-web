@@ -253,6 +253,41 @@ export async function fetchTodayCompletedSession(
   return data ? { id: data.id } : null;
 }
 
+export interface RecentLoad {
+  sessionsLast7Days: number;
+  volumeLast7Days: number;
+}
+
+export async function fetchRecentLoad(clientId: string): Promise<RecentLoad> {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - 6);
+  const startStr = start.toISOString().split("T")[0];
+  const endStr = end.toISOString().split("T")[0];
+
+  const { data } = await supabase
+    .from("workout_sessions_log")
+    .select(`
+      id,
+      set_logs (weight, reps)
+    `)
+    .eq("client_id", clientId)
+    .eq("status", "completed")
+    .gte("date", startStr)
+    .lte("date", endStr);
+
+  const sessions = data?.length ?? 0;
+  let volume = 0;
+  for (const session of data || []) {
+    const setLogs = (session as { set_logs?: { weight: number; reps: number }[] }).set_logs || [];
+    for (const log of setLogs) {
+      volume += (log?.weight ?? 0) * (log?.reps ?? 0);
+    }
+  }
+
+  return { sessionsLast7Days: sessions, volumeLast7Days: Math.round(volume) };
+}
+
 export async function fetchLoggedWorkoutsForRange(
   clientId: string,
   startDate: string,

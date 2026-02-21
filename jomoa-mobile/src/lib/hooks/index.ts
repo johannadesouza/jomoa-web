@@ -11,3 +11,4 @@ export * from "./useDailyInsight";
 export * from "./useCalendar";
 export * from "./useWorkoutSession";
 export * from "./useTrainingAdaptation";
+export * from "./useRecentLoad";

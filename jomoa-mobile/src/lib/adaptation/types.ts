@@ -22,7 +22,13 @@ export interface AdaptationResult {
   topDrivers: string[];
 }
 
+export interface RecentLoadInput {
+  sessionsLast7Days: number;
+  volumeLast7Days: number;
+}
+
 export interface AdaptationContext {
   phase: CyclePhase;
   readiness: ReadinessInput | null;
+  recentLoad: RecentLoadInput | null;
 }

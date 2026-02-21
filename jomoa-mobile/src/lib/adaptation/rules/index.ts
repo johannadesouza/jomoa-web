@@ -4,11 +4,13 @@
 
 import { evaluateCyclePhaseRules } from "./cyclePhaseRules";
 import { evaluateReadinessRules } from "./readinessRules";
+import { evaluateRecentLoadRules } from "./recentLoadRules";
 import type { AdaptationContext } from "../types";
 import type { RuleEffect } from "./cyclePhaseRules";
 
 export { evaluateCyclePhaseRules } from "./cyclePhaseRules";
 export { evaluateReadinessRules } from "./readinessRules";
+export { evaluateRecentLoadRules } from "./recentLoadRules";
 export type { RuleEffect } from "./cyclePhaseRules";
 
 export function evaluateAllRules(
@@ -19,5 +21,9 @@ export function evaluateAllRules(
     context.readiness
   );
   const readinessEffects = evaluateReadinessRules(context.readiness);
-  return [...cycleEffects, ...readinessEffects];
+  const recentLoadEffects = evaluateRecentLoadRules(
+    context.recentLoad,
+    context.readiness
+  );
+  return [...cycleEffects, ...readinessEffects, ...recentLoadEffects];
 }
