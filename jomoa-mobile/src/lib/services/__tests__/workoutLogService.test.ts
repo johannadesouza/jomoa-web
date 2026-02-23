@@ -43,7 +43,7 @@ describe("workout log service – finish-lock and completion", () => {
   const clientId = "client-1";
   const sessionId = "session-1";
   const setLogs: SetLogInput[] = [
-    { exerciseId: "ex-1", setNumber: 1, reps: 10, weight: 60, rpe: 7 },
+    { exerciseId: "ex-1", setNumber: 1, reps: 10, weight: 60 },
   ];
 
   beforeEach(() => {
@@ -66,12 +66,7 @@ describe("workout log service – finish-lock and completion", () => {
         error: null,
       });
 
-      const result = await createWorkoutLogWithSets(
-        clientId,
-        sessionId,
-        setLogs,
-        null
-      );
+      const result = await createWorkoutLogWithSets(clientId, sessionId, setLogs);
 
       expect(result.error).not.toBeNull();
       expect(result.error?.message).toContain("redan genomfört idag");
@@ -81,12 +76,7 @@ describe("workout log service – finish-lock and completion", () => {
     it("succeeds when no existing completion today", async () => {
       mocks.maybeSingle.mockResolvedValueOnce({ data: null, error: null });
 
-      const result = await createWorkoutLogWithSets(
-        clientId,
-        sessionId,
-        setLogs,
-        7
-      );
+      const result = await createWorkoutLogWithSets(clientId, sessionId, setLogs);
 
       expect(result.error).toBeNull();
       expect(result.workoutLogId).toBe("log-1");

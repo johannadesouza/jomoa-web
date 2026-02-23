@@ -13,7 +13,6 @@ export function computeAdaptation(
   const effects = evaluateAllRules(context);
 
   let volumeModifier = 1.0;
-  let rpeModifier = 0;
   let suggestDeload = false;
   let suggestRecovery = false;
   const reasons: string[] = [];
@@ -25,25 +24,25 @@ export function computeAdaptation(
       appliedRules.push(e.ruleId);
       if (e.reason) reasons.push(e.reason);
     }
-    if (e.rpeModifier != null) {
-      rpeModifier += e.rpeModifier;
-      if (!appliedRules.includes(e.ruleId)) {
-        appliedRules.push(e.ruleId);
-        if (e.reason) reasons.push(e.reason);
-      }
-    }
     if (e.suggestDeload) suggestDeload = true;
     if (e.suggestRecovery) suggestRecovery = true;
   }
 
   volumeModifier = Math.max(0.5, Math.min(1.2, volumeModifier));
-  rpeModifier = Math.max(-2, Math.min(1, rpeModifier));
+
+  // Apply strategy preference: if user often rejects, make suggestions more conservative
+  const pref = context.strategyPreference;
+  if (pref && pref.decisionCount >= 5 && volumeModifier !== 1) {
+    const dampen =
+      pref.acceptanceRate < 0.4 ? 0.6 : pref.acceptanceRate > 0.7 ? 1.0 : 0.85;
+    volumeModifier = 1 + (volumeModifier - 1) * dampen;
+    volumeModifier = Math.max(0.5, Math.min(1.2, volumeModifier));
+  }
 
   const topDrivers = [...new Set(reasons)].slice(0, 2);
 
   return {
     volumeModifier,
-    rpeModifier,
     suggestDeload,
     suggestRecovery,
     reason: reasons.length > 0 ? reasons[0] : "",

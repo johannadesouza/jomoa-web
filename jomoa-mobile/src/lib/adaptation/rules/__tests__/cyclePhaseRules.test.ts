@@ -21,7 +21,7 @@ describe("cycle phase rules", () => {
     expect(m?.volumeModifier).toBe(0.9);
   });
 
-  it("reduces volume and rpe for menstruation + low energy", () => {
+  it("reduces volume for menstruation + low energy", () => {
     const effects = evaluateCyclePhaseRules("menstruation", {
       energy_level: 2,
       sleep_quality: 7,
@@ -31,20 +31,18 @@ describe("cycle phase rules", () => {
     const m = effects.find((e) => e.ruleId === "menstruation_deload");
     expect(m).toBeDefined();
     expect(m?.volumeModifier).toBe(0.8);
-    expect(m?.rpeModifier).toBe(-0.5);
   });
 
-  it("reduces rpe for luteal + low energy", () => {
+  it("reduces volume for luteal + low energy", () => {
     const effects = evaluateCyclePhaseRules("luteal", {
       energy_level: 2,
       sleep_quality: 6,
       stress_level: 4,
       soreness: 2,
     });
-    const m = effects.find((e) => e.ruleId === "luteal_rpe");
+    const m = effects.find((e) => e.ruleId === "luteal_volume");
     expect(m).toBeDefined();
     expect(m?.volumeModifier).toBe(0.9);
-    expect(m?.rpeModifier).toBe(-0.5);
   });
 
   it("returns neutral for ovulation", () => {
@@ -52,6 +50,5 @@ describe("cycle phase rules", () => {
     const m = effects.find((e) => e.ruleId === "ovulation_intensity");
     expect(m).toBeDefined();
     expect(m?.volumeModifier).toBe(1);
-    expect(m?.rpeModifier).toBe(0);
   });
 });

@@ -24,9 +24,7 @@ import { useReadinessHistory } from "../../lib/hooks/useReadinessHistory";
 import { useDailyInsight } from "../../lib/hooks/useDailyInsight";
 import { useInsights } from "../../lib/hooks/useInsights";
 import { useDailyPhaseInsight } from "../../lib/hooks/useDailyPhaseInsight";
-import { useTrainingAdaptation } from "../../lib/hooks/useTrainingAdaptation";
 import { useInProgressWorkout } from "../../lib/hooks/useInProgressWorkout";
-import { getAdjustmentRecommendation } from "../../lib/services/adjustmentService";
 import { PHASE_KNOWLEDGE_COPY } from "../../lib/data/phaseKnowledgeCopy";
 import { getLocalDateString, getDateForWeekDay, addDaysToDateStr } from "../../lib/utils/date";
 import { HighlightsSection } from "./HighlightsSection";
@@ -34,7 +32,6 @@ import { getPhaseLabel } from "../../lib/utils/cycleUtils";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { TopBar } from "../../components/layout/TopBar";
 import { QuickActionsSection } from "./QuickActionsSection";
-import { ReadinessGraphCard } from "./ReadinessGraphCard";
 import { RestTimerModal } from "./RestTimerModal";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -72,10 +69,9 @@ export function DashboardScreen() {
   const { inProgress, refetch: refetchInProgress } = useInProgressWorkout();
   const { phase, phaseLabel, cycleDay, daysUntilNextPeriod, refetch: refetchCycle } = useCycle(client?.id);
   const { readiness, refetch: refetchReadiness } = useReadiness(client?.id, selectedDate);
-  const { records: readinessHistory, refetch: refetchReadinessHistory } = useReadinessHistory(client?.id, 7);
+  const { refetch: refetchReadinessHistory } = useReadinessHistory(client?.id, 7);
   const { insight, refetch: refetchInsight } = useDailyInsight(client?.id);
   const { stats: insightStats, refetch: refetchInsights } = useInsights(client?.id);
-  const adaptation = useTrainingAdaptation(client?.id);
 
   const refetchRef = useRef({
     refetchDashboard,
@@ -108,7 +104,6 @@ export function DashboardScreen() {
       r.refetchInsights();
     }, [])
   );
-  const recommendation = getAdjustmentRecommendation(phase ?? null, readiness);
   const phaseInsight = useDailyPhaseInsight(client?.id);
 
   const getGreeting = () => {
@@ -137,18 +132,6 @@ export function DashboardScreen() {
   }
 
   const handleSettings = () => navigation.navigate("Settings");
-
-  const hasAdaptation = (adaptation.volumeModifier !== 1 || adaptation.rpeModifier !== 0) && todaySession && !todaySessionCompleted;
-  const adaptationText = [
-    adaptation.rpeModifier !== 0 &&
-      `${adaptation.rpeModifier > 0 ? "+" : ""}${adaptation.rpeModifier} RPE`,
-    adaptation.volumeModifier !== 1 &&
-      (adaptation.volumeModifier < 1
-        ? `−${Math.round((1 - adaptation.volumeModifier) * 100)}% volym`
-        : `+${Math.round((adaptation.volumeModifier - 1) * 100)}% volym`),
-  ]
-    .filter(Boolean)
-    .join(" · ");
 
   return (
     <Screen scroll padded>
@@ -295,11 +278,6 @@ export function DashboardScreen() {
                       </AppText>
                     </YStack>
                   </XStack>
-                  {hasAdaptation && (
-                    <AppText variant="caption" color="$accent" fontWeight="600">
-                      {adaptationText}
-                    </AppText>
-                  )}
                   <AppButton
                     variant="primary"
                     fullWidth
@@ -380,11 +358,6 @@ export function DashboardScreen() {
                       </AppText>
                     </YStack>
                   </XStack>
-                  {hasAdaptation && (
-                    <AppText variant="caption" color="$accent" fontWeight="600">
-                      {adaptationText}
-                    </AppText>
-                  )}
                   <AppButton
                     variant="primary"
                     fullWidth
@@ -486,21 +459,17 @@ export function DashboardScreen() {
           </Card>
         )}
 
-        {((insight || recommendation) || (phase && phaseInsight) || (readinessHistory ?? []).length > 0) && (
+        {(insight || (phase && phaseInsight)) && (
           <Section title="Insikter">
-            {(insight || recommendation) && (
+            {insight && (
               <Card>
                 <Card.Content>
-                  {insight ? (
-                    <YStack gap="$2">
-                      <AppText variant="h3">{insight.insight_title}</AppText>
-                      {insight.insight_body && (
-                        <AppText variant="small" muted>{insight.insight_body}</AppText>
-                      )}
-                    </YStack>
-                  ) : (
-                    <AppText variant="small">{recommendation!.reason}</AppText>
-                  )}
+                  <YStack gap="$2">
+                    <AppText variant="h3">{insight.insight_title}</AppText>
+                    {insight.insight_body && (
+                      <AppText variant="small" muted>{insight.insight_body}</AppText>
+                    )}
+                  </YStack>
                 </Card.Content>
               </Card>
             )}
@@ -511,13 +480,6 @@ export function DashboardScreen() {
                 bullets={phaseInsight.bullets}
                 footer={PHASE_KNOWLEDGE_COPY.homeTapForMore(getPhaseLabel(phaseInsight.phase ?? null))}
                 onPress={() => navigation.navigate("CycleInsights")}
-              />
-            )}
-            {(readinessHistory ?? []).length > 0 && (
-              <ReadinessGraphCard
-                records={(readinessHistory ?? []).slice(-7)}
-                todayDate={getLocalDateString()}
-                todayReadiness={readiness?.readiness_score ?? null}
               />
             )}
           </Section>

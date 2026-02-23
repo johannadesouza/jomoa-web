@@ -15,6 +15,10 @@ import {
 import { useAuth } from "../../shared/context/AuthContext";
 import { useFavorites } from "../../lib/hooks/useFavorites";
 import { useTrainingAdaptation } from "../../lib/hooks/useTrainingAdaptation";
+import { useCycle } from "../../lib/hooks/useCycle";
+import { useReadiness } from "../../lib/hooks/useReadiness";
+import { getAdjustmentRecommendation } from "../../lib/services/adjustmentService";
+import { saveStrategyDecision } from "../../lib/services/strategyDecisionService";
 import { useTheme } from "../../shared/context/ThemeContext";
 import { getThemeColors } from "../../shared/theme/colors";
 import { RootStackParamList } from "../../navigation/RootNavigator";
@@ -30,10 +34,18 @@ export function WorkoutPreviewScreen({ navigation, route }: Props) {
   const { theme } = useTheme();
   const colors = getThemeColors(theme);
   const { isFavorite, toggle } = useFavorites(client?.id);
+  const { phase } = useCycle(client?.id);
+  const { readiness } = useReadiness(client?.id);
   const adaptation = useTrainingAdaptation(client?.id);
+  const recommendation = getAdjustmentRecommendation(phase ?? null, readiness);
   const { sessionId, isStandalone } = route.params;
   const [session, setSession] = useState<(ProgramSessionData | SessionTemplateData) | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [applyAdjustment, setApplyAdjustment] = useState<boolean | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
+
+  const hasSuggestion =
+    !!recommendation || (adaptation.volumeModifier !== 1 && !adaptation.appliedRules.includes("weekly_progression"));
 
   useEffect(() => {
     let cancelled = false;
@@ -104,29 +116,74 @@ export function WorkoutPreviewScreen({ navigation, route }: Props) {
           </XStack>
         </YStack>
 
-        {(adaptation.volumeModifier !== 1 || adaptation.rpeModifier !== 0) &&
-          !adaptation.appliedRules.includes("weekly_progression") && (
+        {(recommendation || (adaptation.volumeModifier !== 1 && !adaptation.appliedRules.includes("weekly_progression"))) && (
           <Card backgroundColor="$surface3">
             <Card.Content>
               <YStack gap="$2">
-                <AppText variant="h3">Träningsjustering idag</AppText>
+                <AppText variant="h3">Dagens strategi</AppText>
                 <AppText variant="small" color="$accent" fontWeight="600">
-                  {[
-                    adaptation.rpeModifier !== 0 &&
-                      `${adaptation.rpeModifier > 0 ? "+" : ""}${adaptation.rpeModifier} RPE`,
-                    adaptation.volumeModifier !== 1 &&
-                      (adaptation.volumeModifier < 1
-                        ? `−${Math.round((1 - adaptation.volumeModifier) * 100)}% volym`
-                        : `+${Math.round((adaptation.volumeModifier - 1) * 100)}% volym`),
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
+                  {recommendation?.reason ??
+                    (adaptation.volumeModifier < 1
+                      ? `−${Math.round((1 - adaptation.volumeModifier) * 100)}% volym`
+                      : `+${Math.round((adaptation.volumeModifier - 1) * 100)}% volym`)}
                 </AppText>
-                {adaptation.topDrivers.length > 0 && (
+                {!recommendation && adaptation.topDrivers.length > 0 && (
                   <AppText variant="caption" muted>
                     Varför: {adaptation.topDrivers.join(" ")}
                   </AppText>
                 )}
+                <XStack gap="$3" marginTop="$2">
+                  <Pressable
+                    onPress={() => setApplyAdjustment(true)}
+                    style={({ pressed }) => ({
+                      opacity: pressed ? 0.8 : 1,
+                      flex: 1,
+                    })}
+                  >
+                    <Card
+                      backgroundColor={applyAdjustment === true ? "$accent" : "$surface3"}
+                      padding="$3"
+                      borderWidth={applyAdjustment === true ? 2 : 0}
+                      borderColor="$accent"
+                    >
+                      <Card.Content padding="$0">
+                        <AppText
+                          variant="small"
+                          fontWeight="600"
+                          color={applyAdjustment === true ? "$softLight" : "$color"}
+                          textAlign="center"
+                        >
+                          Tillämpa justering
+                        </AppText>
+                      </Card.Content>
+                    </Card>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => setApplyAdjustment(false)}
+                    style={({ pressed }) => ({
+                      opacity: pressed ? 0.8 : 1,
+                      flex: 1,
+                    })}
+                  >
+                    <Card
+                      backgroundColor={applyAdjustment === false ? "$surface3" : "$card"}
+                      padding="$3"
+                      borderWidth={applyAdjustment === false ? 2 : 0}
+                      borderColor="$borderSoft"
+                    >
+                      <Card.Content padding="$0">
+                        <AppText
+                          variant="small"
+                          fontWeight="600"
+                          color="$color"
+                          textAlign="center"
+                        >
+                          Behåll plan
+                        </AppText>
+                      </Card.Content>
+                    </Card>
+                  </Pressable>
+                </XStack>
               </YStack>
             </Card.Content>
           </Card>
@@ -162,11 +219,28 @@ export function WorkoutPreviewScreen({ navigation, route }: Props) {
           variant="primary"
           size="lg"
           fullWidth
-          onPress={() =>
-            navigation.replace("WorkoutSession", { sessionId: session.id, isStandalone })
-          }
+          disabled={isStarting}
+          onPress={async () => {
+            const accepted = hasSuggestion ? (applyAdjustment ?? false) : undefined;
+            if (client?.id && hasSuggestion) {
+              setIsStarting(true);
+              await saveStrategyDecision({
+                clientId: client.id,
+                sessionId: session.id,
+                isStandalone: isStandalone ?? false,
+                suggestedVolumeModifier: adaptation.volumeModifier,
+                accepted: accepted ?? false,
+              });
+              setIsStarting(false);
+            }
+            navigation.replace("WorkoutSession", {
+              sessionId: session.id,
+              isStandalone,
+              applyAdjustment: accepted,
+            });
+          }}
         >
-          Starta pass
+          {isStarting ? "Sparar..." : "Starta pass"}
         </AppButton>
       </YStack>
     </Screen>

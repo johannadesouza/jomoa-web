@@ -16,13 +16,15 @@ import { ProgramDetailScreen } from "../features/programs/ProgramDetailScreen";
 import { OnboardingNavigator } from "../features/onboarding";
 import { CycleScreen } from "../features/cycle";
 import { ReadinessScreen } from "../features/readiness";
+import { CalendarScreen } from "../features/calendar";
+import { SettingsScreen } from "../features/settings";
 
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   Onboarding: undefined;
   Main: { screen?: "DashboardTab" | "WorkoutsTab" | "CalendarTab" | "InsightsTab" | "SettingsTab" } | undefined;
-  WorkoutSession: { sessionId: string; isStandalone?: boolean };
+  WorkoutSession: { sessionId: string; isStandalone?: boolean; applyAdjustment?: boolean };
   WorkoutPreview: { sessionId: string; isStandalone?: boolean };
   WorkoutSummary: { sessionName: string; totalSets: number; totalVolume: number };
   ProgramSelect: undefined;
@@ -30,6 +32,8 @@ export type RootStackParamList = {
   ProgramDetail: { programId: string };
   Cycle: undefined;
   Readiness: undefined;
+  Calendar: undefined;
+  Settings: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -150,6 +154,30 @@ export function RootNavigator() {
               options={{
                 headerShown: true,
                 headerTitle: "Menscykel",
+                headerBackTitle: "Tillbaka",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
+                headerTitleStyle: { fontWeight: "600" },
+              }}
+            />
+            <Stack.Screen
+              name="Calendar"
+              component={CalendarScreen}
+              options={{
+                headerShown: true,
+                headerTitle: "Kalender",
+                headerBackTitle: "Tillbaka",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
+                headerTitleStyle: { fontWeight: "600" },
+              }}
+            />
+            <Stack.Screen
+              name="Settings"
+              component={SettingsScreen}
+              options={{
+                headerShown: true,
+                headerTitle: "Inställningar",
                 headerBackTitle: "Tillbaka",
                 headerStyle: { backgroundColor: themeColors.background },
                 headerTintColor: themeColors.textPrimary,

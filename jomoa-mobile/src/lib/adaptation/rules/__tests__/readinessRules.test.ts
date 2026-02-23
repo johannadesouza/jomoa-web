@@ -47,7 +47,7 @@ describe("readiness rules", () => {
     expect(poorSleep?.volumeModifier).toBe(0.9);
   });
 
-  it("reduces volume and rpe for high soreness + low energy", () => {
+  it("reduces volume for high soreness + low energy", () => {
     const effects = evaluateReadinessRules({
       energy_level: 2,
       sleep_quality: 6,
@@ -57,7 +57,6 @@ describe("readiness rules", () => {
     const soreness = effects.find((e) => e.ruleId === "high_soreness");
     expect(soreness).toBeDefined();
     expect(soreness?.volumeModifier).toBe(0.75);
-    expect(soreness?.rpeModifier).toBe(-0.5);
   });
 
   it("uses default 10 for energy/sleep when null (treats as good)", () => {

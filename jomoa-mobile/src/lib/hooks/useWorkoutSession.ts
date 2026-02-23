@@ -9,7 +9,7 @@ import {
   getRestTimerState,
   setRestTimerState,
 } from "../store/workoutStore";
-import type { SetLogEntry } from "../domain/workout";
+import type { SetLogEntry, ExerciseChallengeLevel } from "../domain/workout";
 import type { ProgramSessionData, SessionExercise } from "../services/workoutService";
 import type { SessionTemplateData, SessionTemplateExercise } from "../services/sessionTemplateService";
 
@@ -37,9 +37,9 @@ export interface UseWorkoutSessionResult {
   updateSetLog: (
     exerciseId: string,
     setNumber: number,
-    update: Partial<Pick<SetLogEntry, "reps" | "weight" | "rpe">>
+    update: Partial<Pick<SetLogEntry, "reps" | "weight">>
   ) => void;
-  completeWorkout: (overallRpe?: number) => Promise<{ error: Error | null }>;
+  completeWorkout: () => Promise<{ error: Error | null }>;
   abortWorkout: () => Promise<void>;
   finishLastExerciseAndComplete: () => void;
   restTimer: {
@@ -50,14 +50,15 @@ export interface UseWorkoutSessionResult {
   };
   sortedExercises: SessionExerciseWithExtras[];
   currentExerciseIndex: number;
-  phase: "exercise" | "rest" | "finishing";
+  phase: "exercise" | "rest" | "challenge" | "finishing";
   currentExercise: SessionExerciseWithExtras | null;
   nextExercise: SessionExerciseWithExtras | null;
   isLastExercise: boolean;
-  goToNextExercise: () => void;
+  goToNextExercise: (selectedChallenge?: ExerciseChallengeLevel) => void;
   goToPrevExercise: () => void;
   skipRest: () => void;
   handleRestComplete: () => void;
+  exerciseChallenges: Record<string, ExerciseChallengeLevel>;
   exerciseTimer: {
     secondsRemaining: number;
     isRunning: boolean;
@@ -80,16 +81,18 @@ export function useWorkoutSession(
   const [workoutStartedAt, setWorkoutStartedAt] = useState<string | null>(null);
   const [restTimerInterval, setRestTimerInterval] = useState<ReturnType<typeof setInterval> | null>(null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
-  const [phase, setPhase] = useState<"exercise" | "rest" | "finishing">("exercise");
+  const [phase, setPhase] = useState<"exercise" | "rest" | "challenge" | "finishing">("exercise");
+  const [exerciseChallenges, setExerciseChallenges] = useState<Record<string, ExerciseChallengeLevel>>({});
   const [exerciseSeconds, setExerciseSeconds] = useState(0);
   const [exerciseTimerInterval, setExerciseTimerInterval] = useState<ReturnType<typeof setInterval> | null>(null);
   const [persistError, setPersistError] = useState<string | null>(null);
   const persistChainRef = useRef<Promise<void>>(Promise.resolve());
   const latestLogsRef = useRef<SetLogEntry[]>([]);
-  const latestFlowRef = useRef<{ currentExerciseIndex: number; phase: "exercise" | "rest" | "finishing" }>({
+  const latestFlowRef = useRef<{ currentExerciseIndex: number; phase: "exercise" | "rest" | "challenge" | "finishing" }>({
     currentExerciseIndex: 0,
     phase: "exercise",
   });
+  const latestExerciseChallengesRef = useRef<Record<string, ExerciseChallengeLevel>>({});
 
   useEffect(() => {
     if (!sessionId || !clientId) {
@@ -119,7 +122,8 @@ export function useWorkoutSession(
             setRestSeconds(inProgress.restTimerSecondsRemaining);
           }
           setCurrentExerciseIndex(inProgress.currentExerciseIndex ?? 0);
-          setPhase(inProgress.phase ?? "exercise");
+          setPhase(inProgress.phase === "challenge" ? "exercise" : (inProgress.phase ?? "exercise"));
+          setExerciseChallenges(inProgress.exerciseChallenges ?? {});
         } else {
           setSetLogs([]);
           setWorkoutStartedAt(new Date().toISOString());
@@ -165,6 +169,7 @@ export function useWorkoutSession(
 
   latestFlowRef.current = { currentExerciseIndex, phase };
   latestLogsRef.current = setLogs;
+  latestExerciseChallengesRef.current = exerciseChallenges;
 
   const doPersist = useCallback(
     async (logs: SetLogEntry[]) => {
@@ -178,7 +183,8 @@ export function useWorkoutSession(
         restTimerSecondsRemaining: restSeconds > 0 ? restSeconds : null,
         lastSetCompletedAt: null,
         currentExerciseIndex: flow.currentExerciseIndex,
-        phase: flow.phase,
+        phase: flow.phase === "challenge" ? "exercise" : flow.phase,
+        exerciseChallenges: latestExerciseChallengesRef.current,
       };
       try {
         await setInProgressWorkout(payload);
@@ -221,7 +227,6 @@ export function useWorkoutSession(
         setNumber: entry.setNumber,
         reps: entry.reps ?? null,
         weight: entry.weight ?? null,
-        rpe: entry.rpe ?? null,
       };
 
       setSetLogs((prev) => {
@@ -240,7 +245,7 @@ export function useWorkoutSession(
     (
       exerciseId: string,
       setNumber: number,
-      update: Partial<Pick<SetLogEntry, "reps" | "weight" | "rpe">>
+      update: Partial<Pick<SetLogEntry, "reps" | "weight">>
     ) => {
       setSetLogs((prev) => {
         const next = prev.map((l) =>
@@ -255,7 +260,7 @@ export function useWorkoutSession(
   );
 
   const completeWorkout = useCallback(
-    async (overallRpe?: number): Promise<{ error: Error | null }> => {
+    async (): Promise<{ error: Error | null }> => {
       if (!clientId || !session) return { error: new Error("Missing client or session") };
 
       setIsSaving(true);
@@ -278,15 +283,18 @@ export function useWorkoutSession(
         setNumber: l.setNumber,
         reps: l.reps,
         weight: l.weight,
-        rpe: l.rpe,
       }));
 
+      const challenges = latestExerciseChallengesRef.current;
+      const exerciseChallengesInput = Object.entries(challenges).map(([exerciseId, challengeLevel]) => ({
+        exerciseId,
+        challengeLevel,
+      }));
       const { error } = await createWorkoutLogWithSets(
         clientId,
         session.id,
         setLogInputs,
-        overallRpe,
-        { isStandalone }
+        { isStandalone, exerciseChallenges: exerciseChallengesInput }
       );
 
       setIsSaving(false);
@@ -352,11 +360,20 @@ export function useWorkoutSession(
     schedulePersist(latestLogsRef.current);
   }, [schedulePersist]);
 
-  const goToNextExercise = useCallback(() => {
-    setPhase("rest");
-    latestFlowRef.current.phase = "rest";
-    persistFlow();
-  }, [persistFlow]);
+  const goToNextExercise = useCallback(
+    (selectedChallenge?: ExerciseChallengeLevel) => {
+      const exerciseId = sortedExercises[currentExerciseIndex]?.exercise_id;
+      if (exerciseId && selectedChallenge) {
+        const next = { ...latestExerciseChallengesRef.current, [exerciseId]: selectedChallenge };
+        latestExerciseChallengesRef.current = next;
+        setExerciseChallenges(next);
+      }
+      setPhase("rest");
+      latestFlowRef.current.phase = "rest";
+      persistFlow();
+    },
+    [currentExerciseIndex, sortedExercises, persistFlow]
+  );
 
   const goToPrevExercise = useCallback(() => {
     const newIndex = Math.max(0, currentExerciseIndex - 1);
@@ -394,10 +411,19 @@ export function useWorkoutSession(
     } catch {}
   }, []);
 
-  const finishLastExerciseAndComplete = useCallback(() => {
-    setPhase("finishing");
-    latestFlowRef.current.phase = "finishing";
-  }, []);
+  const finishLastExerciseAndComplete = useCallback(
+    (selectedChallenge?: ExerciseChallengeLevel) => {
+      const exerciseId = sortedExercises[currentExerciseIndex]?.exercise_id;
+      if (exerciseId && selectedChallenge) {
+        const next = { ...latestExerciseChallengesRef.current, [exerciseId]: selectedChallenge };
+        latestExerciseChallengesRef.current = next;
+        setExerciseChallenges(next);
+      }
+      setPhase("finishing");
+      latestFlowRef.current.phase = "finishing";
+    },
+    [currentExerciseIndex, sortedExercises]
+  );
 
   const handleRestComplete = useCallback(() => {
     const newIndex = currentExerciseIndex + 1;
@@ -418,13 +444,6 @@ export function useWorkoutSession(
           if (next === 0) {
             clearInterval(id);
             setExerciseTimerInterval(null);
-            if (isLast) {
-              setPhase("finishing");
-              latestFlowRef.current.phase = "finishing";
-            } else {
-              setPhase("rest");
-              latestFlowRef.current.phase = "rest";
-            }
             schedulePersist(latestLogsRef.current);
           }
           return next;
@@ -473,6 +492,7 @@ export function useWorkoutSession(
     goToPrevExercise,
     skipRest,
     handleRestComplete,
+    exerciseChallenges,
     exerciseTimer: {
       secondsRemaining: exerciseSeconds,
       isRunning: exerciseTimerInterval != null,

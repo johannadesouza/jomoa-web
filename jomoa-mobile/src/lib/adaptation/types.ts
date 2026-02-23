@@ -13,7 +13,6 @@ export interface ReadinessInput {
 
 export interface AdaptationResult {
   volumeModifier: number;
-  rpeModifier: number;
   suggestDeload: boolean;
   suggestRecovery: boolean;
   reason: string;
@@ -36,6 +35,11 @@ export interface WeeklyProgressionInput {
   completionRate: number;
 }
 
+export interface StrategyPreferenceInput {
+  acceptanceRate: number;
+  decisionCount: number;
+}
+
 export interface AdaptationContext {
   /** Cycle phase – null if no cycle tracking; cycle rules are skipped */
   cyclePhase: CyclePhase | null;
@@ -45,4 +49,6 @@ export interface AdaptationContext {
   trainingLoad: RecentLoadInput | null;
   /** Weekly completion – null if no program or no data; progression rules skipped */
   weeklyProgression: WeeklyProgressionInput | null;
+  /** Strategy preference – user accept/reject history for learning */
+  strategyPreference: StrategyPreferenceInput | null;
 }

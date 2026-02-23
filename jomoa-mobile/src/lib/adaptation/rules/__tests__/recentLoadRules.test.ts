@@ -42,6 +42,5 @@ describe("recent load rules", () => {
     const rule = effects.find((e) => e.ruleId === "high_load_recovery");
     expect(rule).toBeDefined();
     expect(rule?.volumeModifier).toBe(0.85);
-    expect(rule?.rpeModifier).toBe(-0.5);
   });
 });

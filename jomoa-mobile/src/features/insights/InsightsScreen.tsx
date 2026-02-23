@@ -26,14 +26,11 @@ import { useDailyPhaseInsight } from "../../lib/hooks/useDailyPhaseInsight";
 import { useDailyInsight } from "../../lib/hooks/useDailyInsight";
 import { useReadiness } from "../../lib/hooks/useReadiness";
 import { useReadinessHistory } from "../../lib/hooks/useReadinessHistory";
-import { useTrainingAdaptation } from "../../lib/hooks/useTrainingAdaptation";
 import { getPhaseProfile } from "../../lib/services/phaseKnowledgeService";
-import { getAdjustmentRecommendation } from "../../lib/services/adjustmentService";
 import { getLocalDateString } from "../../lib/utils/date";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { AwardsSection } from "./AwardsSection";
 import { GoalsSection } from "./GoalsSection";
-import { ReadinessGraphCard } from "../dashboard/ReadinessGraphCard";
 import { PhaseIndicatorBar } from "../../components/cycle/PhaseIndicatorBar";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -64,10 +61,7 @@ export function InsightsScreen() {
   const phaseProfile = phase ? getPhaseProfile(phase) : null;
   const { insight, refetch: refetchInsight } = useDailyInsight(client?.id);
   const { readiness, refetch: refetchReadiness } = useReadiness(client?.id);
-  const { records: readinessHistory, refetch: refetchReadinessHistory } =
-    useReadinessHistory(client?.id, 7);
-  const adaptation = useTrainingAdaptation(client?.id);
-  const recommendation = getAdjustmentRecommendation(phase ?? null, readiness);
+  const { refetch: refetchReadinessHistory } = useReadinessHistory(client?.id, 7);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -92,12 +86,6 @@ export function InsightsScreen() {
       value: stats ? String(stats.sessionsThisMonth) : "0",
       unit: "",
       icon: "💪",
-    },
-    {
-      label: "Genomsnittlig RPE",
-      value: stats?.averageRpe != null ? String(stats.averageRpe) : "-",
-      unit: "",
-      icon: "⚡",
     },
     {
       label: "Streak",
@@ -163,64 +151,32 @@ export function InsightsScreen() {
 
         {segment === "idag" && (
           <>
-            {(insight || recommendation) && (
+            {insight && (
               <Section title="Rekommendation" subtitle="Baserat på din fas och readiness idag">
                 <Card>
                   <Card.Content>
-                    {insight ? (
-                      <YStack gap="$3">
-                        <AppText variant="h3">{insight.insight_title}</AppText>
-                        {insight.insight_body && (
-                          <AppText variant="small" muted>
-                            {insight.insight_body}
-                          </AppText>
-                        )}
-                        {Array.isArray(insight.actions) && insight.actions.length > 0 && (
-                          <YStack gap="$1">
-                            {insight.actions.map((a, i) => (
-                              <AppText key={i} variant="caption" muted>
-                                • {a}
-                              </AppText>
-                            ))}
-                          </YStack>
-                        )}
-                      </YStack>
-                    ) : (
-                      <AppText variant="small">{recommendation!.reason}</AppText>
-                    )}
-                  </Card.Content>
-                </Card>
-              </Section>
-            )}
-            {(adaptation.volumeModifier !== 1 || adaptation.rpeModifier !== 0) &&
-              !adaptation.appliedRules.includes("weekly_progression") && (
-              <Section title="Träningsjustering">
-                <Card>
-                  <Card.Content>
-                    <YStack gap="$2">
-                      <AppText variant="small" color="$accent" fontWeight="600">
-                        {[
-                          adaptation.rpeModifier !== 0 &&
-                            `${adaptation.rpeModifier > 0 ? "+" : ""}${adaptation.rpeModifier} RPE`,
-                          adaptation.volumeModifier !== 1 &&
-                            (adaptation.volumeModifier < 1
-                              ? `−${Math.round((1 - adaptation.volumeModifier) * 100)}% volym`
-                              : `+${Math.round((adaptation.volumeModifier - 1) * 100)}% volym`),
-                        ]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </AppText>
-                      {adaptation.topDrivers.length > 0 && (
-                        <AppText variant="caption" muted>
-                          Varför: {adaptation.topDrivers.join(" ")}
+                    <YStack gap="$3">
+                      <AppText variant="h3">{insight.insight_title}</AppText>
+                      {insight.insight_body && (
+                        <AppText variant="small" muted>
+                          {insight.insight_body}
                         </AppText>
+                      )}
+                      {Array.isArray(insight.actions) && insight.actions.length > 0 && (
+                        <YStack gap="$1">
+                          {insight.actions.map((a, i) => (
+                            <AppText key={i} variant="caption" muted>
+                              • {a}
+                            </AppText>
+                          ))}
+                        </YStack>
                       )}
                     </YStack>
                   </Card.Content>
                 </Card>
               </Section>
             )}
-            {!insight && !recommendation && !readiness && (
+            {!insight && !readiness && (
               <Section title="Idag" subtitle="Baserat på cykel och readiness">
                 <Card pressable onPress={() => navigation.navigate("Readiness")}>
                   <Card.Content>
@@ -239,13 +195,6 @@ export function InsightsScreen() {
                   </Card.Content>
                 </Card>
               </Section>
-            )}
-            {(readinessHistory ?? []).length > 0 && (
-              <ReadinessGraphCard
-                records={(readinessHistory ?? []).slice(-7)}
-                todayDate={getLocalDateString()}
-                todayReadiness={readiness?.readiness_score ?? null}
-              />
             )}
             <Section
               title="Kategorier"

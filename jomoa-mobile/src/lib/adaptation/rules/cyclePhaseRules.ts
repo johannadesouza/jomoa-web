@@ -7,7 +7,6 @@ import type { ReadinessInput } from "../types";
 
 export interface RuleEffect {
   volumeModifier?: number;
-  rpeModifier?: number;
   suggestDeload?: boolean;
   suggestRecovery?: boolean;
   reason: string;
@@ -40,7 +39,6 @@ export function evaluateCyclePhaseRules(
     if (lowEnergy(readiness) || highStress(readiness)) {
       effects.push({
         volumeModifier: 0.8,
-        rpeModifier: -0.5,
         suggestDeload: lowEnergy(readiness),
         reason: "Mensfas med låg energi eller hög stress.",
         ruleId: "menstruation_deload",
@@ -57,9 +55,8 @@ export function evaluateCyclePhaseRules(
   if (phase === "luteal" && (lowEnergy(readiness) || highStress(readiness))) {
     effects.push({
       volumeModifier: 0.9,
-      rpeModifier: -0.5,
       reason: "Lutealfas med låg energi – fokusera på teknik.",
-      ruleId: "luteal_rpe",
+      ruleId: "luteal_volume",
     });
   }
 
@@ -92,7 +89,6 @@ export function evaluateCyclePhaseRules(
     } else {
       effects.push({
         volumeModifier: 1.0,
-        rpeModifier: 0,
         reason: "Ägglossning – bra dag för hög intensitet.",
         ruleId: "ovulation_intensity",
       });

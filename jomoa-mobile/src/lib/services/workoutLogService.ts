@@ -8,7 +8,6 @@ export interface WorkoutStats {
 export interface InsightStats {
   totalVolume: number;
   sessionsThisMonth: number;
-  averageRpe: number | null;
   streak: number;
 }
 
@@ -71,7 +70,6 @@ export async function fetchInsightStats(clientId: string): Promise<InsightStats>
     .from("workout_sessions_log")
     .select(`
       id,
-      overall_rpe,
       set_logs (weight, reps)
     `)
     .eq("client_id", clientId)
@@ -81,12 +79,7 @@ export async function fetchInsightStats(clientId: string): Promise<InsightStats>
   const sessionsThisMonth = monthlySessions?.length ?? 0;
 
   let totalVolume = 0;
-  const rpeValues: number[] = [];
-
   for (const session of monthlySessions || []) {
-    if (session.overall_rpe != null) {
-      rpeValues.push(Number(session.overall_rpe));
-    }
     const setLogs = (session as { set_logs?: { weight: number; reps: number }[] }).set_logs || [];
     for (const log of setLogs) {
       const weight = log?.weight ?? 0;
@@ -95,17 +88,11 @@ export async function fetchInsightStats(clientId: string): Promise<InsightStats>
     }
   }
 
-  const averageRpe =
-    rpeValues.length > 0
-      ? rpeValues.reduce((a, b) => a + b, 0) / rpeValues.length
-      : null;
-
   const { streak } = await fetchWeeklyStats(clientId);
 
   return {
     totalVolume: Math.round(totalVolume),
     sessionsThisMonth,
-    averageRpe: averageRpe != null ? Math.round(averageRpe * 10) / 10 : null,
     streak,
   };
 }
@@ -120,7 +107,6 @@ export interface SetLogInput {
   setNumber: number;
   reps: number | null;
   weight: number | null;
-  rpe: number | null;
 }
 
 /** Check if client completed a specific session template today */
@@ -140,12 +126,16 @@ export async function fetchTodayCompletedSessionTemplate(
   return data ? { id: data.id } : null;
 }
 
+export interface ExerciseChallengeInput {
+  exerciseId: string;
+  challengeLevel: "easy" | "ok" | "hard";
+}
+
 export async function createWorkoutLogWithSets(
   clientId: string,
   sessionId: string,
   setLogs: SetLogInput[],
-  overallRpe?: number | null,
-  options?: { isStandalone?: boolean }
+  options?: { isStandalone?: boolean; exerciseChallenges?: ExerciseChallengeInput[] }
 ): Promise<{ workoutLogId?: string; error: Error | null }> {
   const today = new Date().toISOString().split("T")[0];
   const isStandalone = options?.isStandalone ?? false;
@@ -169,7 +159,6 @@ export async function createWorkoutLogWithSets(
       session_template_id: sessionTemplateId,
       date: today,
       status: "completed",
-      overall_rpe: overallRpe ?? null,
     })
     .select("id")
     .single();
@@ -185,12 +174,26 @@ export async function createWorkoutLogWithSets(
       set_number: s.setNumber,
       reps: s.reps ?? 0,
       weight: s.weight ?? null,
-      rpe: s.rpe ?? null,
     }));
 
     const { error: setError } = await supabase.from("set_logs").insert(setLogRows);
     if (setError) {
       return { error: setError, workoutLogId: sessionLog.id };
+    }
+  }
+
+  const exerciseChallenges = options?.exerciseChallenges ?? [];
+  if (exerciseChallenges.length > 0) {
+    const challengeRows = exerciseChallenges.map((c) => ({
+      workout_session_log_id: sessionLog.id,
+      exercise_id: c.exerciseId,
+      challenge_level: c.challengeLevel,
+    }));
+    const { error: challengeError } = await supabase
+      .from("exercise_challenge_log")
+      .insert(challengeRows);
+    if (challengeError) {
+      return { error: challengeError, workoutLogId: sessionLog.id };
     }
   }
 

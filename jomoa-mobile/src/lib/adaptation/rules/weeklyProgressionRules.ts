@@ -7,7 +7,6 @@ import type { ReadinessInput, WeeklyProgressionInput } from "../types";
 
 export interface RuleEffect {
   volumeModifier?: number;
-  rpeModifier?: number;
   suggestDeload?: boolean;
   suggestRecovery?: boolean;
   reason: string;

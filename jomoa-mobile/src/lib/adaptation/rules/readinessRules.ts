@@ -6,7 +6,6 @@ import type { ReadinessInput } from "../types";
 
 export interface RuleEffect {
   volumeModifier?: number;
-  rpeModifier?: number;
   suggestDeload?: boolean;
   suggestRecovery?: boolean;
   reason: string;
@@ -62,7 +61,6 @@ export function evaluateReadinessRules(
   if (highSoreness(readiness) && lowEnergy(readiness)) {
     effects.push({
       volumeModifier: 0.75,
-      rpeModifier: -0.5,
       reason: "Ömhet och låg energi – lättare pass med teknikfokus.",
       ruleId: "high_soreness",
     });

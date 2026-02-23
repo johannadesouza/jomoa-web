@@ -3,6 +3,7 @@ import { useCycle } from "./useCycle";
 import { useReadiness } from "./useReadiness";
 import { useRecentLoad } from "./useRecentLoad";
 import { useWeeklyProgression } from "./useWeeklyProgression";
+import { useStrategyAcceptanceRate } from "./useStrategyAcceptanceRate";
 import { computeAdaptation } from "../adaptation/engine";
 import type { AdaptationResult } from "../adaptation/types";
 
@@ -14,6 +15,7 @@ export function useTrainingAdaptation(
   const { readiness } = useReadiness(clientId);
   const recentLoad = useRecentLoad(clientId);
   const weeklyProgression = useWeeklyProgression(clientId);
+  const strategyStats = useStrategyAcceptanceRate(clientId);
 
   return useMemo(() => {
     return computeAdaptation({
@@ -39,6 +41,12 @@ export function useTrainingAdaptation(
             completionRate: weeklyProgression.completionRate,
           }
         : null,
+      strategyPreference: strategyStats
+        ? {
+            acceptanceRate: strategyStats.acceptanceRate,
+            decisionCount: strategyStats.decisionCount,
+          }
+        : null,
     });
-  }, [phase, readiness, recentLoad, weeklyProgression]);
+  }, [phase, readiness, recentLoad, weeklyProgression, strategyStats]);
 }

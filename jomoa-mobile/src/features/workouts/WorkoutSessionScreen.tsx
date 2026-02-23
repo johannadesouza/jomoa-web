@@ -16,6 +16,7 @@ import {
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useWorkoutSession, isTimeBasedExercise } from "../../lib/hooks/useWorkoutSession";
+import type { ExerciseChallengeLevel } from "../../lib/domain/workout";
 import { useTrainingAdaptation } from "../../lib/hooks/useTrainingAdaptation";
 import { useTheme } from "../../shared/context/ThemeContext";
 import { getThemeColors } from "../../shared/theme/colors";
@@ -37,30 +38,25 @@ interface SetInputRowProps {
   setNumber: number;
   repsPlanned: number | string;
   log: SetLogEntry | undefined;
-  onUpdate: (reps: number | null, weight: number | null, rpe: number | null) => void;
-  suggestedRpe?: number;
+  onUpdate: (reps: number | null, weight: number | null) => void;
 }
 
-function SetInputRow({ setNumber, repsPlanned, log, onUpdate, suggestedRpe }: SetInputRowProps) {
+function SetInputRow({ setNumber, repsPlanned, log, onUpdate }: SetInputRowProps) {
   const [reps, setReps] = useState(() => String(log?.reps ?? ""));
   const [weight, setWeight] = useState(() => String(log?.weight ?? ""));
-  const [rpe, setRpe] = useState(() => String(log?.rpe ?? ""));
 
   React.useEffect(() => {
     setReps(String(log?.reps ?? ""));
     setWeight(String(log?.weight ?? ""));
-    setRpe(String(log?.rpe ?? ""));
-  }, [log?.reps, log?.weight, log?.rpe]);
+  }, [log?.reps, log?.weight]);
 
   const handleBlur = () => {
     const r = reps.trim() ? parseInt(reps, 10) : null;
     const w = weight.trim() ? parseFloat(weight) : null;
-    const rp = rpe.trim() ? parseFloat(rpe) : null;
-    if (!isNaN(r as number) || !isNaN(w as number) || !isNaN(rp as number)) {
+    if (!isNaN(r as number) || !isNaN(w as number)) {
       onUpdate(
         r != null && !isNaN(r) ? r : null,
-        w != null && !isNaN(w) ? w : null,
-        rp != null && !isNaN(rp) ? rp : null
+        w != null && !isNaN(w) ? w : null
       );
     }
   };
@@ -86,14 +82,6 @@ function SetInputRow({ setNumber, repsPlanned, log, onUpdate, suggestedRpe }: Se
         onChangeText={setWeight}
         onBlur={handleBlur}
       />
-      <AppInput
-        size="sm"
-        placeholder={suggestedRpe != null ? `RPE ~${suggestedRpe}` : "RPE"}
-        keyboardType="decimal-pad"
-        value={rpe}
-        onChangeText={setRpe}
-        onBlur={handleBlur}
-      />
     </XStack>
   );
 }
@@ -105,6 +93,57 @@ interface RestTimerProps {
   onStart: (seconds: number) => void;
   onPause: () => void;
   onSkipRest: () => void;
+}
+
+const CHALLENGE_LABELS: Record<ExerciseChallengeLevel, string> = {
+  easy: "Lätt",
+  ok: "Lagom",
+  hard: "Hårt",
+};
+
+function ChallengeChips({
+  selected,
+  onSelect,
+}: {
+  selected: ExerciseChallengeLevel | null;
+  onSelect: (level: ExerciseChallengeLevel | null) => void;
+}) {
+  const { theme } = useTheme();
+  const colors = getThemeColors(theme);
+  return (
+    <YStack gap="$2">
+      <AppText variant="caption" muted>
+        Hur utmanande var övningen?
+      </AppText>
+      <XStack gap="$2" flexWrap="wrap">
+        {(["easy", "ok", "hard"] as const).map((level) => {
+          const isSelected = selected === level;
+          return (
+            <Pressable
+              key={level}
+              onPress={() => onSelect(selected === level ? null : level)}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderRadius: 20,
+                backgroundColor: isSelected ? colors.accent : colors.surface3,
+                borderWidth: 1,
+                borderColor: isSelected ? colors.accent : "transparent",
+              }}
+            >
+              <AppText
+                variant="small"
+                fontWeight="500"
+                style={{ color: isSelected ? "#fff" : colors.textPrimary }}
+              >
+                {CHALLENGE_LABELS[level]}
+              </AppText>
+            </Pressable>
+          );
+        })}
+      </XStack>
+    </YStack>
+  );
 }
 
 function RestTimer({
@@ -152,7 +191,7 @@ function RestTimer({
 }
 
 export function WorkoutSessionScreen({ navigation, route }: Props) {
-  const { sessionId, isStandalone } = route.params;
+  const { sessionId, isStandalone, applyAdjustment } = route.params;
   const { client } = useAuth();
   const { theme } = useTheme();
   const colors = getThemeColors(theme);
@@ -178,21 +217,21 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
     goToNextExercise,
     goToPrevExercise,
     skipRest,
-    handleRestComplete,
-    exerciseTimer,
+  handleRestComplete,
+  exerciseTimer,
   } = useWorkoutSession(sessionId, client?.id, isStandalone);
 
-  const [overallRpe, setOverallRpe] = useState("");
+  const [selectedChallenge, setSelectedChallenge] = useState<ExerciseChallengeLevel | null>(null);
+
+  useEffect(() => {
+    setSelectedChallenge(null);
+  }, [currentExerciseIndex]);
 
   const restSeconds = currentExercise?.rest_seconds ?? 90;
-  const volumeModifier = adaptation.volumeModifier;
-  const rpeModifier = adaptation.rpeModifier;
-  const suggestedRpe =
-    rpeModifier !== 0
-      ? Math.min(10, Math.max(1, Math.round(8 + rpeModifier)))
-      : undefined;
+  const useAdaptation = applyAdjustment !== false;
+  const effectiveVolumeModifier = useAdaptation ? adaptation.volumeModifier : 1;
   const getEffectiveSetsPlanned = (n: number) =>
-    Math.max(1, Math.round((n ?? 0) * volumeModifier));
+    Math.max(1, Math.round((n ?? 0) * effectiveVolumeModifier));
 
   useEffect(() => {
     if (phase === "rest" && !restTimer.isRunning && restTimer.secondsRemaining === 0) {
@@ -247,13 +286,6 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
   };
 
   const handleFinishWorkout = () => {
-    const rpeValue = overallRpe.trim()
-      ? (() => {
-          const n = parseFloat(overallRpe);
-          return !isNaN(n) && n >= 1 && n <= 10 ? n : undefined;
-        })()
-      : undefined;
-
     Alert.alert(
       "Avsluta pass",
       "Vill du spara och avsluta passet?",
@@ -262,7 +294,7 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
         {
           text: "Avsluta",
           onPress: async () => {
-            const { error } = await completeWorkout(rpeValue);
+            const { error } = await completeWorkout();
             if (error) {
               Alert.alert("Fel", error.message);
             } else {
@@ -484,59 +516,71 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
               </AppButton>
             )}
             {(exerciseTimer.isRunning || exerciseTimer.secondsRemaining < durationSec) && (
-              <XStack gap="$3" justifyContent="center">
-                <AppButton
-                  variant="secondary"
-                  size="md"
-                  onPress={() => {
-                    exerciseTimer.reset(durationSec);
-                    exerciseTimer.start(durationSec, isLastExercise);
-                  }}
-                >
-                  Omstart
-                </AppButton>
-                <AppButton
-                  variant="primary"
-                  size="md"
-                  onPress={goToNextExercise}
-                  disabled={exerciseTimer.isRunning}
-                >
-                  {isLastExercise ? "Avsluta övning" : "Nästa övning"}
-                </AppButton>
-              </XStack>
+              <>
+                <XStack gap="$3" justifyContent="center">
+                  <AppButton
+                    variant="secondary"
+                    size="md"
+                    onPress={() => {
+                      exerciseTimer.reset(durationSec);
+                      exerciseTimer.start(durationSec, isLastExercise);
+                    }}
+                  >
+                    Omstart
+                  </AppButton>
+                  <AppButton
+                    variant="primary"
+                    size="md"
+                    onPress={() =>
+                      isLastExercise
+                        ? finishLastExerciseAndComplete(selectedChallenge ?? undefined)
+                        : goToNextExercise(selectedChallenge ?? undefined)
+                    }
+                    disabled={exerciseTimer.isRunning}
+                  >
+                    {isLastExercise ? "Avsluta övning" : "Nästa övning"}
+                  </AppButton>
+                </XStack>
+                <ChallengeChips selected={selectedChallenge} onSelect={setSelectedChallenge} />
+              </>
             )}
           </YStack>
         )}
 
         {!isTimeBased && (
           <YStack gap="$4">
-            {Array.from({ length: effectiveSets }, (_, i) => i + 1).map((setNum) => (
-              <SetInputRow
+            <YStack gap="$2">
+              {Array.from({ length: effectiveSets }, (_, i) => i + 1).map((setNum) => (
+                <SetInputRow
                 key={setNum}
                 setNumber={setNum}
                 repsPlanned={ex.reps_planned ?? 0}
-                suggestedRpe={suggestedRpe}
                 log={getLogForSet(setLogs, ex.exercise_id, setNum)}
-                onUpdate={(reps, weight, rpe) => {
+                onUpdate={(reps, weight) => {
                   const existing = getLogForSet(setLogs, ex.exercise_id, setNum);
                   if (existing) {
-                    updateSetLog(ex.exercise_id, setNum, { reps, weight, rpe });
+                    updateSetLog(ex.exercise_id, setNum, { reps, weight });
                   } else {
                     addSetLog({
                       exerciseId: ex.exercise_id,
                       setNumber: setNum,
                       reps,
                       weight,
-                      rpe,
                     });
                   }
                 }}
               />
-            ))}
+              ))}
+            </YStack>
+            <ChallengeChips selected={selectedChallenge} onSelect={setSelectedChallenge} />
             <AppButton
               variant="primary"
               size="lg"
-              onPress={isLastExercise ? finishLastExerciseAndComplete : goToNextExercise}
+              onPress={() =>
+                isLastExercise
+                  ? finishLastExerciseAndComplete(selectedChallenge ?? undefined)
+                  : goToNextExercise(selectedChallenge ?? undefined)
+              }
             >
               {isLastExercise ? "Sista – avsluta övning" : "Nästa övning"}
             </AppButton>
@@ -572,9 +616,9 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
               <Pressable
                 onPress={() => {
                   if (isLastExercise) {
-                    finishLastExerciseAndComplete();
+                    finishLastExerciseAndComplete(selectedChallenge ?? undefined);
                   } else {
-                    goToNextExercise();
+                    goToNextExercise(selectedChallenge ?? undefined);
                   }
                 }}
                 style={{

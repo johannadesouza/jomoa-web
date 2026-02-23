@@ -4,25 +4,22 @@ import { XStack, YStack } from "tamagui";
 import { Section, Card, AppText } from "../../shared/ui";
 import type { ReadinessRecord } from "../../lib/services/readinessService";
 
-function getBarColor(score: number): string {
-  if (score >= 70) return "$success";
-  if (score >= 40) return "$accent";
+function getBarColor(energy: number): string {
+  if (energy >= 7) return "$success";
+  if (energy >= 4) return "$accent";
   return "$warning";
 }
 
 interface ReadinessGraphCardProps {
   records: ReadinessRecord[];
   todayDate: string;
-  todayReadiness: number | null;
 }
 
 export function ReadinessGraphCard({
   records,
   todayDate,
-  todayReadiness,
 }: ReadinessGraphCardProps) {
-  const BAR_HEIGHT = 56;
-  const ENERGY_HEIGHT = 14;
+  const BAR_HEIGHT = 40;
 
   return (
     <Section title="Hur du mår" subtitle="Senaste 7 dagar">
@@ -32,45 +29,32 @@ export function ReadinessGraphCard({
             backgroundColor="$surface3"
             borderRadius="$3"
             padding="$4"
-            paddingBottom="$5"
+            paddingBottom="$4"
           >
             <XStack justifyContent="space-between" alignItems="flex-end" gap="$2">
               {records.map((r) => {
-                const score = r.readiness_score ?? 0;
                 const energy = r.energy_level ?? 0;
-                const readinessH = Math.max(10, (score / 100) * BAR_HEIGHT);
-                const energyH = energy > 0 ? Math.max(4, (energy / 10) * ENERGY_HEIGHT) : 0;
+                const energyH = energy > 0 ? Math.max(8, (energy / 10) * BAR_HEIGHT) : 8;
                 const isToday = r.date === todayDate;
-                const barColor = getBarColor(score);
+                const barColor = getBarColor(energy);
                 return (
                   <YStack key={r.id} flex={1} alignItems="center" gap="$2">
                     <YStack
                       width="100%"
-                      height={BAR_HEIGHT + ENERGY_HEIGHT + 8}
+                      height={BAR_HEIGHT + 8}
                       justifyContent="flex-end"
                       alignItems="center"
-                      gap="$1"
                     >
                       <YStack
                         width="100%"
-                        minHeight={10}
-                        height={readinessH}
+                        minHeight={8}
+                        height={energyH}
                         backgroundColor={barColor}
                         opacity={isToday ? 1 : 0.85}
                         borderRadius="$3"
                         borderWidth={isToday ? 2 : 0}
                         borderColor="$textPrimary"
                       />
-                      {energyH > 0 && (
-                        <YStack
-                          width="75%"
-                          minHeight={4}
-                          height={energyH}
-                          backgroundColor="$accent"
-                          opacity={0.5}
-                          borderRadius="$full"
-                        />
-                      )}
                     </YStack>
                     <AppText
                       variant="caption"
@@ -84,11 +68,6 @@ export function ReadinessGraphCard({
                 );
               })}
             </XStack>
-            {todayReadiness != null && (
-              <AppText variant="caption" muted marginTop="$3" textAlign="center">
-                Poäng idag: {todayReadiness}%
-              </AppText>
-            )}
           </YStack>
         </Card.Content>
       </Card>

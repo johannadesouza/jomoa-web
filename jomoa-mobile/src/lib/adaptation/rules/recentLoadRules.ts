@@ -7,7 +7,6 @@ import type { ReadinessInput, RecentLoadInput } from "../types";
 
 export interface RuleEffect {
   volumeModifier?: number;
-  rpeModifier?: number;
   suggestDeload?: boolean;
   suggestRecovery?: boolean;
   reason: string;
@@ -47,7 +46,6 @@ export function evaluateRecentLoadRules(
   if (recentLoad.sessionsLast7Days >= VERY_HIGH_SESSIONS_THRESHOLD) {
     effects.push({
       volumeModifier: 0.85,
-      rpeModifier: -0.5,
       suggestDeload: true,
       reason: "Hög träningsbelastning (5+ pass/vecka) och återhämtningssignaler – minska volym.",
       ruleId: "high_load_recovery",
