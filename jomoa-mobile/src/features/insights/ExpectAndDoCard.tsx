@@ -1,5 +1,5 @@
 /**
- * ExpectAndDoCard – "Vad kan jag förvänta mig?" + "Vad kan jag göra?" (Hormona-inspirerad)
+ * ExpectAndDoCard – "Vad kan jag förvänta mig?" + "Vad kan jag göra?"
  * Strukturerad insikt med förväntningar och konkreta steg
  */
 import React from "react";

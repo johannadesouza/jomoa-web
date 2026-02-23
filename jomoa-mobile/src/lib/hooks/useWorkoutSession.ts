@@ -29,7 +29,7 @@ export function isTimeBasedExercise(ex: SessionExerciseWithExtras): boolean {
 
 export interface UseWorkoutSessionResult {
   session: (ProgramSessionData | SessionTemplateData) | null;
-  setLogs: SetLogEntry[];
+  logs: SetLogEntry[];
   isLoading: boolean;
   isSaving: boolean;
   persistError: string | null;
@@ -74,7 +74,7 @@ export function useWorkoutSession(
   isStandalone?: boolean
 ): UseWorkoutSessionResult {
   const [session, setSession] = useState<(ProgramSessionData | SessionTemplateData) | null>(null);
-  const [setLogs, setSetLogs] = useState<SetLogEntry[]>([]);
+  const [logs, setLogs] = useState<SetLogEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [restSeconds, setRestSeconds] = useState(0);
@@ -106,35 +106,39 @@ export function useWorkoutSession(
     async function load() {
       if (!sessionId) return;
       setIsLoading(true);
-      const [sessionData, inProgress] = await Promise.all([
-        isStandalone ? fetchSessionTemplateById(sessionId) : fetchSessionById(sessionId),
-        getInProgressWorkout(),
-      ]);
+      try {
+        const [sessionData, inProgress] = await Promise.all([
+          isStandalone ? fetchSessionTemplateById(sessionId) : fetchSessionById(sessionId),
+          getInProgressWorkout(),
+        ]);
 
-      if (cancelled) return;
+        if (cancelled) return;
 
-      if (sessionData) {
-        setSession(sessionData);
-        if (inProgress && inProgress.sessionId === sessionId && inProgress.isStandalone === isStandalone) {
-          setSetLogs(inProgress.setLogs);
-          setWorkoutStartedAt(inProgress.startedAt);
-          if (inProgress.restTimerSecondsRemaining != null && inProgress.restTimerSecondsRemaining > 0) {
-            setRestSeconds(inProgress.restTimerSecondsRemaining);
+        if (sessionData) {
+          setSession(sessionData);
+          if (inProgress && inProgress.sessionId === sessionId && inProgress.isStandalone === isStandalone) {
+            setLogs(inProgress.setLogs);
+            setWorkoutStartedAt(inProgress.startedAt);
+            if (inProgress.restTimerSecondsRemaining != null && inProgress.restTimerSecondsRemaining > 0) {
+              setRestSeconds(inProgress.restTimerSecondsRemaining);
+            }
+            setCurrentExerciseIndex(inProgress.currentExerciseIndex ?? 0);
+            setPhase(inProgress.phase === "challenge" ? "exercise" : (inProgress.phase ?? "exercise"));
+            setExerciseChallenges(inProgress.exerciseChallenges ?? {});
+          } else {
+            setLogs([]);
+            setWorkoutStartedAt(new Date().toISOString());
+            setCurrentExerciseIndex(0);
+            setPhase("exercise");
           }
-          setCurrentExerciseIndex(inProgress.currentExerciseIndex ?? 0);
-          setPhase(inProgress.phase === "challenge" ? "exercise" : (inProgress.phase ?? "exercise"));
-          setExerciseChallenges(inProgress.exerciseChallenges ?? {});
         } else {
-          setSetLogs([]);
-          setWorkoutStartedAt(new Date().toISOString());
-          setCurrentExerciseIndex(0);
-          setPhase("exercise");
+          setSession(null);
         }
-      } else {
-        setSession(null);
+      } catch {
+        if (!cancelled) setSession(null);
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
-
-      setIsLoading(false);
     }
 
     load();
@@ -168,7 +172,7 @@ export function useWorkoutSession(
   const isLastExercise = currentExerciseIndex >= sortedExercises.length - 1;
 
   latestFlowRef.current = { currentExerciseIndex, phase };
-  latestLogsRef.current = setLogs;
+  latestLogsRef.current = logs;
   latestExerciseChallengesRef.current = exerciseChallenges;
 
   const doPersist = useCallback(
@@ -209,7 +213,9 @@ export function useWorkoutSession(
       const run = async () => {
         await doPersist(latestLogsRef.current);
       };
-      persistChainRef.current = persistChainRef.current.then(run, run);
+      persistChainRef.current = persistChainRef.current
+        .then(run, run)
+        .catch(() => {});
     },
     [doPersist]
   );
@@ -229,7 +235,7 @@ export function useWorkoutSession(
         weight: entry.weight ?? null,
       };
 
-      setSetLogs((prev) => {
+      setLogs((prev) => {
         const filtered = prev.filter(
           (l) => !(l.exerciseId === entry.exerciseId && l.setNumber === entry.setNumber)
         );
@@ -247,7 +253,7 @@ export function useWorkoutSession(
       setNumber: number,
       update: Partial<Pick<SetLogEntry, "reps" | "weight">>
     ) => {
-      setSetLogs((prev) => {
+      setLogs((prev) => {
         const next = prev.map((l) =>
           l.exerciseId === exerciseId && l.setNumber === setNumber ? { ...l, ...update } : l
         );
@@ -266,7 +272,7 @@ export function useWorkoutSession(
       setIsSaving(true);
 
       const logsByExercise = new Map<string, SetLogEntry[]>();
-      for (const log of setLogs) {
+      for (const log of logs) {
         const list = logsByExercise.get(log.exerciseId) ?? [];
         list.push(log);
         logsByExercise.set(log.exerciseId, list);
@@ -311,7 +317,7 @@ export function useWorkoutSession(
 
       return { error };
     },
-    [clientId, session, setLogs, isStandalone]
+    [clientId, session, logs, isStandalone]
   );
 
   const onRestCompleteRef = useRef<(() => void) | null>(null);
@@ -467,7 +473,7 @@ export function useWorkoutSession(
 
   return {
     session,
-    setLogs,
+    logs,
     isLoading,
     isSaving,
     persistError,

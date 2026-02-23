@@ -5,7 +5,7 @@ React Native mobile app för JOMOA - din strategiska träningscoach.
 ## QA & Testing
 
 - **Seed data:** `supabase/seed.sql` – exempel för cykel, readiness, pass
-- **Manual QA:** Se `docs/QA_SEED_GUIDE.md` och `docs/WIRING_UX_AUDIT.md` (sektion 6)
+- **Manual QA:** Se `docs/QA_SEED_GUIDE.md` och `docs/E2E_VERIFICATION.md`
 - **Cycle data:** All cykeldata flödar via `CycleContext` – en enda källa
 
 ## Tech Stack
@@ -154,7 +154,6 @@ src/
     │   ├── tamagui.config.ts
     │   └── index.ts
     ├── types/           # TypeScript types
-    │   ├── client.ts
     │   └── onboarding.ts
     └── ui/              # Base UI components
         ├── Screen.tsx

@@ -269,8 +269,7 @@ const jomoaDarkTheme = {
   placeholderColor: colors.mutedWarm,
 } as const;
 
-// Light theme – inspo: assets/inspo (Hormona, Jö, Journey)
-// Cream, light peach, warm browns
+// Light theme – cream, light peach, warm browns
 const lightColors = {
   background: lightPalette.creamBg,
   card: lightPalette.creamCard,

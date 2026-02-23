@@ -1,5 +1,5 @@
 /**
- * PhaseIndicatorBar – enkel fas-visualisering (Hormona-inspirerad)
+ * PhaseIndicatorBar – enkel fas-visualisering
  * Horisontell bar med fyra faser, nuvarande markerad.
  */
 import React from "react";

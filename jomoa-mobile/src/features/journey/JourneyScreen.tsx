@@ -1,6 +1,6 @@
 /**
  * JourneyScreen – Insikter först, logga som segment
- * Hormona-inspirerad UX: Hur mår du idag?, Symtomlindring, Min prognos, Vad kan jag göra?
+ * Journey: Hur mår du idag?, Symtomlindring, Min prognos, Vad kan jag göra?
  */
 import React, { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";

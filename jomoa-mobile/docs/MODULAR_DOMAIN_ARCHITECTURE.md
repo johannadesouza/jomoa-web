@@ -212,7 +212,7 @@ const recentLoad = useRecentLoad(clientId);
 - `evaluateRecentLoadRules(recentLoad, readiness)` – `!recentLoad || sessions < 4` → returns `[]`.
 - `evaluateReadinessRules(readiness)` – `readiness === null` → returns `[]`.
 
-### 4.4 `useCalendar` – already optional
+### 4.4 `useCalendarMonth` – already optional
 
 - `assignmentData` – training only; null/empty → `sessions = []`.
 - `latestPeriodStart` – cycle only; null → `cyclePhase = null` for all days.

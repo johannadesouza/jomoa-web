@@ -1,5 +1,5 @@
 /**
- * HormoneGraph – Östrogen och progesteron över cykeln (Hormona-inspirerad)
+ * HormoneGraph – Östrogen och progesteron över cykeln
  * View-based bar visualization, no SVG
  */
 import React from "react";

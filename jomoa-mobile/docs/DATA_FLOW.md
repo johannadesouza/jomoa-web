@@ -4,7 +4,7 @@
 
 **Source of truth for planned workouts**: `client_program_assignments` (active) → `program_weeks` → `program_sessions`.
 
-- The **calendar** (`useCalendar`) shows planned sessions per week based on the client’s active program.
+- The **calendar** (`useCalendarMonth`) shows planned sessions per month based on the client’s active program.
 - **Dashboard** and **Workouts** use the same source: `fetchActiveAssignment` + `fetchSessionsByWeekId` / `fetchSessionsForWorkouts`.
 - Planned sessions come from `program_sessions` (day_of_week, name, etc.).
 

@@ -1,5 +1,5 @@
 /**
- * InsightCategoryStrip – Välmående, Näring, Fysiskt (Hormona-inspirerad)
+ * InsightCategoryStrip – Välmående, Näring, Fysiskt
  * Horisontella kategorikort som länkar till relevant innehåll
  */
 import React from "react";

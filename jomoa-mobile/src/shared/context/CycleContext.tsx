@@ -52,10 +52,16 @@ export function CycleProvider({ children }: { children: React.ReactNode }) {
     }
     setIsLoading(true);
     setError(null);
-    const { data, error } = await getLatestPeriodStart(client.id);
-    setLatestPeriodStart(data);
-    setError(error);
-    setIsLoading(false);
+    try {
+      const { data, error } = await getLatestPeriodStart(client.id);
+      setLatestPeriodStart(data);
+      setError(error);
+    } catch (e) {
+      setLatestPeriodStart(null);
+      setError(e instanceof Error ? e.message : "Kunde inte hämta");
+    } finally {
+      setIsLoading(false);
+    }
   }, [client?.id]);
 
   useEffect(() => {

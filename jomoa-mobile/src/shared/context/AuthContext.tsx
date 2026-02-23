@@ -56,30 +56,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const clientData = await fetchClient(session.user.id);
-        setClient(clientData ?? null);
-      } else {
-        setClient(null);
-      }
-      setIsLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(async ({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          const clientData = await fetchClient(session.user.id).catch(() => null);
+          setClient(clientData ?? null);
+        } else {
+          setClient(null);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        const clientData = await fetchClient(session.user.id);
-        setClient(clientData ?? null);
-      } else {
-        setClient(null);
+      try {
+        if (session?.user) {
+          const clientData = await fetchClient(session.user.id).catch(() => null);
+          setClient(clientData ?? null);
+        } else {
+          setClient(null);
+        }
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();

@@ -1,5 +1,5 @@
 /**
- * QuickLogStrip – Horisontella cirklar för snabbloggning (Hormona-inspirerad)
+ * QuickLogStrip – Horisontella cirklar för snabbloggning
  * Logga annat + Trötthet, Uppblåsthet, Energi: Låg, Sömn – öppnar Symtomlindring eller Logga
  */
 import React from "react";

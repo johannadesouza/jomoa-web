@@ -9,7 +9,7 @@ import { getThemeColors } from "../theme/colors";
 
 /**
  * InsightCard - Card for daily insights and phase knowledge
- * Layout: icon + headline + 2-3 bullet points (per VISUAL_INSPIRATION)
+ * Layout: icon + headline + 2-3 bullet points
  */
 
 interface InsightCardProps {

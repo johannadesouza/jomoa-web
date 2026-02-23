@@ -1,6 +1,5 @@
 /**
  * Fördefinierade mål per typ – JOMOA-stil
- * Inspirerat av Journey/Hormona, anpassat till vår design
  */
 
 import type { GoalType } from "../services/goalsService";

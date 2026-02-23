@@ -37,7 +37,7 @@ psql $DATABASE_URL -f seed.sql
 
 ## QA-flows (manual checklista)
 
-Se `docs/WIRING_UX_AUDIT.md` sektion 6.
+Se `docs/E2E_VERIFICATION.md`.
 
 ## QA Mode (framtida)
 

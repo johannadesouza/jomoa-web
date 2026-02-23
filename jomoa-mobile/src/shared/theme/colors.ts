@@ -50,6 +50,3 @@ const light = {
 export function getThemeColors(theme: ThemeMode) {
   return theme === "light" ? light : dark;
 }
-
-/** @deprecated Use getThemeColors(useTheme().theme) for theme-aware colors */
-export const themeColors = dark;

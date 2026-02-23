@@ -30,10 +30,15 @@ export function useReadinessHistory(
       return;
     }
     setIsLoading(true);
-    const { start, end } = getDateRange(days);
-    const data = await getReadinessHistory(clientId, start, end);
-    setRecords(data);
-    setIsLoading(false);
+    try {
+      const { start, end } = getDateRange(days);
+      const data = await getReadinessHistory(clientId, start, end);
+      setRecords(data);
+    } catch {
+      setRecords([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {

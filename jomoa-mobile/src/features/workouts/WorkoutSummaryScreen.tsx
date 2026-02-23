@@ -59,7 +59,7 @@ export function WorkoutSummaryScreen({ navigation, route }: Props) {
             size="lg"
             fullWidth
             onPress={() =>
-              navigation.navigate("Main", { screen: "DashboardTab" })
+              navigation.navigate("Main", { screen: "HomeTab" })
             }
           >
             Tillbaka till hem

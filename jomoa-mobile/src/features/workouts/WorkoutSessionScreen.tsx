@@ -25,11 +25,11 @@ import type { SetLogEntry } from "../../lib/domain/workout";
 type Props = NativeStackScreenProps<RootStackParamList, "WorkoutSession">;
 
 function getLogForSet(
-  setLogs: SetLogEntry[],
+  logs: SetLogEntry[],
   exerciseId: string,
   setNumber: number
 ): SetLogEntry | undefined {
-  return setLogs.find(
+  return logs.find(
     (l) => l.exerciseId === exerciseId && l.setNumber === setNumber
   );
 }
@@ -198,7 +198,7 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
   const adaptation = useTrainingAdaptation(client?.id);
   const {
     session,
-    setLogs,
+    logs,
     isLoading,
     isSaving,
     persistError,
@@ -254,18 +254,18 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
         doCompleteAndNavigate.current = false;
         Alert.alert("Fel", error.message);
       } else {
-        const totalVolume = setLogs.reduce(
+        const totalVolume = logs.reduce(
           (sum, l) => sum + (l.reps ?? 0) * (l.weight ?? 0),
           0
         );
         navigation.replace("WorkoutSummary", {
           sessionName: session.name ?? "Pass",
-          totalSets: setLogs.length,
+          totalSets: logs.length,
           totalVolume: Math.round(totalVolume),
         });
       }
     })();
-  }, [phase, currentExerciseIndex, sortedExercises.length, session, completeWorkout, setLogs, navigation]);
+  }, [phase, currentExerciseIndex, sortedExercises.length, session, completeWorkout, logs, navigation]);
 
   const handleAbort = () => {
     Alert.alert(
@@ -298,13 +298,13 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
             if (error) {
               Alert.alert("Fel", error.message);
             } else {
-              const totalVolume = setLogs.reduce(
+              const totalVolume = logs.reduce(
                 (sum, l) => sum + (l.reps ?? 0) * (l.weight ?? 0),
                 0
               );
               navigation.replace("WorkoutSummary", {
                 sessionName: session?.name ?? "Pass",
-                totalSets: setLogs.length,
+                totalSets: logs.length,
                 totalVolume: Math.round(totalVolume),
               });
             }
@@ -555,9 +555,9 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
                 key={setNum}
                 setNumber={setNum}
                 repsPlanned={ex.reps_planned ?? 0}
-                log={getLogForSet(setLogs, ex.exercise_id, setNum)}
+                log={getLogForSet(logs, ex.exercise_id, setNum)}
                 onUpdate={(reps, weight) => {
-                  const existing = getLogForSet(setLogs, ex.exercise_id, setNum);
+                  const existing = getLogForSet(logs, ex.exercise_id, setNum);
                   if (existing) {
                     updateSetLog(ex.exercise_id, setNum, { reps, weight });
                   } else {

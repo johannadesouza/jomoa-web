@@ -1,9 +1,9 @@
 import { Text, styled, GetProps } from "tamagui";
 
 /**
- * AppText - Typography component following JOMOA design standards + inspo
+ * AppText - Typography component following JOMOA design standards
  *
- * Typography Hierarchy (Cormorant for headings per Hormona/Jö/Journey):
+ * Typography Hierarchy:
  * - H1: 36px ($8), Cormorant semibold, page title
  * - H2: 20px ($4), Cormorant semibold, section title
  * - H3: 16px ($3), Inter semibold, card title

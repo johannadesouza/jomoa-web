@@ -1,5 +1,5 @@
 /**
- * SymptomReliefCards – Horisontella kort för symtomlindring (Hormona-inspirerad)
+ * SymptomReliefCards – Horisontella kort för symtomlindring
  * Visar rekommendationer baserat på fas och readiness
  */
 import React from "react";

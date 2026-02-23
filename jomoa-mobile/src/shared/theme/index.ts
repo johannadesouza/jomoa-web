@@ -2,7 +2,6 @@
  * JOMOA Theme - Re-exports from root tamagui.config.ts
  */
 
-export { themeColors } from "./colors";
 export {
   default as tamaguiConfig,
   tokens,

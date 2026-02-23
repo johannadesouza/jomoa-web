@@ -2,8 +2,9 @@ import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { themeColors } from "../shared/theme/colors";
+import { getThemeColors } from "../shared/theme/colors";
 import { useAuth } from "../shared/context/AuthContext";
+import { useTheme } from "../shared/context/ThemeContext";
 import { LoginScreen } from "../features/auth/LoginScreen";
 import { RegisterScreen } from "../features/auth/RegisterScreen";
 import { TabNavigator } from "./TabNavigator";
@@ -44,6 +45,8 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootNavigator() {
+  const { theme } = useTheme();
+  const themeColors = getThemeColors(theme);
   const { isAuthenticated, isLoading, client } = useAuth();
 
   const needsOnboarding = client?.onboarding_stage !== "completed";

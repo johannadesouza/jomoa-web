@@ -14,6 +14,24 @@ import { AuthProvider } from "./src/shared/context/AuthContext";
 import { AssignmentProvider } from "./src/shared/context/AssignmentContext";
 import { CycleProvider } from "./src/shared/context/CycleContext";
 import { ThemeProvider, useTheme } from "./src/shared/context/ThemeContext";
+import { getThemeColors } from "./src/shared/theme/colors";
+
+function LoadingScreen() {
+  const { theme } = useTheme();
+  const colors = getThemeColors(theme);
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: colors.background,
+      }}
+    >
+      <ActivityIndicator size="large" color={colors.accent} />
+    </View>
+  );
+}
 
 function AppContent() {
   const { theme } = useTheme();
@@ -41,19 +59,15 @@ export default function App() {
     Cormorant_600SemiBold,
   });
 
-  if (!fontsLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#141012" }}>
-        <ActivityIndicator size="large" color="#D96D46" />
-      </View>
-    );
-  }
-
   return (
     <ThemeProvider>
-      <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
-        <AppContent />
-      </TamaguiProvider>
+      {!fontsLoaded ? (
+        <LoadingScreen />
+      ) : (
+        <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
+          <AppContent />
+        </TamaguiProvider>
+      )}
     </ThemeProvider>
   );
 }

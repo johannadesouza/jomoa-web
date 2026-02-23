@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   fetchAllProgramsWithAssignment,
   fetchProgramWithStructure,
@@ -38,7 +38,7 @@ export function useActiveProgram(clientId: string | undefined): UseActiveProgram
   const [error, setError] = useState<string | null>(null);
   const [isSwitching, setIsSwitching] = useState(false);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     if (!clientId) {
       setPrograms([]);
       setActiveAssignment(null);
@@ -78,11 +78,11 @@ export function useActiveProgram(clientId: string | undefined): UseActiveProgram
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [clientId]);
 
   useEffect(() => {
     load();
-  }, [clientId]);
+  }, [load]);
 
   const switchProgram = async (
     cId: string,

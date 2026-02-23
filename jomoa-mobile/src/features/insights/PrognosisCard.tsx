@@ -1,5 +1,5 @@
 /**
- * PrognosisCard – "Min prognos" – vad kan du förvänta dig kommande dagar (Hormona-inspirerad)
+ * PrognosisCard – "Min prognos" – vad kan du förvänta dig kommande dagar
  */
 import React from "react";
 import { YStack, XStack } from "tamagui";

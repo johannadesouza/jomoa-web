@@ -12,9 +12,14 @@ export function usePrograms() {
 
   async function load() {
     setIsLoading(true);
-    const data = await fetchTemplatePrograms();
-    setPrograms(data);
-    setIsLoading(false);
+    try {
+      const data = await fetchTemplatePrograms();
+      setPrograms(data);
+    } catch {
+      setPrograms([]);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return { programs, isLoading, refetch: load };

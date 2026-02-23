@@ -52,7 +52,7 @@ export function CalendarScreen() {
   return (
     <Screen scroll padded>
       <YStack gap="$5">
-        {/* Kategoritabs – inspo: Allmänt / Humör / Näring */}
+        {/* Kategoritabs */}
         <XStack
           backgroundColor="$surface3"
           borderRadius="$4"
@@ -90,7 +90,7 @@ export function CalendarScreen() {
           })}
         </XStack>
 
-        {/* Månadsnavigering – inspo: Februari 2026 */}
+        {/* Månadsnavigering */}
         <XStack
           alignItems="center"
           justifyContent="space-between"
@@ -131,7 +131,7 @@ export function CalendarScreen() {
           </Pressable>
         </XStack>
 
-        {/* Veckodagar – inspo: M T O T F L S */}
+        {/* Veckodagar */}
         <XStack justifyContent="space-around" paddingVertical="$2">
           {WEEKDAY_LETTERS.map((letter, i) => (
             <YStack key={i} flex={1} alignItems="center">
@@ -142,7 +142,7 @@ export function CalendarScreen() {
           ))}
         </XStack>
 
-        {/* Datum-grid – inspo: färgkodade datum med faslabels */}
+        {/* Datum-grid */}
         <YStack gap="$1">
           {grid.map((row, rowIdx) => (
             <XStack key={rowIdx} gap="$1">

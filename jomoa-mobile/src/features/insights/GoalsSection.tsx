@@ -1,6 +1,6 @@
 /**
  * GoalsSection – mål från client_goals (databas-synk)
- * Journey-stil: kategori-kort med valt mål eller "Lägg till"
+ * Kategori-kort med valt mål eller "Lägg till"
  */
 import React, { useState } from "react";
 import { YStack, XStack } from "tamagui";
