@@ -3,6 +3,9 @@ import { YStack, Text } from "tamagui";
 
 import { Card } from "./Card";
 import { AppText } from "./AppText";
+import { AppIcon, type AppIconName } from "./AppIcon";
+import { useTheme } from "../context/ThemeContext";
+import { getThemeColors } from "../theme/colors";
 
 /**
  * InsightCard - Card for daily insights and phase knowledge
@@ -10,7 +13,8 @@ import { AppText } from "./AppText";
  */
 
 interface InsightCardProps {
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
+  iconName?: AppIconName;
   headline: string;
   bullets?: string[];
   body?: string;
@@ -20,12 +24,26 @@ interface InsightCardProps {
 
 export function InsightCard({
   icon,
+  iconName,
   headline,
   bullets = [],
   body,
   footer,
   onPress,
 }: InsightCardProps) {
+  const { theme } = useTheme();
+  const colors = getThemeColors(theme);
+
+  const renderIcon = () => {
+    if (iconName) {
+      return <AppIcon name={iconName} size={24} color={colors.textSecondary} />;
+    }
+    if (typeof icon === "string" || typeof icon === "number") {
+      return <Text fontSize="$xl">{icon}</Text>;
+    }
+    return icon;
+  };
+
   return (
     <Card pressable={!!onPress} onPress={onPress}>
       <Card.Content>
@@ -40,11 +58,7 @@ export function InsightCard({
               justifyContent="center"
               flexShrink={0}
             >
-              {typeof icon === "string" || typeof icon === "number" ? (
-                <Text fontSize="$xl">{icon}</Text>
-              ) : (
-                icon
-              )}
+              {renderIcon()}
             </YStack>
             <YStack flex={1} gap="$2">
               <AppText variant="h3">{headline}</AppText>

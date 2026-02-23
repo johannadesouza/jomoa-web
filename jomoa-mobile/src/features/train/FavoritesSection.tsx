@@ -7,7 +7,7 @@ import { YStack, Text } from "tamagui";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { Section, Card } from "../../shared/ui";
+import { Section, Card, AppIcon, type AppIconName } from "../../shared/ui";
 import { AppText } from "../../shared/ui";
 import { useFavorites } from "../../lib/hooks/useFavorites";
 import { fetchSessionsByIds } from "../../lib/services/workoutService";
@@ -15,12 +15,12 @@ import type { ProgramSessionData } from "../../lib/services/workoutService";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { TRAINING_STYLES } from "./trainingStyles";
 
-function getIconForFocus(focus: string | null | undefined): string {
-  if (!focus) return "💪";
+function getIconNameForFocus(focus: string | null | undefined): AppIconName {
+  if (!focus) return "barbell-outline";
   const style = TRAINING_STYLES.find(
     (s) => s.label.toLowerCase() === focus.toLowerCase() || s.id === focus.toLowerCase()
   );
-  return style?.icon ?? "💪";
+  return (style?.iconName ?? "barbell-outline") as AppIconName;
 }
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -67,7 +67,7 @@ export function FavoritesSection({ clientId, embedded }: FavoritesSectionProps) 
         >
           <Card.Content padding="$4">
             <YStack alignItems="center" gap="$2" paddingVertical="$2">
-              <Text fontSize="$xl">{getIconForFocus(session.focus)}</Text>
+              <AppIcon name={getIconNameForFocus(session.focus)} size={24} />
               <AppText variant="small" fontWeight="600" textAlign="center" numberOfLines={2}>
                 {session.name}
               </AppText>

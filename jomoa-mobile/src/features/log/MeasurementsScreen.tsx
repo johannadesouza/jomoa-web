@@ -43,7 +43,7 @@ export function MeasurementsScreen() {
             <Card>
               <Card.Content>
                 <EmptyState
-                  icon="📏"
+                  iconName="body-outline"
                   title="Inga mätningar ännu"
                   description="Lägg till din första mätning för att börja spåra din utveckling."
                   actionLabel="Lägg till mätning"

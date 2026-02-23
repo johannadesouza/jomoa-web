@@ -113,6 +113,7 @@ export function ProgramListScreen({ navigation }: Props) {
             <Card>
               <Card.Content>
                 <EmptyState
+                  iconName="list-outline"
                   title="Inga program"
                   description="Det finns inga tillgängliga program just nu."
                 />

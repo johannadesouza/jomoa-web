@@ -3,39 +3,46 @@ import { View, Pressable, StyleSheet, Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Text, YStack } from "tamagui";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { getThemeColors } from "../shared/theme/colors";
 import { useTheme } from "../shared/context/ThemeContext";
 import { DashboardScreen } from "../features/dashboard/DashboardScreen";
 import { TrainScreen } from "../features/train/TrainScreen";
-import { LogScreen } from "../features/log/LogScreen";
-import { InsightsScreen } from "../features/insights/InsightsScreen";
+import { JourneyScreen } from "../features/journey/JourneyScreen";
+import { NutritionScreen } from "../features/nutrition/NutritionScreen";
 import { LearnScreen } from "../features/learn/LearnScreen";
 
 export type TabParamList = {
   HomeTab: undefined;
   TrainTab: undefined;
-  LogTab: undefined;
-  InsightsTab: undefined;
+  JourneyTab: undefined;
+  NutritionTab: undefined;
   LearnTab: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const CENTER_INDEX = 2; // Hem is the 3rd tab (0: Träna, 1: Logga, 2: Hem, 3: Insikter, 4: Lär dig)
+const CENTER_INDEX = 2; // Hem (0: Träna, 1: Logga&insikter, 2: Hem, 3: Kost, 4: Lär dig)
 const CENTER_PILL_SIZE = 56;
 const CENTER_PILL_RISE = 16;
 
+type TabIconName = keyof typeof Ionicons.glyphMap;
+
 interface TabIconProps {
   label: string;
-  icon: string;
+  icon: TabIconName;
   focused: boolean;
 }
 
 function TabIcon({ label, icon, focused }: TabIconProps) {
+  const { theme } = useTheme();
+  const colors = getThemeColors(theme);
+  const iconColor = focused ? colors.accent : colors.textSecondary;
+
   return (
-    <YStack alignItems="center" gap="$1">
-      <Text fontSize="$xl">{icon}</Text>
+    <YStack alignItems="center" gap="$2">
+      <Ionicons name={icon} size={22} color={iconColor} />
       <Text
         fontSize="$xs"
         color={focused ? "$accent" : "$textSecondary"}
@@ -116,8 +123,8 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
                   accessibilityState={isFocused ? { selected: true } : {}}
                   accessibilityLabel={options.tabBarAccessibilityLabel ?? "Hem"}
                 >
-                  <YStack alignItems="center" gap={4}>
-                    <Text fontSize="$xl">🏠</Text>
+                  <YStack alignItems="center" gap={6}>
+                    <Ionicons name="home" size={24} color="#FFFBF8" />
                     <Text fontSize="$xs" color="#FFFBF8" fontWeight="600">
                       Hem
                     </Text>
@@ -159,7 +166,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
   },
   centerSlot: {
     flex: 1,
@@ -186,16 +194,16 @@ export function TabNavigator() {
         component={TrainScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon label="Träna" icon="💪" focused={focused} />
+            <TabIcon label="Träna" icon="barbell-outline" focused={focused} />
           ),
         }}
       />
       <Tab.Screen
-        name="LogTab"
-        component={LogScreen}
+        name="JourneyTab"
+        component={JourneyScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon label="Logga" icon="📝" focused={focused} />
+            <TabIcon label="Insikter" icon="stats-chart-outline" focused={focused} />
           ),
         }}
       />
@@ -204,16 +212,16 @@ export function TabNavigator() {
         component={DashboardScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon label="Hem" icon="🏠" focused={focused} />
+            <TabIcon label="Hem" icon="home-outline" focused={focused} />
           ),
         }}
       />
       <Tab.Screen
-        name="InsightsTab"
-        component={InsightsScreen}
+        name="NutritionTab"
+        component={NutritionScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon label="Insikter" icon="📊" focused={focused} />
+            <TabIcon label="Kost" icon="nutrition-outline" focused={focused} />
           ),
         }}
       />
@@ -222,7 +230,7 @@ export function TabNavigator() {
         component={LearnScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon label="Lär dig" icon="📚" focused={focused} />
+            <TabIcon label="Lär dig" icon="book-outline" focused={focused} />
           ),
         }}
       />

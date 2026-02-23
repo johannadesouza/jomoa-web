@@ -17,8 +17,8 @@ export const ROUTES = {
   Main: "Main",
   HomeTab: "HomeTab",
   TrainTab: "TrainTab",
-  LogTab: "LogTab",
-  InsightsTab: "InsightsTab",
+  JourneyTab: "JourneyTab",
+  NutritionTab: "NutritionTab",
   LearnTab: "LearnTab",
 
   // Stack
@@ -35,6 +35,7 @@ export const ROUTES = {
   Measurements: "Measurements",
   Calendar: "Calendar",
   Settings: "Settings",
+  Profile: "Profile",
 } as const;
 
 export type RouteName = keyof typeof ROUTES;

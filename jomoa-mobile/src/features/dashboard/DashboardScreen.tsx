@@ -13,6 +13,7 @@ import {
   AppButton,
   Divider,
   InsightCard,
+  AppIcon,
   LoadingScreen,
   ErrorState,
 } from "../../shared/ui";
@@ -132,10 +133,11 @@ export function DashboardScreen() {
   }
 
   const handleSettings = () => navigation.navigate("Settings");
+  const handleProfile = () => navigation.navigate("Profile");
 
   return (
     <Screen scroll padded>
-      <TopBar rightIcons={["settings"]} onSettings={handleSettings} />
+      <TopBar rightIcons={["profile", "settings"]} onProfile={handleProfile} onSettings={handleSettings} />
       <YStack gap="$8" paddingTop="$4" paddingBottom="$8">
         <YStack gap="$4">
           <AppText variant="h2" color="$textPrimary">
@@ -412,7 +414,7 @@ export function DashboardScreen() {
           totalVolume={insightStats?.totalVolume ?? 0}
           streak={streak}
           weeklyWorkouts={weeklyWorkouts}
-          onViewAll={() => navigation.navigate("Main", { screen: "InsightsTab" })}
+          onViewAll={() => navigation.navigate("Main", { screen: "JourneyTab" })}
         />
 
         {phase ? (
@@ -475,7 +477,7 @@ export function DashboardScreen() {
             )}
             {phase && phaseInsight && (
               <InsightCard
-                icon="🌙"
+                iconName="moon-outline"
                 headline={phaseInsight.headline}
                 bullets={phaseInsight.bullets}
                 footer={PHASE_KNOWLEDGE_COPY.homeTapForMore(getPhaseLabel(phaseInsight.phase ?? null))}
@@ -497,7 +499,7 @@ export function DashboardScreen() {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Text fontSize="$xl">💪</Text>
+                  <AppIcon name="barbell-outline" size={24} />
                 </YStack>
                 <YStack flex={1} gap="$1">
                   <AppText variant="body">Utforska pass</AppText>

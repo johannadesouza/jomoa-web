@@ -35,6 +35,8 @@ export { AppInput } from "./AppInput";
 // Content cards
 export { InsightCard } from "./InsightCard";
 export { LockIcon } from "./LockIcon";
+export { AppIcon } from "./AppIcon";
+export type { AppIconName } from "./AppIcon";
 
 // States
 export { LoadingScreen } from "./LoadingScreen";

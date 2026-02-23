@@ -7,7 +7,7 @@ import { useTheme } from "../../shared/context/ThemeContext";
 import { getThemeColors } from "../../shared/theme/colors";
 import { AppText } from "../../shared/ui";
 
-type TopBarIcon = "settings" | "calendar" | "search";
+type TopBarIcon = "settings" | "calendar" | "search" | "profile";
 
 interface TopBarProps {
   title?: string;
@@ -16,12 +16,14 @@ interface TopBarProps {
   onSettings?: () => void;
   onCalendar?: () => void;
   onSearch?: () => void;
+  onProfile?: () => void;
 }
 
 const ICON_MAP: Record<TopBarIcon, keyof typeof Ionicons.glyphMap> = {
   settings: "settings-outline",
   calendar: "calendar-outline",
   search: "search-outline",
+  profile: "person-circle-outline",
 };
 
 export function TopBar({
@@ -31,6 +33,7 @@ export function TopBar({
   onSettings,
   onCalendar,
   onSearch,
+  onProfile,
 }: TopBarProps) {
   const { theme } = useTheme();
   const colors = getThemeColors(theme);
@@ -40,8 +43,10 @@ export function TopBar({
       icon === "settings"
         ? onSettings
         : icon === "calendar"
-        ? onCalendar
-        : onSearch;
+          ? onCalendar
+          : icon === "search"
+            ? onSearch
+            : onProfile;
     if (!onPress) return null;
     return (
       <Pressable

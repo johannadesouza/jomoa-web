@@ -14,17 +14,23 @@ export interface PhaseProfile {
   nutritionFocus: string[];
   socialEnergyPattern: string[];
   cautionFlags: string[];
+  libidoPattern: string[];
+  enjoymentFocus: string[];
+  lifestyleTips: string[];
 }
 
 /** Section labels for UI – no hardcoded strings */
 export const PHASE_SECTION_LABELS = {
-  physiology: "Fysiologi",
+  physiology: "Hormoner & fysiologi",
   commonPatterns: "Vanliga mönster",
-  trainingFocus: "Träningsfokus",
+  trainingFocus: "Träning",
   recoveryFocus: "Återhämtning",
-  nutritionFocus: "Nutrition",
+  nutritionFocus: "Kost",
   socialEnergyPattern: "Social energi",
   cautionFlags: "Att tänka på",
+  libidoPattern: "Sex & intimitet",
+  enjoymentFocus: "Njutning & välmående",
+  lifestyleTips: "Livsstil",
 } as const;
 
 export const PHASE_PROFILES: Record<Exclude<CyclePhase, null>, PhaseProfile> = {
@@ -57,6 +63,20 @@ export const PHASE_PROFILES: Record<Exclude<CyclePhase, null>, PhaseProfile> = {
     cautionFlags: [
       "Intensiv träning vid kraftig blödning kan kännas fel.",
     ],
+    libidoPattern: [
+      "Lusten kan variera – lyssna på vad som känns rätt för dig.",
+      "Många känner sig mindre i humör för sex under mens – helt normalt.",
+    ],
+    enjoymentFocus: [
+      "Lugn rörelse, stretching eller en promenad kan kännas skönt.",
+      "Filmkväll, mysiga kläder och varm dryck.",
+      "Ta det lugnt – det är okej att vila.",
+    ],
+    lifestyleTips: [
+      "Prioritera sömn och extra vila de första dagarna.",
+      "Planera lite lugnare vecka om möjligt.",
+      "Håll dig hydrerad – särskilt vid blödning.",
+    ],
   },
 
   follicular: {
@@ -85,6 +105,20 @@ export const PHASE_PROFILES: Record<Exclude<CyclePhase, null>, PhaseProfile> = {
     ],
     cautionFlags: [
       "Överdriv inte – progression ska vara gradvis även i bra faser.",
+    ],
+    libidoPattern: [
+      "Östrogen stiger – många upplever ökad lust i denna fas.",
+      "Bra tid för intimitet om det känns rätt för dig.",
+    ],
+    enjoymentFocus: [
+      "Bra fas för nya aktiviteter och utmaningar.",
+      "Sociala träffar och träningskamrater brukar kännas bra.",
+      "Passa på energi och motivation.",
+    ],
+    lifestyleTips: [
+      "Utnytja den goda energin – planera träning och sociala aktiviteter.",
+      "Sömn brukar vara god – bibehåll rutiner.",
+      "Bra tid för projekt och fokusarbete.",
     ],
   },
 
@@ -145,6 +179,20 @@ export const PHASE_PROFILES: Record<Exclude<CyclePhase, null>, PhaseProfile> = {
     ],
     cautionFlags: [
       "Undvik att tvinga intensiv träning vid låg energi.",
+    ],
+    libidoPattern: [
+      "Kan variera – vissa vill ha mer närhet, andra mer avstånd.",
+      "Lyssna på kroppen – både behov av intimitet och ensamtid är normalt.",
+    ],
+    enjoymentFocus: [
+      "Mysiga aktiviteter – film, bok, varm dryck.",
+      "Lugnare träning eller stretching kan kännas bra.",
+      "Mys med vänner eller partner på dina villkor.",
+    ],
+    lifestyleTips: [
+      "Prioritera sömn – återhämtning tar längre tid i luteal.",
+      "Stresshantering – andning, promenad, mindre krav på dig själv.",
+      "Planera mer vila mellan pass och aktiviteter.",
     ],
   },
 };

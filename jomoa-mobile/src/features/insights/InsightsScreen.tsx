@@ -13,6 +13,7 @@ import {
   Section,
   Card,
   AppText,
+  AppIcon,
   LoadingScreen,
 } from "../../shared/ui";
 import { TopBar } from "../../components/layout/TopBar";
@@ -78,19 +79,19 @@ export function InsightsScreen() {
       label: "Total volym",
       value: stats ? String(stats.totalVolume) : "0",
       unit: "kg",
-      icon: "📊",
+      iconName: "bar-chart-outline" as const,
     },
     {
       label: "Pass denna månad",
       value: stats ? String(stats.sessionsThisMonth) : "0",
       unit: "",
-      icon: "💪",
+      iconName: "barbell-outline" as const,
     },
     {
       label: "Streak",
       value: stats ? String(stats.streak) : "0",
       unit: "dagar",
-      icon: "🔥",
+      iconName: "flame-outline" as const,
     },
   ];
 
@@ -236,7 +237,7 @@ export function InsightsScreen() {
                           alignItems="center"
                           justifyContent="center"
                         >
-                          <Text fontSize="$lg">{s.icon}</Text>
+                          <AppIcon name={s.iconName} size={20} />
                         </YStack>
                         <XStack alignItems="baseline" gap="$1">
                           <Text fontSize="$xxl" fontWeight="700" color="$accent">

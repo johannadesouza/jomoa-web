@@ -5,7 +5,7 @@
 export interface HighlightItem {
   value: string | number;
   label: string;
-  icon?: string;
+  iconName?: string; // Ionicons name, e.g. "barbell-outline"
 }
 
 export interface HighlightsInput {
@@ -18,13 +18,13 @@ export interface HighlightsInput {
 export function getHighlightItems(input: HighlightsInput): HighlightItem[] {
   const { sessionsThisMonth, totalVolume, streak, weeklyWorkouts } = input;
   return [
-    { value: sessionsThisMonth, label: "Pass denna månad", icon: "💪" },
-    { value: Math.round(totalVolume), label: "Volym (kg)", icon: "📊" },
+    { value: sessionsThisMonth, label: "Pass denna månad", iconName: "barbell-outline" },
+    { value: Math.round(totalVolume), label: "Volym (kg)", iconName: "bar-chart-outline" },
     {
       value: streak,
       label: streak === 1 ? "Dag streak" : "Dagars streak",
-      icon: "🔥",
+      iconName: "flame-outline",
     },
-    { value: weeklyWorkouts, label: "Pass denna vecka", icon: "📅" },
+    { value: weeklyWorkouts, label: "Pass denna vecka", iconName: "calendar-outline" },
   ];
 }

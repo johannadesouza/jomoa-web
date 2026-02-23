@@ -19,12 +19,13 @@ import { ReadinessScreen } from "../features/readiness";
 import { CalendarScreen } from "../features/calendar";
 import { SettingsScreen } from "../features/settings";
 import { MeasurementsScreen } from "../features/log/MeasurementsScreen";
+import { ProfileScreen } from "../features/profile/ProfileScreen";
 
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   Onboarding: undefined;
-  Main: { screen?: "HomeTab" | "TrainTab" | "LogTab" | "InsightsTab" | "LearnTab" } | undefined;
+  Main: { screen?: "HomeTab" | "TrainTab" | "JourneyTab" | "NutritionTab" | "LearnTab" } | undefined;
   WorkoutSession: { sessionId: string; isStandalone?: boolean; applyAdjustment?: boolean };
   WorkoutPreview: { sessionId: string; isStandalone?: boolean };
   WorkoutSummary: { sessionName: string; totalSets: number; totalVolume: number };
@@ -35,8 +36,9 @@ export type RootStackParamList = {
   Readiness: undefined;
   Calendar: undefined;
   Settings: undefined;
-  CycleInsights: undefined;
+  CycleInsights: { initialSegment?: string } | undefined;
   Measurements: undefined;
+  Profile: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -205,6 +207,18 @@ export function RootNavigator() {
               options={{
                 headerShown: true,
                 headerTitle: "Inställningar",
+                headerBackTitle: "Tillbaka",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
+                headerTitleStyle: { fontWeight: "600" },
+              }}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={ProfileScreen}
+              options={{
+                headerShown: true,
+                headerTitle: "Min resa",
                 headerBackTitle: "Tillbaka",
                 headerStyle: { backgroundColor: themeColors.background },
                 headerTintColor: themeColors.textPrimary,

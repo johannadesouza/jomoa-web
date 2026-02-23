@@ -97,7 +97,7 @@ export function WorkoutsScreen({
   if (allSessions.length === 0) {
     const empty = (
       <EmptyState
-        icon="💪"
+        iconName="barbell-outline"
         title="Inga pass"
         description={programSessions.length === 0 ? "Välj ett program eller vänta på nya fristående pass." : "Inga pass matchar den valda stilen."}
         actionLabel={programSessions.length === 0 ? "Välj program" : undefined}

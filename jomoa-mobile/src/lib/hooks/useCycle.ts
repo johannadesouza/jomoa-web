@@ -12,6 +12,7 @@ export function useCycle(clientId: string | undefined) {
     phase: ctx.phase,
     phaseLabel: ctx.phaseLabel,
     cycleDay: ctx.cycleDay,
+    cycleLength: ctx.cycleLength,
     daysUntilNextPeriod: ctx.daysUntilNextPeriod,
     isLoading: ctx.isLoading,
     error: ctx.error,

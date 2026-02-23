@@ -57,14 +57,16 @@ export function TrainScreen() {
 
   const handleSettings = () => navigation.navigate("Settings");
   const handleCalendar = () => navigation.navigate("Calendar");
+  const handleProfile = () => navigation.navigate("Profile");
 
   return (
     <Screen padded scroll>
       <TopBar
         title="Träning"
-        rightIcons={["calendar", "settings"]}
-        onSettings={handleSettings}
+        rightIcons={["calendar", "profile", "settings"]}
         onCalendar={handleCalendar}
+        onProfile={handleProfile}
+        onSettings={handleSettings}
       />
       <YStack gap="$8" paddingTop="$4">
         <Section title="Dagens pass" spacing="md">

@@ -2,6 +2,9 @@ import React from "react";
 import { YStack, styled, GetProps } from "tamagui";
 import { AppText } from "./AppText";
 import { AppButton } from "./AppButton";
+import { AppIcon, type AppIconName } from "./AppIcon";
+import { useTheme } from "../context/ThemeContext";
+import { getThemeColors } from "../theme/colors";
 
 function ActionButton({
   label,
@@ -85,6 +88,7 @@ const EmptyStateDescription = styled(AppText, {
 
 export type EmptyStateProps = GetProps<typeof EmptyStateContainer> & {
   icon?: React.ReactNode;
+  iconName?: AppIconName;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -104,6 +108,7 @@ export type EmptyStateProps = GetProps<typeof EmptyStateContainer> & {
  */
 export function EmptyState({
   icon,
+  iconName,
   title,
   description,
   actionLabel,
@@ -112,7 +117,7 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <EmptyStateContainer {...props}>
-      <IconWrapper icon={icon} IconContainer={EmptyStateIcon} />
+      <IconWrapper icon={icon} iconName={iconName} IconContainer={EmptyStateIcon} />
       <EmptyStateTitle>{title}</EmptyStateTitle>
       <DescriptionWrapper description={description} DescriptionComponent={EmptyStateDescription} />
       {actionLabel && onAction && (

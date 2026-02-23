@@ -2,7 +2,7 @@ import React from "react";
 import { ScrollView } from "react-native";
 import { YStack, Text } from "tamagui";
 
-import { Section, Card, AppText } from "../../shared/ui";
+import { Section, Card, AppText, AppIcon } from "../../shared/ui";
 import { getHighlightItems } from "./highlightsUtils";
 
 const ICON_BG_COLORS = ["$accent", "$success", "$warning", "$info"] as const;
@@ -49,7 +49,7 @@ export function HighlightsSection({
           >
             <Card.Content>
               <YStack alignItems="center" gap="$3" paddingVertical="$4" paddingHorizontal="$4">
-                {item.icon && (
+                {item.iconName && (
                   <YStack
                     width={44}
                     height={44}
@@ -59,9 +59,7 @@ export function HighlightsSection({
                     justifyContent="center"
                     opacity={0.9}
                   >
-                    <Text fontSize="$xl" color="#FFF">
-                      {item.icon}
-                    </Text>
+                    <AppIcon name={item.iconName} size={22} color="#FFF" />
                   </YStack>
                 )}
                 <Text fontSize="$7" fontWeight="700" color="$accent">

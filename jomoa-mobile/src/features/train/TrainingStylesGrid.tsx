@@ -4,9 +4,9 @@
  */
 import React from "react";
 import { ScrollView } from "react-native";
-import { YStack, Text } from "tamagui";
+import { YStack } from "tamagui";
 
-import { Section, Card } from "../../shared/ui";
+import { Section, Card, AppIcon, type AppIconName } from "../../shared/ui";
 import { AppText } from "../../shared/ui";
 import { TRAINING_STYLES } from "./trainingStyles";
 
@@ -42,7 +42,7 @@ export function TrainingStylesGrid({
         >
           <Card.Content>
             <YStack alignItems="center" gap="$1" paddingVertical="$3">
-              <Text fontSize="$xl">📋</Text>
+              <AppIcon name="apps-outline" size={24} color={isAllSelected ? "#FFFBF8" : undefined} />
               <AppText variant="caption" fontWeight="600" color={isAllSelected ? "$background" : "$color"}>
                 Alla
               </AppText>
@@ -66,7 +66,7 @@ export function TrainingStylesGrid({
             >
               <Card.Content>
                 <YStack alignItems="center" gap="$1" paddingVertical="$3">
-                  <Text fontSize="$xl">{style.icon}</Text>
+                  <AppIcon name={style.iconName as AppIconName} size={24} color={isSelected ? "#FFFBF8" : undefined} />
                   <AppText variant="caption" fontWeight="600" color={isSelected ? "$background" : "$color"}>
                     {style.label}
                   </AppText>

@@ -10,6 +10,8 @@ import {
   Card,
   AppText,
   AppButton,
+  AppIcon,
+  type AppIconName,
   Divider,
 } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
@@ -19,7 +21,7 @@ import { RootStackParamList } from "../../navigation/RootNavigator";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface SettingsItem {
-  icon: string;
+  iconName: AppIconName;
   label: string;
   onPress: () => void;
 }
@@ -45,18 +47,18 @@ export function SettingsScreen() {
   };
 
   const settingsItems: SettingsItem[] = [
-    { icon: "👤", label: "Profil", onPress: showComingSoon("Profil") },
-    { icon: "💪", label: "Mina program", onPress: () => navigation.navigate("ProgramList") },
-    { icon: "🎯", label: "Mål", onPress: () => navigation.navigate("Main", { screen: "InsightsTab" }) },
-    { icon: "💚", label: "Hur mår du idag?", onPress: () => navigation.navigate("Readiness") },
-    { icon: "🔔", label: "Notifikationer", onPress: showComingSoon("Notifikationer") },
-    { icon: "🌙", label: "Menscykel", onPress: () => navigation.navigate("Cycle") },
+    { iconName: "person-outline", label: "Profil", onPress: showComingSoon("Profil") },
+    { iconName: "barbell-outline", label: "Mina program", onPress: () => navigation.navigate("ProgramList") },
+    { iconName: "flag-outline", label: "Mål", onPress: () => navigation.navigate("Profile") },
+    { iconName: "heart-outline", label: "Hur mår du idag?", onPress: () => navigation.navigate("Readiness") },
+    { iconName: "notifications-outline", label: "Notifikationer", onPress: showComingSoon("Notifikationer") },
+    { iconName: "moon-outline", label: "Menscykel", onPress: () => navigation.navigate("Cycle") },
   ];
 
   const supportItems: SettingsItem[] = [
-    { icon: "❓", label: "Hjälp & support", onPress: showComingSoon("Hjälp") },
-    { icon: "📝", label: "Feedback", onPress: showComingSoon("Feedback") },
-    { icon: "📜", label: "Villkor", onPress: showComingSoon("Villkor") },
+    { iconName: "help-circle-outline", label: "Hjälp & support", onPress: showComingSoon("Hjälp") },
+    { iconName: "chatbubble-outline", label: "Feedback", onPress: showComingSoon("Feedback") },
+    { iconName: "document-text-outline", label: "Villkor", onPress: showComingSoon("Villkor") },
   ];
 
   return (
@@ -74,7 +76,7 @@ export function SettingsScreen() {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Text fontSize="$xl">👤</Text>
+                  <AppIcon name="person-outline" size={28} />
                 </YStack>
                 <YStack flex={1} gap="$1">
                   <AppText variant="h3">
@@ -106,7 +108,7 @@ export function SettingsScreen() {
                   >
                     <Card.Content>
                       <YStack alignItems="center" gap="$1">
-                        <Text fontSize="$xl">🌙</Text>
+                        <AppIcon name="moon-outline" size={24} color={theme === "dark" ? "#FFF" : undefined} />
                         <AppText
                           variant="body"
                           fontWeight="600"
@@ -126,7 +128,7 @@ export function SettingsScreen() {
                   >
                     <Card.Content>
                       <YStack alignItems="center" gap="$1">
-                        <Text fontSize="$xl">☀️</Text>
+                        <AppIcon name="sunny-outline" size={24} color={theme === "light" ? "#FFF" : undefined} />
                         <AppText
                           variant="body"
                           fontWeight="600"
@@ -156,7 +158,7 @@ export function SettingsScreen() {
                       pressStyle={{ opacity: 0.7 }}
                       onPress={item.onPress}
                     >
-                      <Text fontSize="$lg">{item.icon}</Text>
+                      <AppIcon name={item.iconName} size={22} />
                       <AppText variant="body" flex={1}>
                         {item.label}
                       </AppText>
@@ -183,7 +185,7 @@ export function SettingsScreen() {
                       pressStyle={{ opacity: 0.7 }}
                       onPress={item.onPress}
                     >
-                      <Text fontSize="$lg">{item.icon}</Text>
+                      <AppIcon name={item.iconName} size={22} />
                       <AppText variant="body" flex={1}>
                         {item.label}
                       </AppText>

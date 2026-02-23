@@ -1,8 +1,9 @@
 /**
  * GoalsSection – mål från client_goals (databas-synk)
+ * Journey-stil: kategori-kort med valt mål eller "Lägg till"
  */
 import React, { useState } from "react";
-import { YStack, XStack, Text } from "tamagui";
+import { YStack, XStack } from "tamagui";
 import { Pressable } from "react-native";
 
 import {
@@ -11,6 +12,7 @@ import {
   AppText,
   AppButton,
   EmptyState,
+  AppIcon,
 } from "../../shared/ui";
 import { useGoals } from "../../lib/hooks/useGoals";
 import {
@@ -20,31 +22,51 @@ import {
 } from "../../lib/services/goalsService";
 import { AddGoalModal } from "./AddGoalModal";
 
-const GOAL_ICONS: Record<GoalType, string> = {
-  fitness: "💪",
-  nutrition: "🥗",
-  wellness: "💚",
-  event: "🏃",
-};
-
-const GOAL_BG: Record<GoalType, string> = {
-  fitness: "$accent",
-  nutrition: "$success",
-  wellness: "$success",
-  event: "$info",
+const GOAL_ICON_NAMES: Record<GoalType, string> = {
+  fitness: "barbell-outline",
+  nutrition: "nutrition-outline",
+  wellness: "heart-outline",
+  event: "calendar-outline",
 };
 
 interface GoalsSectionProps {
   clientId: string | undefined;
 }
 
+function getGoalsByType(goals: ClientGoal[]): Record<GoalType, ClientGoal[]> {
+  const byType: Record<GoalType, ClientGoal[]> = {
+    fitness: [],
+    nutrition: [],
+    wellness: [],
+    event: [],
+  };
+  goals.forEach((g) => byType[g.goal_type].push(g));
+  return byType;
+}
+
 export function GoalsSection({ clientId }: GoalsSectionProps) {
   const { goals, isLoading, addGoal, updateGoalById, removeGoal } =
     useGoals(clientId);
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [editingType, setEditingType] = useState<GoalType | null>(null);
   const [editGoal, setEditGoal] = useState<ClientGoal | null>(null);
 
+  const byType = getGoalsByType(goals);
+  const GOAL_TYPES: GoalType[] = ["fitness", "nutrition", "wellness", "event"];
+
   if (isLoading) return null;
+
+  const handleOpenAdd = (type?: GoalType) => {
+    setEditingType(type ?? null);
+    setEditGoal(null);
+    setAddModalVisible(true);
+  };
+
+  const handleOpenEdit = (goal: ClientGoal) => {
+    setEditingType(goal.goal_type);
+    setEditGoal(goal);
+    setAddModalVisible(true);
+  };
 
   if (goals.length === 0) {
     return (
@@ -56,11 +78,11 @@ export function GoalsSection({ clientId }: GoalsSectionProps) {
           <Card>
             <Card.Content>
               <EmptyState
-                icon="🎯"
+                iconName="flag-outline"
                 title="Inga mål ännu"
                 description="Lägg till mål för att följa din utveckling och hålla dig motiverad."
                 actionLabel="Lägg till mål"
-                onAction={() => setAddModalVisible(true)}
+                onAction={() => handleOpenAdd()}
               />
             </Card.Content>
           </Card>
@@ -69,6 +91,7 @@ export function GoalsSection({ clientId }: GoalsSectionProps) {
           visible={addModalVisible}
           onClose={() => setAddModalVisible(false)}
           onSave={addGoal}
+          initialGoalType={editingType ?? undefined}
         />
       </>
     );
@@ -76,63 +99,75 @@ export function GoalsSection({ clientId }: GoalsSectionProps) {
 
   return (
     <>
-      <Section title="Mål" subtitle="Din resa mot bättre hälsa">
+      <Section
+        title="Mål"
+        subtitle="Din resa mot bättre hälsa"
+        viewAllLabel="Lägg till"
+        onViewAll={() => handleOpenAdd()}
+      >
         <YStack gap="$3">
-          {goals.map((goal) => (
-            <Pressable
-              key={goal.id}
-              onPress={() => setEditGoal(goal)}
-            >
-              <Card>
-                <Card.Content>
-                  <XStack alignItems="center" gap="$4">
-                    <YStack
-                      width={48}
-                      height={48}
-                      borderRadius="$full"
-                      backgroundColor={GOAL_BG[goal.goal_type]}
-                      alignItems="center"
-                      justifyContent="center"
-                      opacity={0.9}
-                    >
-                      <Text fontSize="$xl">{GOAL_ICONS[goal.goal_type]}</Text>
-                    </YStack>
-                    <YStack flex={1} gap="$1">
-                      <AppText variant="h3">
-                        {getGoalTypeLabel(goal.goal_type)}
+          {GOAL_TYPES.map((type) => {
+            const typeGoals = byType[type];
+            const summary = typeGoals
+              .map((g) => g.description || g.target_value || "Målsättning")
+              .join(", ");
+
+            return (
+              <Pressable
+                key={type}
+                onPress={() =>
+                  typeGoals.length > 0
+                    ? handleOpenEdit(typeGoals[0])
+                    : handleOpenAdd(type)
+                }
+              >
+                <Card>
+                  <Card.Content>
+                    <XStack alignItems="center" gap="$4">
+                      <YStack
+                        width={48}
+                        height={48}
+                        borderRadius="$full"
+                        backgroundColor="$surface3"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <AppIcon
+                          name={GOAL_ICON_NAMES[type] as AppIconName}
+                          size={24}
+                        />
+                      </YStack>
+                      <YStack flex={1} gap="$1">
+                        <AppText variant="h3">
+                          {getGoalTypeLabel(type)}
+                        </AppText>
+                        <AppText variant="caption" muted numberOfLines={1}>
+                          {typeGoals.length > 0
+                            ? summary
+                            : "Lägg till mål"}
+                        </AppText>
+                      </YStack>
+                      <AppText variant="caption" color="$colorSecondary">
+                        →
                       </AppText>
-                      <AppText variant="caption" muted>
-                        {goal.description || goal.target_value || "Målsättning"}
-                      </AppText>
-                    </YStack>
-                    <AppText variant="caption" color="$colorSecondary">
-                      →
-                    </AppText>
-                  </XStack>
-                </Card.Content>
-              </Card>
-            </Pressable>
-          ))}
+                    </XStack>
+                  </Card.Content>
+                </Card>
+              </Pressable>
+            );
+          })}
         </YStack>
-        <AppButton
-          variant="secondary"
-          marginTop="$3"
-          onPress={() => setAddModalVisible(true)}
-        >
-          Lägg till mål
-        </AppButton>
       </Section>
 
       <AddGoalModal
         visible={addModalVisible}
-        onClose={() => setAddModalVisible(false)}
+        onClose={() => {
+          setAddModalVisible(false);
+          setEditingType(null);
+          setEditGoal(null);
+        }}
         onSave={addGoal}
-      />
-
-      <AddGoalModal
-        visible={!!editGoal}
-        onClose={() => setEditGoal(null)}
-        onSave={addGoal}
+        initialGoalType={editingType ?? undefined}
         initialGoal={editGoal}
         onUpdate={updateGoalById}
         onDelete={removeGoal}

@@ -1,16 +1,20 @@
 import React from "react";
-import { YStack, XStack, Text } from "tamagui";
+import { YStack, XStack } from "tamagui";
 
-import { Section, Card, AppText } from "../../shared/ui";
+import { Section, Card, AppText, AppIcon, type AppIconName } from "../../shared/ui";
+import { useTheme } from "../../shared/context/ThemeContext";
+import { getThemeColors } from "../../shared/theme/colors";
 
 interface QuickActionProps {
-  icon: string;
+  iconName: AppIconName;
   label: string;
   onPress: () => void;
   iconBg?: string;
 }
 
-function QuickAction({ icon, label, onPress, iconBg = "$surface3" }: QuickActionProps) {
+function QuickAction({ iconName, label, onPress, iconBg = "$surface3" }: QuickActionProps) {
+  const { theme } = useTheme();
+  const colors = getThemeColors(theme);
   return (
     <Card flex={1} pressable minWidth={0} padding="$4" onPress={onPress}>
       <Card.Content padding="$0" alignItems="center" gap="$2">
@@ -24,7 +28,7 @@ function QuickAction({ icon, label, onPress, iconBg = "$surface3" }: QuickAction
           borderWidth={1}
           borderColor="$borderSoft"
         >
-          <Text fontSize="$xl">{icon}</Text>
+          <AppIcon name={iconName} size={22} color={colors.textPrimary} />
         </YStack>
         <AppText variant="caption" numberOfLines={1} center>
           {label}
@@ -50,10 +54,10 @@ export function QuickActionsSection({
   return (
     <Section title="Snabbåtgärder" subtitle="Logga och planera">
       <XStack gap="$3">
-        <QuickAction icon="💚" label="Logga energi" onPress={onLogEnergie} iconBg="$surface3" />
-        <QuickAction icon="🌸" label="Logga symptom" onPress={onLogSymptom} iconBg="$surface3" />
-        <QuickAction icon="⏱" label="Vilotimer" onPress={onOpenRestTimer} iconBg="$accent" />
-        <QuickAction icon="📅" label="Kalender" onPress={onOpenCalendar} iconBg="$surface3" />
+        <QuickAction iconName="heart-outline" label="Logga energi" onPress={onLogEnergie} iconBg="$surface3" />
+        <QuickAction iconName="leaf-outline" label="Logga symptom" onPress={onLogSymptom} iconBg="$surface3" />
+        <QuickAction iconName="timer-outline" label="Vilotimer" onPress={onOpenRestTimer} iconBg="$accent" />
+        <QuickAction iconName="calendar-outline" label="Kalender" onPress={onOpenCalendar} iconBg="$surface3" />
       </XStack>
     </Section>
   );

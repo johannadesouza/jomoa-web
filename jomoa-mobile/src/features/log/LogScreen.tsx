@@ -15,6 +15,7 @@ import {
   Card,
   AppText,
   AppButton,
+  AppIcon,
 } from "../../shared/ui";
 import { TopBar } from "../../components/layout/TopBar";
 import { useAuth } from "../../shared/context/AuthContext";
@@ -25,13 +26,13 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const SECONDARY_ACTIONS = [
   {
-    icon: "🌙",
+    iconName: "moon-outline" as const,
     label: "Period & symtom",
     desc: "Mensstart, kramper, energi",
     route: "Cycle" as const,
   },
   {
-    icon: "📏",
+    iconName: "body-outline" as const,
     label: "Mätningar",
     desc: "Vikt och kroppsmått",
     route: "Measurements" as const,
@@ -69,7 +70,7 @@ export function LogScreen() {
               <Card>
                 <Card.Content>
                   <YStack alignItems="center" gap="$3" paddingVertical="$4">
-                    <Text fontSize="$xxl">✓</Text>
+                    <AppIcon name="checkmark-circle-outline" size={40} />
                     <AppText variant="body" center>
                       Du har loggat hur du mår idag
                     </AppText>
@@ -93,7 +94,7 @@ export function LogScreen() {
               >
                 <Card.Content>
                   <YStack alignItems="center" gap="$4" paddingVertical="$4">
-                    <Text fontSize="$xxxl">💚</Text>
+                    <AppIcon name="heart-outline" size={48} />
                     <YStack alignItems="center" gap="$1">
                       <AppText variant="h3">Hur mår du idag?</AppText>
                       <AppText variant="small" muted center>
@@ -124,7 +125,7 @@ export function LogScreen() {
                 >
                   <Card.Content>
                     <YStack alignItems="center" gap="$2" paddingVertical="$4">
-                      <Text fontSize="$xxl">{action.icon}</Text>
+                      <AppIcon name={action.iconName} size={32} />
                       <AppText variant="body" fontWeight="600">
                         {action.label}
                       </AppText>
