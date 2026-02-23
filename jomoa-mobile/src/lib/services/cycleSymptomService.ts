@@ -83,6 +83,14 @@ export async function saveCycleSymptom(
   }
 }
 
+export async function getTodayHasSymptoms(
+  clientId: string
+): Promise<boolean> {
+  const today = new Date().toISOString().split("T")[0];
+  const symptoms = await getCycleSymptomsForRange(clientId, today, today);
+  return symptoms.length > 0;
+}
+
 export async function getCycleSymptomsForRange(
   clientId: string,
   startDate: string,

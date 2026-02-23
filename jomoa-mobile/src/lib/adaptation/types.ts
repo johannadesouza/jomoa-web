@@ -27,8 +27,22 @@ export interface RecentLoadInput {
   volumeLast7Days: number;
 }
 
+/** Alias for clarity: training load input to adaptation */
+export type TrainingLoadInput = RecentLoadInput;
+
+export interface WeeklyProgressionInput {
+  lastWeekPlanned: number;
+  lastWeekCompleted: number;
+  completionRate: number;
+}
+
 export interface AdaptationContext {
-  phase: CyclePhase;
+  /** Cycle phase – null if no cycle tracking; cycle rules are skipped */
+  cyclePhase: CyclePhase | null;
+  /** Readiness check-in – null if no check-in today */
   readiness: ReadinessInput | null;
-  recentLoad: RecentLoadInput | null;
+  /** Training load – null if no training; load rules are skipped */
+  trainingLoad: RecentLoadInput | null;
+  /** Weekly completion – null if no program or no data; progression rules skipped */
+  weeklyProgression: WeeklyProgressionInput | null;
 }

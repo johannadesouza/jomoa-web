@@ -2,12 +2,16 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "../../config/supabase";
 
-interface Client {
+export interface Client {
   id: string;
   profile_id: string;
   status: string;
   onboarding_stage: string | null;
   created_at: string;
+  cycle_length?: number | null;
+  irregular_cycle?: boolean | null;
+  no_period?: boolean | null;
+  peri_menopause?: boolean | null;
 }
 
 interface AuthContextType {
@@ -52,11 +56,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchClient(session.user.id).then(setClient);
+        const clientData = await fetchClient(session.user.id);
+        setClient(clientData ?? null);
+      } else {
+        setClient(null);
       }
       setIsLoading(false);
     });
@@ -68,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       if (session?.user) {
         const clientData = await fetchClient(session.user.id);
-        setClient(clientData);
+        setClient(clientData ?? null);
       } else {
         setClient(null);
       }

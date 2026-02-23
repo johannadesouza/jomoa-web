@@ -17,7 +17,10 @@ export type PlanStyle = "strict" | "flexible";
 
 export type DayOfWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7; // 1 = Monday, 7 = Sunday
 
+export type OnboardingPath = "cycle_only" | "training_only" | "both";
+
 export interface OnboardingData {
+  onboardingPath: OnboardingPath | null;
   // Step 1: Goals
   primaryGoal: TrainingGoal | null;
   secondaryGoals: TrainingGoal[];

@@ -6,6 +6,7 @@ import {
   getTodayInsight,
   type DailyInsight,
 } from "../services/insightService";
+import { getTodayHasSymptoms } from "../services/cycleSymptomService";
 
 const REFETCH_DEBOUNCE_MS = 300;
 
@@ -34,40 +35,53 @@ export function useDailyInsight(clientId: string | undefined) {
   const [insight, setInsight] = useState<DailyInsight | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refetch = useCallback(async () => {
+  const inputRef = useRef({
+    phase: phase ?? null,
+    cycleDay: cycleDay ?? null,
+    readinessTier: readinessToTier(readiness),
+    energyLevel: readiness?.energy_level ?? null,
+  });
+  inputRef.current = {
+    phase: phase ?? null,
+    cycleDay: cycleDay ?? null,
+    readinessTier: readinessToTier(readiness),
+    energyLevel: readiness?.energy_level ?? null,
+  };
+
+  const loadInsight = useCallback(async () => {
     if (!clientId) {
       setInsight(null);
       setIsLoading(false);
       return;
     }
     setIsLoading(true);
-    const tier = readinessToTier(readiness);
-    const { data, error } = await getOrCreateTodayInsight(clientId, {
-      phase: phase ?? null,
-      cycleDay: cycleDay ?? null,
-      readinessTier: tier,
-      energyLevel: readiness?.energy_level ?? null,
-      hasSymptoms: false,
-    });
-    if (!error && data) {
-      setInsight(data);
-    } else {
-      const fallback = await getTodayInsight(clientId);
-      if (fallback.data) setInsight(fallback.data);
-      else setInsight(null);
+    try {
+      const { phase: p, cycleDay: cd, readinessTier: tier, energyLevel: energy } = inputRef.current;
+      const hasSymptoms = await getTodayHasSymptoms(clientId);
+      const { data, error } = await getOrCreateTodayInsight(clientId, {
+        phase: p,
+        cycleDay: cd,
+        readinessTier: tier,
+        energyLevel: energy,
+        hasSymptoms,
+      });
+      if (!error && data) {
+        setInsight(data);
+      } else {
+        const fallback = await getTodayInsight(clientId);
+        if (fallback.data) setInsight(fallback.data);
+        else setInsight(null);
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  }, [clientId, phase, cycleDay, readiness?.readiness_score, readiness?.energy_level]);
+  }, [clientId]);
 
   useEffect(() => {
     if (!clientId) return;
-
-    const timeout = setTimeout(() => {
-      refetch();
-    }, REFETCH_DEBOUNCE_MS);
-
+    const timeout = setTimeout(loadInsight, REFETCH_DEBOUNCE_MS);
     return () => clearTimeout(timeout);
-  }, [clientId, refetch]);
+  }, [clientId, loadInsight]);
 
-  return { insight, isLoading, refetch };
+  return { insight, isLoading, refetch: loadInsight };
 }

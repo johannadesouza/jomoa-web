@@ -1,53 +1,20 @@
-import { useEffect, useState } from "react";
-import { getLatestPeriodStart } from "../services/cycleService";
-import {
-  calculateCyclePhase,
-  getPhaseLabel,
-  type CyclePhase,
-} from "../utils/cycleUtils";
+/**
+ * useCycle – reads from CycleContext (single source of truth)
+ * Use for today's phase. For arbitrary dates use useCycleContext().getPhaseForDate()
+ */
+import { useCycleContext } from "../../shared/context/CycleContext";
 
-interface UseCycleResult {
-  latestPeriodStart: string | null;
-  phase: CyclePhase;
-  phaseLabel: string;
-  cycleDay: number;
-  isLoading: boolean;
-  error: string | null;
-  refetch: () => Promise<void>;
-}
-
-export function useCycle(clientId: string | undefined): UseCycleResult {
-  const [latestPeriodStart, setLatestPeriodStart] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchLatestPeriod = async () => {
-    if (!clientId) {
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(true);
-    setError(null);
-    const { data, error: err } = await getLatestPeriodStart(clientId);
-    setLatestPeriodStart(data);
-    setError(err);
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    fetchLatestPeriod();
-  }, [clientId]);
-
-  const { phase, cycleDay } = calculateCyclePhase(latestPeriodStart);
-  const phaseLabel = getPhaseLabel(phase);
+export function useCycle(clientId: string | undefined) {
+  const ctx = useCycleContext();
 
   return {
-    latestPeriodStart,
-    phase,
-    phaseLabel,
-    cycleDay,
-    isLoading,
-    error,
-    refetch: fetchLatestPeriod,
+    latestPeriodStart: ctx.latestPeriodStart,
+    phase: ctx.phase,
+    phaseLabel: ctx.phaseLabel,
+    cycleDay: ctx.cycleDay,
+    daysUntilNextPeriod: ctx.daysUntilNextPeriod,
+    isLoading: ctx.isLoading,
+    error: ctx.error,
+    refetch: ctx.refetch,
   };
 }

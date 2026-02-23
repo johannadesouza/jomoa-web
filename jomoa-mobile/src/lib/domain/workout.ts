@@ -14,10 +14,15 @@ export interface SetLogEntry {
 
 export interface InProgressWorkout {
   sessionId: string;
+  isStandalone?: boolean;
   startedAt: string;
   setLogs: SetLogEntry[];
   restTimerSecondsRemaining: number | null;
   lastSetCompletedAt: string | null;
+  /** Övningsvis flöde: index av nuvarande övning (0-baserad) */
+  currentExerciseIndex?: number;
+  /** Övningsvis flöde: 'exercise' = övning, 'rest' = vila, 'finishing' = sparar och avslutar */
+  phase?: "exercise" | "rest" | "finishing";
 }
 
 export interface RestTimerState {

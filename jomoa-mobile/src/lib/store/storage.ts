@@ -6,10 +6,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const KEYS = {
-  ACTIVE_PROGRAM_ID: "@jomoa/activeProgramId",
   IN_PROGRESS_WORKOUT: "@jomoa/inProgressWorkout",
   REST_TIMER_STATE: "@jomoa/restTimerState",
-  LAST_SAVED_AT: "@jomoa/lastSavedAt",
+  PREFERRED_THEME: "@jomoa/preferredTheme",
 } as const;
 
 export const storageKeys = KEYS;

@@ -2,6 +2,12 @@
 
 React Native mobile app för JOMOA - din strategiska träningscoach.
 
+## QA & Testing
+
+- **Seed data:** `supabase/seed.sql` – exempel för cykel, readiness, pass
+- **Manual QA:** Se `docs/QA_SEED_GUIDE.md` och `docs/WIRING_UX_AUDIT.md` (sektion 6)
+- **Cycle data:** All cykeldata flödar via `CycleContext` – en enda källa
+
 ## Tech Stack
 
 - **Expo** - React Native framework
@@ -172,7 +178,7 @@ npm install
 
 # Create .env file
 cp .env.example .env
-# Add your Supabase credentials (same as jomoa-app)
+# Add your Supabase credentials
 
 # Start development
 npm start
@@ -281,8 +287,6 @@ function LoginScreen() {
 ```
 
 ## Code Standards
-
-Se `jomoa-app/docs/engineering-standards.md` för fullständig kodstandard.
 
 ### Regler
 

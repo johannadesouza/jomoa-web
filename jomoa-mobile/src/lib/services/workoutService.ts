@@ -7,9 +7,13 @@ export interface SessionExercise {
   order_index: number;
   sets_planned: number;
   reps_planned: string;
+  rest_seconds?: number | null;
+  /** Tidsbestämd övning: antal sekunder (t.ex. 55). Om null: set/reps-baserad */
+  duration_seconds?: number | null;
   exercise: {
     id: string;
     name: string;
+    default_video_url?: string | null;
   };
 }
 
@@ -92,6 +96,7 @@ export async function fetchSessionById(
         sets_planned,
         reps_planned,
         rest_seconds,
+        duration_seconds,
         exercise:exercises (id, name, default_video_url)
       )
     `)
@@ -124,5 +129,32 @@ export async function fetchSessionsByWeekId(weekId: string): Promise<ProgramSess
     .eq("week_id", weekId)
     .order("day_of_week", { ascending: true });
 
+  return (data || []) as unknown as ProgramSessionData[];
+}
+
+export async function fetchSessionsByIds(
+  sessionIds: string[]
+): Promise<ProgramSessionData[]> {
+  if (sessionIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("program_sessions")
+    .select(`
+      id,
+      name,
+      day_of_week,
+      focus,
+      session_exercises (
+        id,
+        exercise_id,
+        order_index,
+        sets_planned,
+        reps_planned,
+        exercise:exercises (id, name)
+      )
+    `)
+    .in("id", sessionIds);
+
+  if (error || !data) return [];
   return (data || []) as unknown as ProgramSessionData[];
 }

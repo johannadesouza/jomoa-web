@@ -4,7 +4,7 @@ Manuellt test av hela flödet för att säkerställa att produkten fungerar.
 
 ## Förutsättningar
 
-- Supabase-migrationer är körda (se `jomoa-app/supabase/MIGRATION_ORDER.txt`)
+- Supabase-migrationer är körda (se `web/supabase/migrations/` för befintliga migrations)
 - `EXPO_PUBLIC_SUPABASE_URL` och `EXPO_PUBLIC_SUPABASE_ANON_KEY` sätts i miljön
 - Appen startar med `npx expo start`
 

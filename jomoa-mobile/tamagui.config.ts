@@ -1,27 +1,54 @@
 import { config as defaultConfig } from "@tamagui/config/v3";
 import { createTamagui } from "tamagui";
-import { createTokens } from "@tamagui/core";
+import { createTokens, createFont } from "@tamagui/core";
 import { createInterFont } from "@tamagui/font-inter";
 
 // =============================================================================
-// JOMOA DESIGN TOKENS
+// JOMOA DESIGN TOKENS – Brand Style Guidelines
 // =============================================================================
 
-const colors = {
-  deepPlumBlack: "#141012",
-  warmCharcoal: "#1E1A1C",
-  surface3: "#2A2426",
-  softLight: "#EDE8E6",
-  mutedWarm: "#8A7F7A",
+// Brand colors (Style guidelines)
+const brandColors = {
+  softLightPink: "#FFFBF7",
   warmTerracotta: "#D96D46",
-  accentHover: "#E57D56",
+  terracottaLighter: "#FDB499",
+  yellowBeigeSand: "#FEE7AB",
+  deepPlumBrown: "#462324",
+  deepPlumBrownLighter: "#976568",
+  dustyMauve: "#5E3F50",
+  dustyMauveLighter: "#F0D6D7",
+};
+
+const accentColors = {
+  warmTerracotta: brandColors.warmTerracotta,
+  accentHover: brandColors.terracottaLighter,
   accentPressed: "#C45D36",
+};
+
+const lightPalette = {
+  creamBg: brandColors.softLightPink,
+  creamCard: "#FFF5F0",
+  lightPeach: brandColors.dustyMauveLighter,
+  warmGray: "#F5EBE8",
+  warmBrown: "#462324",
+  warmBrownMuted: brandColors.deepPlumBrownLighter,
+};
+
+const colors = {
+  deepPlumBlack: brandColors.deepPlumBrown,
+  warmCharcoal: "#5A2D2E",
+  surface3: "#6E3F41",
+  softLight: "#FEE7AB",
+  mutedWarm: brandColors.deepPlumBrownLighter,
+  ...accentColors,
+  ...lightPalette,
+  ...brandColors,
   success: "#4CAF50",
   warning: "#FF9800",
   error: "#F44336",
   info: "#2196F3",
-  borderSoft: "rgba(237, 232, 230, 0.12)",
-  borderStrong: "rgba(237, 232, 230, 0.18)",
+  borderSoft: "rgba(254, 231, 171, 0.15)",
+  borderStrong: "rgba(254, 231, 171, 0.25)",
   transparent: "transparent",
 } as const;
 
@@ -195,6 +222,17 @@ const interFont = createInterFont({
   },
 });
 
+const cormorantFont = createFont({
+  family: "Cormorant_600SemiBold",
+  size: { ...fontSize },
+  lineHeight: { ...lineHeight },
+  weight: { 600: "600" },
+  letterSpacing: { 1: 0 },
+  face: {
+    600: { normal: "Cormorant_600SemiBold" },
+  },
+});
+
 const jomoaDarkTheme = {
   background: colors.deepPlumBlack,
   backgroundHover: colors.warmCharcoal,
@@ -208,7 +246,7 @@ const jomoaDarkTheme = {
   colorFocus: colors.softLight,
   colorPress: colors.softLight,
   colorSecondary: colors.mutedWarm,
-  colorTransparent: "rgba(237, 232, 230, 0)",
+  colorTransparent: "rgba(254, 231, 171, 0)",
   textPrimary: colors.softLight,
   textSecondary: colors.mutedWarm,
   borderColor: colors.borderSoft,
@@ -231,17 +269,64 @@ const jomoaDarkTheme = {
   placeholderColor: colors.mutedWarm,
 } as const;
 
+// Light theme – inspo: assets/inspo (Hormona, Jö, Journey)
+// Cream, light peach, warm browns
+const lightColors = {
+  background: lightPalette.creamBg,
+  card: lightPalette.creamCard,
+  surface3: lightPalette.warmGray,
+  cardHighlight: lightPalette.lightPeach,
+  textPrimary: lightPalette.warmBrown,
+  textSecondary: lightPalette.warmBrownMuted,
+};
+
+const jomoaLightTheme = {
+  background: lightColors.background,
+  backgroundHover: lightColors.surface3,
+  backgroundFocus: lightColors.surface3,
+  backgroundPress: lightPalette.lightPeach,
+  backgroundStrong: lightColors.card,
+  backgroundTransparent: "transparent",
+  surface3: lightColors.surface3,
+  color: lightColors.textPrimary,
+  colorHover: lightColors.textPrimary,
+  colorFocus: lightColors.textPrimary,
+  colorPress: lightColors.textPrimary,
+  colorSecondary: lightColors.textSecondary,
+  colorTransparent: "rgba(70, 35, 36, 0)",
+  textPrimary: lightColors.textPrimary,
+  textSecondary: lightColors.textSecondary,
+  borderColor: "rgba(70, 35, 36, 0.12)",
+  borderColorHover: "rgba(70, 35, 36, 0.18)",
+  borderColorFocus: accentColors.warmTerracotta,
+  borderColorPress: "rgba(70, 35, 36, 0.18)",
+  borderSoft: "rgba(70, 35, 36, 0.12)",
+  borderStrong: "rgba(70, 35, 36, 0.18)",
+  card: lightColors.card,
+  cardHover: lightPalette.lightPeach,
+  accent: accentColors.warmTerracotta,
+  accentHover: accentColors.accentHover,
+  accentPress: accentColors.accentPressed,
+  success: colors.success,
+  warning: colors.warning,
+  error: colors.error,
+  info: colors.info,
+  shadowColor: "rgba(0, 0, 0, 0.08)",
+  shadowColorHover: "rgba(0, 0, 0, 0.12)",
+  placeholderColor: lightColors.textSecondary,
+} as const;
+
 const tamaguiConfig = createTamagui({
   ...defaultConfig,
   tokens,
   themes: {
     ...defaultConfig.themes,
     dark: jomoaDarkTheme,
-    light: jomoaDarkTheme,
+    light: jomoaLightTheme,
   },
   fonts: {
     ...defaultConfig.fonts,
-    heading: interFont,
+    heading: cormorantFont,
     body: interFont,
   },
   defaultTheme: "dark",

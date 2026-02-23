@@ -12,6 +12,7 @@ import {
 } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
+import { OnboardingStepDots } from "./OnboardingStepDots";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "CycleSetup">;
 
@@ -21,7 +22,8 @@ export function CycleSetupScreen({ navigation }: Props) {
     data.lastPeriodStart ?? ""
   );
 
-  const wantsTracking = data.wantsCycleTracking === true;
+  const isCycleOnly = data.onboardingPath === "cycle_only";
+  const wantsTracking = isCycleOnly || data.wantsCycleTracking === true;
 
   const handleSelect = (value: boolean | null) => {
     updateData({ wantsCycleTracking: value });
@@ -51,12 +53,17 @@ export function CycleSetupScreen({ navigation }: Props) {
       <YStack flex={1} justifyContent="space-between">
         <YStack gap="$6" paddingTop="$4">
           <YStack gap="$2">
-            <AppText variant="h1">Menscykel</AppText>
+            <AppText variant="h1">
+              {isCycleOnly ? "Logga din period" : "Menscykel"}
+            </AppText>
             <AppText variant="body" muted>
-              Vill du spåra din cykel för anpassade träningsrekommendationer?
+              {isCycleOnly
+                ? "När började din senaste period? Vi anpassar rekommendationer utifrån din cykelfas."
+                : "Vill du spåra din cykel för anpassade träningsrekommendationer?"}
             </AppText>
           </YStack>
 
+          {!isCycleOnly && (
           <YStack gap="$2">
             <Pressable onPress={() => handleSelect(true)}>
               <Card
@@ -127,11 +134,15 @@ export function CycleSetupScreen({ navigation }: Props) {
                 </Card.Content>
               </Card>
             </Pressable>
+          </YStack>
+          )}
 
-            {wantsTracking && (
-              <YStack gap="$2" marginTop="$2" padding="$4" backgroundColor="$surface3" borderRadius="$3">
+          {wantsTracking && (
+              <YStack gap="$2" marginTop={isCycleOnly ? 0 : "$2"} padding="$4" backgroundColor="$surface3" borderRadius="$3">
                 <AppText variant="small" muted>
-                  När började din senaste period? (valfritt)
+                  {isCycleOnly
+                    ? "När började din senaste period?"
+                    : "När började din senaste period? (valfritt)"}
                 </AppText>
                 <AppInput
                   placeholder="ÅÅÅÅ-MM-DD"
@@ -143,7 +154,6 @@ export function CycleSetupScreen({ navigation }: Props) {
                 </AppText>
               </YStack>
             )}
-          </YStack>
         </YStack>
 
         <YStack gap="$4" paddingBottom="$8">
@@ -163,17 +173,7 @@ export function CycleSetupScreen({ navigation }: Props) {
           >
             Tillbaka
           </AppButton>
-          <XStack justifyContent="center" gap="$2">
-            {[1, 2, 3, 4, 5].map((step) => (
-              <XStack
-                key={step}
-                width={8}
-                height={8}
-                borderRadius="$full"
-                backgroundColor={step === 4 ? "$accent" : "$borderColor"}
-              />
-            ))}
-          </XStack>
+          <OnboardingStepDots path={data.onboardingPath} screen="CycleSetup" />
         </YStack>
       </YStack>
     </Screen>

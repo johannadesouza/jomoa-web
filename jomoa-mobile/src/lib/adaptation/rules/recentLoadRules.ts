@@ -48,6 +48,7 @@ export function evaluateRecentLoadRules(
     effects.push({
       volumeModifier: 0.85,
       rpeModifier: -0.5,
+      suggestDeload: true,
       reason: "Hög träningsbelastning (5+ pass/vecka) och återhämtningssignaler – minska volym.",
       ruleId: "high_load_recovery",
     });

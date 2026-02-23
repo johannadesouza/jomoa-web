@@ -123,15 +123,38 @@ export interface SetLogInput {
   rpe: number | null;
 }
 
+/** Check if client completed a specific session template today */
+export async function fetchTodayCompletedSessionTemplate(
+  clientId: string,
+  sessionTemplateId: string
+): Promise<{ id: string } | null> {
+  const today = new Date().toISOString().split("T")[0];
+  const { data } = await supabase
+    .from("workout_sessions_log")
+    .select("id")
+    .eq("client_id", clientId)
+    .eq("session_template_id", sessionTemplateId)
+    .eq("date", today)
+    .eq("status", "completed")
+    .maybeSingle();
+  return data ? { id: data.id } : null;
+}
+
 export async function createWorkoutLogWithSets(
   clientId: string,
-  programSessionId: string,
+  sessionId: string,
   setLogs: SetLogInput[],
-  overallRpe?: number | null
+  overallRpe?: number | null,
+  options?: { isStandalone?: boolean }
 ): Promise<{ workoutLogId?: string; error: Error | null }> {
   const today = new Date().toISOString().split("T")[0];
+  const isStandalone = options?.isStandalone ?? false;
+  const programSessionId = isStandalone ? null : sessionId;
+  const sessionTemplateId = isStandalone ? sessionId : null;
 
-  const existing = await fetchTodayCompletedSession(clientId, programSessionId);
+  const existing = isStandalone
+    ? await fetchTodayCompletedSessionTemplate(clientId, sessionId)
+    : await fetchTodayCompletedSession(clientId, sessionId);
   if (existing) {
     return {
       error: new Error("Detta pass är redan genomfört idag. Du kan inte logga samma pass flera gånger samma dag."),
@@ -143,6 +166,7 @@ export async function createWorkoutLogWithSets(
     .insert({
       client_id: clientId,
       program_session_id: programSessionId,
+      session_template_id: sessionTemplateId,
       date: today,
       status: "completed",
       overall_rpe: overallRpe ?? null,
@@ -236,21 +260,30 @@ export interface LoggedWorkout {
   program_session?: { name: string } | null;
 }
 
+/** Check if client completed a specific program session on a given date */
+export async function fetchCompletedSessionForDate(
+  clientId: string,
+  programSessionId: string,
+  date: string
+): Promise<{ id: string } | null> {
+  const { data } = await supabase
+    .from("workout_sessions_log")
+    .select("id")
+    .eq("client_id", clientId)
+    .eq("program_session_id", programSessionId)
+    .eq("date", date)
+    .eq("status", "completed")
+    .maybeSingle();
+  return data ? { id: data.id } : null;
+}
+
 /** Check if client completed a specific program session today */
 export async function fetchTodayCompletedSession(
   clientId: string,
   programSessionId: string
 ): Promise<{ id: string } | null> {
   const today = new Date().toISOString().split("T")[0];
-  const { data } = await supabase
-    .from("workout_sessions_log")
-    .select("id")
-    .eq("client_id", clientId)
-    .eq("program_session_id", programSessionId)
-    .eq("date", today)
-    .eq("status", "completed")
-    .maybeSingle();
-  return data ? { id: data.id } : null;
+  return fetchCompletedSessionForDate(clientId, programSessionId, today);
 }
 
 export interface RecentLoad {

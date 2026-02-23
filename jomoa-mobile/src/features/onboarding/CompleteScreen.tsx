@@ -6,7 +6,9 @@ import { Alert } from "react-native";
 import { Screen, AppText, AppButton } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
+import { OnboardingStepDots } from "./OnboardingStepDots";
 import { useAuth } from "../../shared/context/AuthContext";
+import { useCycleContext } from "../../shared/context/CycleContext";
 import { supabase } from "../../config/supabase";
 import { savePeriodStart } from "../../lib/services/cycleService";
 
@@ -15,6 +17,7 @@ type Props = NativeStackScreenProps<OnboardingStackParamList, "Complete">;
 export function CompleteScreen({ navigation }: Props) {
   const { data } = useOnboarding();
   const { client, refreshClient } = useAuth();
+  const { refetch: refetchCycle } = useCycleContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleComplete = async () => {
@@ -27,11 +30,14 @@ export function CompleteScreen({ navigation }: Props) {
 
     try {
       const clientUpdate: Record<string, unknown> = {
-        primary_goal: data.primaryGoal,
-        training_frequency: data.trainingFrequency,
-        training_days: data.trainingDays,
         onboarding_stage: "completed",
       };
+
+      if (data.onboardingPath !== "cycle_only") {
+        clientUpdate.primary_goal = data.primaryGoal;
+        clientUpdate.training_frequency = data.trainingFrequency;
+        clientUpdate.training_days = data.trainingDays;
+      }
 
       if (data.wantsCycleTracking === true) {
         clientUpdate.cycle_length = data.cycleLength ?? 28;
@@ -54,6 +60,7 @@ export function CompleteScreen({ navigation }: Props) {
 
       if (data.lastPeriodStart) {
         await savePeriodStart(client.id, data.lastPeriodStart);
+        await refetchCycle();
       }
 
       await refreshClient();
@@ -108,26 +115,32 @@ export function CompleteScreen({ navigation }: Props) {
           </YStack>
 
           <YStack gap="$4" backgroundColor="$backgroundStrong" padding="$4" borderRadius="$4">
-            <YStack gap="$2">
-              <AppText variant="small" muted>
-                Ditt mål
-              </AppText>
-              <AppText variant="h3">{getGoalLabel()}</AppText>
-            </YStack>
+            {data.onboardingPath !== "cycle_only" && (
+              <>
+                <YStack gap="$2">
+                  <AppText variant="small" muted>
+                    Ditt mål
+                  </AppText>
+                  <AppText variant="h3">{getGoalLabel()}</AppText>
+                </YStack>
 
-            <YStack gap="$2">
-              <AppText variant="small" muted>
-                Träningsfrekvens
-              </AppText>
-              <AppText variant="h3">{data.trainingFrequency} dagar/vecka</AppText>
-            </YStack>
+                <YStack gap="$2">
+                  <AppText variant="small" muted>
+                    Träningsfrekvens
+                  </AppText>
+                  <AppText variant="h3">
+                    {data.trainingFrequency} dagar/vecka
+                  </AppText>
+                </YStack>
 
-            <YStack gap="$2">
-              <AppText variant="small" muted>
-                Träningsdagar
-              </AppText>
-              <AppText variant="h3">{getDaysLabel()}</AppText>
-            </YStack>
+                <YStack gap="$2">
+                  <AppText variant="small" muted>
+                    Träningsdagar
+                  </AppText>
+                  <AppText variant="h3">{getDaysLabel()}</AppText>
+                </YStack>
+              </>
+            )}
 
             {data.wantsCycleTracking && (
               <YStack gap="$2">
@@ -162,17 +175,7 @@ export function CompleteScreen({ navigation }: Props) {
           >
             Tillbaka
           </AppButton>
-          <XStack justifyContent="center" gap="$2">
-            {[1, 2, 3, 4, 5].map((step) => (
-              <XStack
-                key={step}
-                width={8}
-                height={8}
-                borderRadius="$full"
-                backgroundColor={step === 5 ? "$accent" : "$borderColor"}
-              />
-            ))}
-          </XStack>
+          <OnboardingStepDots path={data.onboardingPath} screen="Complete" />
         </YStack>
       </YStack>
     </Screen>

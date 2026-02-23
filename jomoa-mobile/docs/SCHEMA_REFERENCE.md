@@ -4,6 +4,8 @@ Schema som jomoa-mobile förväntar sig. Använd för att sätta upp en ny Supab
 
 **Förutsättning:** Supabase Auth är aktiverat. Tabellen `auth.users` finns.
 
+**Migrations:** Finns i `supabase/migrations/` – kör `001_jomoa_training_schema.sql` och `002_jomoa_rls.sql`.
+
 ---
 
 ## Tabeller (i förväntad ordning)

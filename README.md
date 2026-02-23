@@ -8,7 +8,6 @@ JOMOA kombinerar strukturerad träning, menscykel och livsstilsfaktorer i ett in
 
 ```
 jomoa.coach/
-├── jomoa-app/      # Web app (Next.js) - Admin/Dashboard
 ├── jomoa-mobile/   # Mobile app (React Native/Expo) - Huvudprodukt
 ├── web/            # Landing page & marketing site
 └── README.md       # Du är här
@@ -32,20 +31,7 @@ npm start
 - React Navigation
 - Supabase (Backend)
 
-### jomoa-app (Web Dashboard)
-
-Next.js web app för administration och analytics.
-
-```bash
-cd jomoa-app
-npm install
-npm run dev
-```
-
-**Tech Stack:**
-- Next.js 14 (App Router)
-- Tailwind CSS
-- Supabase
+**Se `jomoa-mobile/README.md` för fullständig dokumentation.**
 
 ### web (Landing Page)
 
@@ -69,7 +55,7 @@ Alla appar följer JOMOA Design Standards:
 | **Text** | Soft Light `#EDE8E6` |
 | **Muted** | Muted Warm `#8A7F7A` |
 
-Se `jomoa-app/docs/design-standards.md` för komplett dokumentation.
+Se `jomoa-mobile/README.md` för design tokens och komponenter.
 
 ## 🗄️ Backend (Supabase)
 
@@ -82,13 +68,10 @@ Alla appar delar samma Supabase-backend:
 
 ### Environment Variables
 
-Varje app behöver:
-```
-NEXT_PUBLIC_SUPABASE_URL=xxx       # jomoa-app
-EXPO_PUBLIC_SUPABASE_URL=xxx       # jomoa-mobile
-NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
-EXPO_PUBLIC_SUPABASE_ANON_KEY=xxx
-```
+| App | Variabler |
+|-----|-----------|
+| jomoa-mobile | `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY` |
+| web | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
 
 ## 🧩 Moduler
 
@@ -111,8 +94,8 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=xxx
 
 2. **Sätt upp Supabase**
    - Skapa ett Supabase-projekt
-   - Kör migrations i `jomoa-app/supabase/migrations/`
-   - Kör seed data i `jomoa-app/supabase/seed.sql`
+   - Kör migrations i `web/supabase/migrations/` (landing/waitlist)
+   - Lägg till schema för jomoa-mobile enligt projektets dokumentation
 
 3. **Starta mobilappen**
    ```bash
@@ -126,11 +109,9 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=xxx
 
 | Fil | Beskrivning |
 |-----|-------------|
-| `jomoa-app/docs/architecture.md` | System-arkitektur |
-| `jomoa-app/docs/design-standards.md` | UI/UX-regler |
-| `jomoa-app/docs/engineering-standards.md` | Kodstandard |
-| `jomoa-app/docs/supabase.md` | Backend-setup |
-| `jomoa-app/docs/development.md` | Utvecklingsguide |
+| `jomoa-mobile/README.md` | Mobile app, design system, setup |
+| `jomoa-mobile/docs/E2E_VERIFICATION.md` | Manuell E2E-testchecklista |
+| `BRANDING_GUIDE_V1.md` | Varumärke, färger, typografi |
 
 ## 📄 Licens
 

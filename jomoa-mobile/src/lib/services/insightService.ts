@@ -75,6 +75,9 @@ function computeInsightBody(input: InsightInput): string {
 
 function computeActions(input: InsightInput): string[] {
   const actions: string[] = [];
+  if (input.hasSymptoms && (input.phase === "menstruation" || input.phase === "luteal")) {
+    actions.push("Lyssna på kroppen – justera efter symtom");
+  }
   if (input.readinessTier === "low" || (input.phase === "menstruation" && (input.energyLevel ?? 5) <= 4)) {
     actions.push("Minska volym med 10–20%");
     actions.push("Överväg stretching eller promenad");
@@ -146,9 +149,12 @@ export async function getOrCreateTodayInsight(
     return { data: inserted as DailyInsight, error: null };
   } catch (err) {
     const e = err as { code?: string; message?: string };
-    const isTableMissing = e?.code === "PGRST205" || e?.message?.includes("daily_insight_log");
-    if (!isTableMissing) console.error("Error getOrCreateTodayInsight:", err);
-    return { data: null, error: null };
+    const isTableMissing = e?.code === "PGRST205" || (e?.message && String(e.message).includes("daily_insight_log"));
+    const message = e?.message ? String(e.message) : "getOrCreateTodayInsight failed";
+    if (!isTableMissing && __DEV__) {
+      console.warn("[insightService] getOrCreateTodayInsight:", e?.code ?? message, err);
+    }
+    return { data: null, error: isTableMissing ? null : message };
   }
 }
 
@@ -168,8 +174,11 @@ export async function getTodayInsight(
     return { data: data as DailyInsight | null, error: null };
   } catch (err) {
     const e = err as { code?: string; message?: string };
-    const isTableMissing = e?.code === "PGRST205" || e?.message?.includes("daily_insight_log");
-    if (!isTableMissing) console.error("Error getTodayInsight:", err);
-    return { data: null, error: null };
+    const isTableMissing = e?.code === "PGRST205" || (e?.message && String(e.message).includes("daily_insight_log"));
+    const message = e?.message ? String(e.message) : "getTodayInsight failed";
+    if (!isTableMissing && __DEV__) {
+      console.warn("[insightService] getTodayInsight:", e?.code ?? message, err);
+    }
+    return { data: null, error: isTableMissing ? null : message };
   }
 }

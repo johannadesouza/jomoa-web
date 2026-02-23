@@ -25,8 +25,7 @@ export function CycleGraphSection({ clientId, onPress }: CycleGraphSectionProps)
     );
   }
 
-  const phaseIndex = PHASE_ORDER.indexOf(phase as (typeof PHASE_ORDER)[number]);
-  const progress = phaseIndex >= 0 ? (phaseIndex + 0.5) / 4 : 0.5;
+  const PHASE_COLORS = ["#9B6B9E", "#5B9B7A", "#D96D46", "#C4956A"] as const;
 
   return (
     <YStack gap="$2">
@@ -36,17 +35,17 @@ export function CycleGraphSection({ clientId, onPress }: CycleGraphSectionProps)
         </AppText>
       </XStack>
       <XStack
-        height={8}
-        backgroundColor="$backgroundStrong"
+        height={10}
         borderRadius="$full"
         overflow="hidden"
+        backgroundColor="$surface3"
       >
         {PHASE_ORDER.map((p, i) => (
           <XStack
             key={p}
             flex={1}
-            backgroundColor={phase === p ? "$accent" : "$surface3"}
-            opacity={phase === p ? 1 : 0.4}
+            backgroundColor={PHASE_COLORS[i]}
+            opacity={phase === p ? 1 : 0.35}
           />
         ))}
       </XStack>

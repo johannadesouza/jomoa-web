@@ -33,6 +33,28 @@ export interface CyclePhaseRecord {
 }
 
 /**
+ * Get all period start dates for a client (for phase calculation on historical dates)
+ */
+export async function getAllPeriodStarts(
+  clientId: string
+): Promise<string[]> {
+  try {
+    const { data, error } = await supabase
+      .from("cycle_events")
+      .select("date")
+      .eq("client_id", clientId)
+      .eq("event_type", "period_start")
+      .order("date", { ascending: false });
+
+    if (error) throw error;
+    return (data ?? []).map((r) => r.date).filter(Boolean);
+  } catch (err) {
+    console.error("Error fetching period starts:", err);
+    return [];
+  }
+}
+
+/**
  * Get latest period start date for a client
  */
 export async function getLatestPeriodStart(

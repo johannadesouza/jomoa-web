@@ -1,6 +1,7 @@
 import React from "react";
-import { YStack, styled, GetProps } from "tamagui";
+import { YStack, XStack, styled, GetProps } from "tamagui";
 import { AppText } from "./AppText";
+import { AppButton } from "./AppButton";
 
 function TitleText({ text, Component }: { text?: string; Component: React.ComponentType<{ children: React.ReactNode }> }) {
   if (!text) return null;
@@ -67,6 +68,8 @@ const SectionSubtitle = styled(AppText, {
 export type SectionProps = GetProps<typeof SectionContainer> & {
   title?: string;
   subtitle?: string;
+  viewAllLabel?: string;
+  onViewAll?: () => void;
 };
 
 /**
@@ -87,20 +90,46 @@ export type SectionProps = GetProps<typeof SectionContainer> & {
  *   </YStack>
  * </Screen>
  */
-function SectionHeaderWrapper({ title, subtitle }: { title?: string; subtitle?: string }) {
-  if (!title && !subtitle) return null;
+function SectionHeaderWrapper({
+  title,
+  subtitle,
+  viewAllLabel,
+  onViewAll,
+}: {
+  title?: string;
+  subtitle?: string;
+  viewAllLabel?: string;
+  onViewAll?: () => void;
+}) {
+  if (!title && !subtitle && !viewAllLabel) return null;
   return (
-    <SectionHeader>
-      <TitleText text={title} Component={SectionTitle} />
-      <TitleText text={subtitle} Component={SectionSubtitle} />
-    </SectionHeader>
+    <XStack justifyContent="space-between" alignItems="flex-start" flexWrap="wrap" gap="$2">
+      <SectionHeader flex={1} minWidth={0}>
+        <TitleText text={title} Component={SectionTitle} />
+        <TitleText text={subtitle} Component={SectionSubtitle} />
+      </SectionHeader>
+      {viewAllLabel && onViewAll && (
+        <AppButton
+          variant="ghost"
+          size="sm"
+          onPress={onViewAll}
+        >
+          {`${viewAllLabel} →`}
+        </AppButton>
+      )}
+    </XStack>
   );
 }
 
-export function Section({ title, subtitle, children, ...props }: SectionProps) {
+export function Section({ title, subtitle, viewAllLabel, onViewAll, children, ...props }: SectionProps) {
   return (
     <SectionContainer {...props}>
-      <SectionHeaderWrapper title={title} subtitle={subtitle} />
+      <SectionHeaderWrapper
+        title={title}
+        subtitle={subtitle}
+        viewAllLabel={viewAllLabel}
+        onViewAll={onViewAll}
+      />
       {children}
     </SectionContainer>
   );

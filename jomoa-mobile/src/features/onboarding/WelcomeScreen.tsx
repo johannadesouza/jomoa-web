@@ -87,7 +87,7 @@ export function WelcomeScreen({ navigation }: Props) {
             variant="primary"
             size="lg"
             fullWidth
-            onPress={() => navigation.navigate("Goals")}
+            onPress={() => navigation.navigate("PathChoice")}
           >
             Kom igång
           </AppButton>

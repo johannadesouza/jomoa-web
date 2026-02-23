@@ -1,7 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useAssignment } from "../../shared/context/AssignmentContext";
 import { fetchActiveAssignment, getWeekIdForDate } from "../services/programService";
-import { fetchWeeklyStats, fetchTodayCompletedSession } from "../services/workoutLogService";
+import { fetchWeeklyStats, fetchCompletedSessionForDate } from "../services/workoutLogService";
 import { fetchSessionsByWeekId } from "../services/workoutService";
+import { getLocalDateString } from "../utils/date";
 import { ProgramAssignmentData } from "../services/programService";
 import { ProgramSessionData } from "../services/workoutService";
 
@@ -16,6 +18,13 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   ]);
 }
 
+/** Get ISO day of week (1=Mon, 7=Sun) from YYYY-MM-DD string */
+function getDayOfWeekFromDateStr(dateStr: string): number {
+  const d = new Date(dateStr + "T12:00:00");
+  const js = d.getDay();
+  return js === 0 ? 7 : js;
+}
+
 export interface WeekDay {
   name: string;
   shortName: string;
@@ -24,7 +33,15 @@ export interface WeekDay {
   isToday: boolean;
 }
 
-export function useDashboard(clientId: string | undefined) {
+export function useDashboard(clientId: string | undefined, viewDate?: string) {
+  const viewDateStr = viewDate ?? getLocalDateString();
+  const todayStr = getLocalDateString();
+  const isViewingToday = viewDateStr === todayStr;
+
+  const ctx = useAssignment();
+  const assignmentRef = useRef<ProgramAssignmentData | null>(ctx?.assignment ?? null);
+  assignmentRef.current = ctx?.assignment ?? null;
+
   const [assignment, setAssignment] = useState<ProgramAssignmentData | null>(null);
   const [todaySession, setTodaySession] = useState<ProgramSessionData | null>(null);
   const [todaySessionCompleted, setTodaySessionCompleted] = useState(false);
@@ -45,9 +62,10 @@ export function useDashboard(clientId: string | undefined) {
       setError(null);
 
       try {
+        const fromContext = assignmentRef.current;
         const [assignmentData, stats] = await withTimeout(
           Promise.all([
-            fetchActiveAssignment(clientId),
+            fromContext ? Promise.resolve(fromContext) : fetchActiveAssignment(clientId),
             fetchWeeklyStats(clientId),
           ]),
           LOAD_TIMEOUT_MS
@@ -59,22 +77,21 @@ export function useDashboard(clientId: string | undefined) {
         if (assignmentData) {
           setAssignment(assignmentData);
 
-          const todayStr = new Date().toISOString().split("T")[0];
           const weekId = await getWeekIdForDate(
             assignmentData.program_id,
             assignmentData.start_date,
-            todayStr
+            viewDateStr
           );
           if (weekId) {
             const sessions = await fetchSessionsByWeekId(weekId);
-            const todayJs = new Date().getDay();
-            const todayDb = todayJs === 0 ? 7 : todayJs;
-            const session = sessions.find((s) => s.day_of_week === todayDb) || null;
+            const viewDayDb = getDayOfWeekFromDateStr(viewDateStr);
+            const todayDb = getDayOfWeekFromDateStr(todayStr);
+            const session = sessions.find((s) => s.day_of_week === viewDayDb) || null;
 
             setTodaySession(session);
 
             if (session) {
-              const completed = await fetchTodayCompletedSession(clientId, session.id);
+              const completed = await fetchCompletedSessionForDate(clientId, session.id, viewDateStr);
               setTodaySessionCompleted(!!completed);
               setTodayCompletedSessionId(completed?.id ?? null);
             } else {
@@ -119,7 +136,7 @@ export function useDashboard(clientId: string | undefined) {
         setIsLoading(false);
       }
     },
-    [clientId]
+    [clientId, viewDateStr]
   );
 
   useEffect(() => {
@@ -128,7 +145,7 @@ export function useDashboard(clientId: string | undefined) {
     } else {
       setIsLoading(false);
     }
-  }, [clientId, load]);
+  }, [clientId, viewDateStr, load]);
 
   const refetch = useCallback(() => load(true), [load]);
 
@@ -143,5 +160,6 @@ export function useDashboard(clientId: string | undefined) {
     isLoading,
     error,
     refetch,
+    isViewingToday,
   };
 }

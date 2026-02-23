@@ -146,7 +146,7 @@ export function ProgramListScreen({ navigation }: Props) {
                           </XStack>
 
                           <XStack gap="$3" flexWrap="wrap">
-                            {program.target_duration_weeks && (
+                            {program.target_duration_weeks != null && program.target_duration_weeks > 0 && (
                               <AppText variant="caption" muted>
                                 {program.target_duration_weeks} veckor
                               </AppText>

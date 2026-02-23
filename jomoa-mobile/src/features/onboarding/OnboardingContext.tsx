@@ -11,6 +11,7 @@ interface OnboardingContextType {
 }
 
 const initialData: OnboardingData = {
+  onboardingPath: null,
   primaryGoal: null,
   secondaryGoals: [],
   trainingLevel: null,

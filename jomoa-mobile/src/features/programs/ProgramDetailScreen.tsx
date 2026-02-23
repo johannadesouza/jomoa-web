@@ -1,6 +1,8 @@
 import React from "react";
 import { YStack, XStack } from "tamagui";
 import { Pressable, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import {
@@ -19,6 +21,7 @@ import { fetchProgramWithStructure } from "../../lib/services/programService";
 import type { ProgramWithStructure, ProgramSession } from "../../lib/domain/program";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProgramDetail">;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const DAY_NAMES: Record<number, string> = {
   1: "Måndag",
@@ -42,6 +45,7 @@ function getGoalLabel(goal: string | null | undefined) {
 }
 
 export function ProgramDetailScreen({ navigation, route }: Props) {
+  const nav = useNavigation<NavigationProp>();
   const { programId } = route.params;
   const { client, refreshClient } = useAuth();
   const { programs, activeAssignment, switchProgram, isSwitching } =
@@ -55,11 +59,14 @@ export function ProgramDetailScreen({ navigation, route }: Props) {
   React.useEffect(() => {
     let cancelled = false;
     async function load() {
-      const data = await fetchProgramWithStructure(programId);
-      if (!cancelled) {
-        setStructure(data ?? null);
+      try {
+        const data = await fetchProgramWithStructure(programId);
+        if (!cancelled) {
+          setStructure(data ?? null);
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
-      setIsLoading(false);
     }
     load();
     return () => {
@@ -105,9 +112,18 @@ export function ProgramDetailScreen({ navigation, route }: Props) {
     <Screen scroll padded>
       <YStack gap="$6">
         <YStack gap="$2">
-          <XStack justifyContent="space-between" alignItems="center">
+          <XStack justifyContent="space-between" alignItems="center" flexWrap="wrap" gap="$2">
             <AppText variant="h1">{prog.name}</AppText>
-            {isActive && <Badge variant="accent" label="Aktiv" />}
+            <XStack gap="$2" alignItems="center">
+              {isActive && <Badge variant="accent" label="Aktiv" />}
+              <AppButton
+                variant="ghost"
+                size="sm"
+                onPress={() => nav.navigate("ProgramList")}
+              >
+                Byt program
+              </AppButton>
+            </XStack>
           </XStack>
           {prog.description && (
             <AppText variant="body" muted>
@@ -120,7 +136,7 @@ export function ProgramDetailScreen({ navigation, route }: Props) {
           <Card>
             <Card.Content>
               <YStack gap="$3">
-                {prog.target_duration_weeks && (
+                {prog.target_duration_weeks != null && prog.target_duration_weeks > 0 && (
                   <XStack justifyContent="space-between">
                     <AppText variant="small" muted>
                       Längd
@@ -157,7 +173,7 @@ export function ProgramDetailScreen({ navigation, route }: Props) {
                   <Card.Content>
                     <YStack gap="$2">
                       <AppText variant="h3">{block.name}</AppText>
-                      {block.weeks_count && (
+                      {block.weeks_count != null && block.weeks_count > 0 && (
                         <AppText variant="small" muted>
                           {block.weeks_count} veckor
                         </AppText>
@@ -187,23 +203,35 @@ export function ProgramDetailScreen({ navigation, route }: Props) {
                         {weekSessions
                           .sort((a, b) => a.day_of_week - b.day_of_week)
                           .map((session) => (
-                            <XStack
+                            <Pressable
                               key={session.id}
-                              justifyContent="space-between"
-                              alignItems="center"
+                              onPress={() =>
+                                nav.navigate("WorkoutPreview", {
+                                  sessionId: session.id,
+                                })
+                              }
                             >
-                              <AppText variant="body">
-                                {DAY_NAMES[session.day_of_week] ?? `Dag ${session.day_of_week}`}
-                              </AppText>
-                              <YStack alignItems="flex-end">
-                                <AppText variant="small">{session.name}</AppText>
-                                {session.focus && (
-                                  <AppText variant="caption" muted>
-                                    {session.focus}
-                                  </AppText>
-                                )}
-                              </YStack>
-                            </XStack>
+                              <XStack
+                                justifyContent="space-between"
+                                alignItems="center"
+                                paddingVertical="$2"
+                              >
+                                <AppText variant="body">
+                                  {DAY_NAMES[session.day_of_week] ?? `Dag ${session.day_of_week}`}
+                                </AppText>
+                                <YStack alignItems="flex-end">
+                                  <AppText variant="small">{session.name}</AppText>
+                                  {session.focus && (
+                                    <AppText variant="caption" muted>
+                                      {session.focus}
+                                    </AppText>
+                                  )}
+                                </YStack>
+                                <AppText variant="caption" color="$textSecondary">
+                                  →
+                                </AppText>
+                              </XStack>
+                            </Pressable>
                           ))}
                       </YStack>
                     </YStack>

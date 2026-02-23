@@ -6,6 +6,7 @@ import { Pressable } from "react-native";
 import { Screen, AppText, AppButton, Card } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
+import { OnboardingStepDots } from "./OnboardingStepDots";
 import { TrainingGoal } from "../../shared/types/onboarding";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "Goals">;
@@ -146,17 +147,7 @@ export function GoalsScreen({ navigation }: Props) {
           >
             Fortsätt
           </AppButton>
-          <XStack justifyContent="center" gap="$2">
-            {[1, 2, 3, 4, 5].map((step) => (
-              <XStack
-                key={step}
-                width={8}
-                height={8}
-                borderRadius="$full"
-                backgroundColor={step === 1 ? "$accent" : "$borderColor"}
-              />
-            ))}
-          </XStack>
+          <OnboardingStepDots path={data.onboardingPath} screen="Goals" />
         </YStack>
       </YStack>
     </Screen>

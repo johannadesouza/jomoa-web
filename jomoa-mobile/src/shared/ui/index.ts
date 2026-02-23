@@ -32,6 +32,10 @@ export {
 export { AppButton } from "./AppButton";
 export { AppInput } from "./AppInput";
 
+// Content cards
+export { InsightCard } from "./InsightCard";
+export { LockIcon } from "./LockIcon";
+
 // States
 export { LoadingScreen } from "./LoadingScreen";
 export { EmptyState } from "./EmptyState";

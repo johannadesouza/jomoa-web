@@ -13,6 +13,7 @@ import {
   Divider,
 } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
+import { useTheme } from "../../shared/context/ThemeContext";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -26,6 +27,7 @@ interface SettingsItem {
 export function SettingsScreen() {
   const navigation = useNavigation<NavigationProp>();
   const { user, signOut } = useAuth();
+  const { theme, setTheme } = useTheme();
 
   const handleSignOut = () => {
     Alert.alert(
@@ -45,7 +47,7 @@ export function SettingsScreen() {
   const settingsItems: SettingsItem[] = [
     { icon: "👤", label: "Profil", onPress: showComingSoon("Profil") },
     { icon: "💪", label: "Mina program", onPress: () => navigation.navigate("ProgramList") },
-    { icon: "🎯", label: "Mål", onPress: () => navigation.navigate("ProgramSelect") },
+    { icon: "🎯", label: "Mål", onPress: () => navigation.navigate("Main", { screen: "InsightsTab" }) },
     { icon: "💚", label: "Hur mår du idag?", onPress: () => navigation.navigate("Readiness") },
     { icon: "🔔", label: "Notifikationer", onPress: showComingSoon("Notifikationer") },
     { icon: "🌙", label: "Menscykel", onPress: () => navigation.navigate("Cycle") },
@@ -83,6 +85,60 @@ export function SettingsScreen() {
                   </AppText>
                 </YStack>
               </XStack>
+            </Card.Content>
+          </Card>
+        </Section>
+
+        <Section title="Utseende">
+          <Card>
+            <Card.Content>
+              <YStack gap="$3">
+                <AppText variant="small" muted>
+                  Välj mörkt eller ljust läge
+                </AppText>
+                <XStack gap="$3">
+                  <Card
+                    pressable
+                    flex={1}
+                    backgroundColor={theme === "dark" ? "$accent" : "$card"}
+                    borderColor={theme === "dark" ? "$accent" : "$borderColor"}
+                    onPress={() => setTheme("dark")}
+                  >
+                    <Card.Content>
+                      <YStack alignItems="center" gap="$1">
+                        <Text fontSize="$xl">🌙</Text>
+                        <AppText
+                          variant="body"
+                          fontWeight="600"
+                          color={theme === "dark" ? "#FFF" : "$color"}
+                        >
+                          Mörkt
+                        </AppText>
+                      </YStack>
+                    </Card.Content>
+                  </Card>
+                  <Card
+                    pressable
+                    flex={1}
+                    backgroundColor={theme === "light" ? "$accent" : "$card"}
+                    borderColor={theme === "light" ? "$accent" : "$borderColor"}
+                    onPress={() => setTheme("light")}
+                  >
+                    <Card.Content>
+                      <YStack alignItems="center" gap="$1">
+                        <Text fontSize="$xl">☀️</Text>
+                        <AppText
+                          variant="body"
+                          fontWeight="600"
+                          color={theme === "light" ? "#FFF" : "$color"}
+                        >
+                          Ljust
+                        </AppText>
+                      </YStack>
+                    </Card.Content>
+                  </Card>
+                </XStack>
+              </YStack>
             </Card.Content>
           </Card>
         </Section>

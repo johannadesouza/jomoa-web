@@ -1,15 +1,15 @@
 import { Text, styled, GetProps } from "tamagui";
 
 /**
- * AppText - Typography component following JOMOA design standards
+ * AppText - Typography component following JOMOA design standards + inspo
  *
- * Typography Hierarchy (from design-standards.md):
- * - H1: 36px ($8), semibold, page title
- * - H2: 20px ($4), semibold, section title
- * - H3: 16px ($3), semibold, card title
- * - Body: 16px ($3), normal, minimum for accessibility
- * - Small: 14px ($2), medium, secondary text
- * - Caption: 12px ($1), medium, labels
+ * Typography Hierarchy (Cormorant for headings per Hormona/Jö/Journey):
+ * - H1: 36px ($8), Cormorant semibold, page title
+ * - H2: 20px ($4), Cormorant semibold, section title
+ * - H3: 16px ($3), Inter semibold, card title
+ * - Body: 16px ($3), Inter normal, minimum for accessibility
+ * - Small: 14px ($2), Inter medium, secondary text
+ * - Caption: 12px ($1), Inter medium, labels
  *
  * Rules:
  * - No hardcoded font sizes
@@ -27,11 +27,13 @@ const BaseText = styled(Text, {
   variants: {
     variant: {
       h1: {
+        fontFamily: "$heading",
         fontSize: "$8", // 36px
         lineHeight: "$8", // 48
         fontWeight: "600",
       },
       h2: {
+        fontFamily: "$heading",
         fontSize: "$4", // 20px
         lineHeight: "$4", // 26
         fontWeight: "600",

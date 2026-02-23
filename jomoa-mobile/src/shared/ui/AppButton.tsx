@@ -1,7 +1,8 @@
 import { ActivityIndicator } from "react-native";
 import { XStack, styled, GetProps } from "tamagui";
 
-import { themeColors } from "../theme/colors";
+import { getThemeColors } from "../theme/colors";
+import { useTheme } from "../context/ThemeContext";
 import { AppText } from "./AppText";
 
 /**
@@ -159,6 +160,11 @@ export function AppButton({
 }: AppButtonProps) {
   const isDisabled = disabled || loading;
   const frameProps = pickFrameProps(rest as Record<string, unknown>);
+  const { theme } = useTheme();
+  const colors = getThemeColors(theme);
+  const spinnerColor = variant === "primary" || variant === "destructive" || variant === "success"
+    ? "#FFF"
+    : colors.textPrimary;
 
   return (
     <ButtonFrame
@@ -175,7 +181,7 @@ export function AppButton({
         opacity={loading ? 1 : 0}
         pointerEvents="none"
       >
-        <ActivityIndicator size="small" color={themeColors.textPrimary} />
+        <ActivityIndicator size="small" color={spinnerColor} />
       </XStack>
       <XStack
         alignItems="center"

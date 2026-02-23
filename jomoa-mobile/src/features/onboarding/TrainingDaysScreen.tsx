@@ -6,6 +6,7 @@ import { Pressable } from "react-native";
 import { Screen, AppText, AppButton, Card } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
+import { OnboardingStepDots } from "./OnboardingStepDots";
 import { DayOfWeek } from "../../shared/types/onboarding";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "TrainingDays">;
@@ -34,7 +35,9 @@ export function TrainingDaysScreen({ navigation }: Props) {
 
   const handleContinue = () => {
     setCurrentStep(4);
-    navigation.navigate("CycleSetup");
+    const nextScreen =
+      data.onboardingPath === "training_only" ? "Complete" : "CycleSetup";
+    navigation.navigate(nextScreen);
   };
 
   const handleBack = () => {
@@ -120,17 +123,7 @@ export function TrainingDaysScreen({ navigation }: Props) {
           >
             Tillbaka
           </AppButton>
-          <XStack justifyContent="center" gap="$2">
-            {[1, 2, 3, 4, 5].map((step) => (
-              <XStack
-                key={step}
-                width={8}
-                height={8}
-                borderRadius="$full"
-                backgroundColor={step === 3 ? "$accent" : "$borderColor"}
-              />
-            ))}
-          </XStack>
+          <OnboardingStepDots path={data.onboardingPath} screen="TrainingDays" />
         </YStack>
       </YStack>
     </Screen>

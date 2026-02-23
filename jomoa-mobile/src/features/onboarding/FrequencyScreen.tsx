@@ -6,6 +6,7 @@ import { Pressable } from "react-native";
 import { Screen, AppText, AppButton, Card } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
+import { OnboardingStepDots } from "./OnboardingStepDots";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "Frequency">;
 
@@ -121,17 +122,7 @@ export function FrequencyScreen({ navigation }: Props) {
           >
             Tillbaka
           </AppButton>
-          <XStack justifyContent="center" gap="$2">
-            {[1, 2, 3, 4, 5].map((step) => (
-              <XStack
-                key={step}
-                width={8}
-                height={8}
-                borderRadius="$full"
-                backgroundColor={step === 2 ? "$accent" : "$borderColor"}
-              />
-            ))}
-          </XStack>
+          <OnboardingStepDots path={data.onboardingPath} screen="Frequency" />
         </YStack>
       </YStack>
     </Screen>

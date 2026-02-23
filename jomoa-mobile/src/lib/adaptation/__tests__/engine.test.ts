@@ -6,9 +6,9 @@ import type { AdaptationContext } from "../types";
 
 describe("adaptation engine", () => {
   const baseContext: AdaptationContext = {
-    phase: "follicular",
+    cyclePhase: "follicular",
     readiness: null,
-    recentLoad: null,
+    trainingLoad: null,
   };
 
   it("returns neutral result when no rules apply", () => {
@@ -22,14 +22,14 @@ describe("adaptation engine", () => {
   it("caps volume modifier between 0.5 and 1.2", () => {
     // ovulation adds 1.0; low energy + poor sleep could stack low
     const result = computeAdaptation({
-      phase: "ovulation",
+      cyclePhase: "ovulation",
       readiness: {
         energy_level: 2,
         sleep_quality: 2,
         stress_level: 8,
         soreness: 8,
       },
-      recentLoad: null,
+      trainingLoad: null,
     });
     expect(result.volumeModifier).toBeGreaterThanOrEqual(0.5);
     expect(result.volumeModifier).toBeLessThanOrEqual(1.2);
@@ -37,14 +37,14 @@ describe("adaptation engine", () => {
 
   it("caps rpe modifier between -2 and 1", () => {
     const result = computeAdaptation({
-      phase: "menstruation",
+      cyclePhase: "menstruation",
       readiness: {
         energy_level: 1,
         sleep_quality: 1,
         stress_level: 9,
         soreness: 9,
       },
-      recentLoad: null,
+      trainingLoad: null,
     });
     expect(result.rpeModifier).toBeGreaterThanOrEqual(-2);
     expect(result.rpeModifier).toBeLessThanOrEqual(1);
@@ -52,14 +52,14 @@ describe("adaptation engine", () => {
 
   it("includes topDrivers (max 2)", () => {
     const result = computeAdaptation({
-      phase: "menstruation",
+      cyclePhase: "menstruation",
       readiness: {
         energy_level: 2,
         sleep_quality: 2,
         stress_level: 0,
         soreness: 0,
       },
-      recentLoad: null,
+      trainingLoad: null,
     });
     expect(result.topDrivers).toBeDefined();
     expect(Array.isArray(result.topDrivers)).toBe(true);
@@ -68,9 +68,9 @@ describe("adaptation engine", () => {
 
   it("returns appliedRules array", () => {
     const result = computeAdaptation({
-      phase: "ovulation",
+      cyclePhase: "ovulation",
       readiness: null,
-      recentLoad: null,
+      trainingLoad: null,
     });
     expect(result.appliedRules).toBeDefined();
     expect(Array.isArray(result.appliedRules)).toBe(true);
@@ -78,28 +78,28 @@ describe("adaptation engine", () => {
 
   it("reduces volume for menstruation + low energy", () => {
     const result = computeAdaptation({
-      phase: "menstruation",
+      cyclePhase: "menstruation",
       readiness: {
         energy_level: 2,
         sleep_quality: 7,
         stress_level: 5,
         soreness: 3,
       },
-      recentLoad: null,
+      trainingLoad: null,
     });
     expect(result.volumeModifier).toBeLessThan(1);
   });
 
   it("suggests recovery for high stress + low energy", () => {
     const result = computeAdaptation({
-      phase: "follicular",
+      cyclePhase: "follicular",
       readiness: {
         energy_level: 2,
         sleep_quality: 5,
         stress_level: 8,
         soreness: 2,
       },
-      recentLoad: null,
+      trainingLoad: null,
     });
     expect(result.suggestRecovery).toBe(true);
   });

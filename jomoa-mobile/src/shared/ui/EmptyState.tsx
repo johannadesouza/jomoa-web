@@ -3,9 +3,23 @@ import { YStack, styled, GetProps } from "tamagui";
 import { AppText } from "./AppText";
 import { AppButton } from "./AppButton";
 
-function ActionButton({ label, onPress }: { label: string; onPress: () => void }) {
+function ActionButton({
+  label,
+  onPress,
+  fullWidth,
+}: {
+  label: string;
+  onPress: () => void;
+  fullWidth?: boolean;
+}) {
   return (
-    <AppButton variant="primary" onPress={onPress} marginTop="$2">
+    <AppButton
+      variant="primary"
+      onPress={onPress}
+      marginTop="$2"
+      fullWidth={fullWidth}
+      size="lg"
+    >
       {label}
     </AppButton>
   );
@@ -44,8 +58,8 @@ const EmptyStateContainer = styled(YStack, {
 
 const EmptyStateIcon = styled(YStack, {
   name: "EmptyStateIcon",
-  width: "$16", // 64px
-  height: "$16", // 64px
+  width: "$16",
+  height: "$16",
   borderRadius: "$full",
   backgroundColor: "$backgroundStrong",
   alignItems: "center",
@@ -100,7 +114,7 @@ export function EmptyState({
       <EmptyStateTitle>{title}</EmptyStateTitle>
       <DescriptionWrapper description={description} DescriptionComponent={EmptyStateDescription} />
       {actionLabel && onAction && (
-        <ActionButton label={actionLabel} onPress={onAction} />
+        <ActionButton label={actionLabel} onPress={onAction} fullWidth />
       )}
     </EmptyStateContainer>
   );

@@ -21,6 +21,7 @@ const BadgeFrame = styled(XStack, {
   borderRadius: "$1", // 4px (small)
   alignItems: "center",
   justifyContent: "center",
+  flexShrink: 0,
 
   variants: {
     variant: {
@@ -83,7 +84,7 @@ export function Badge({ label, variant = "default", ...props }: BadgeProps) {
 
   return (
     <BadgeFrame variant={variant} {...props}>
-      <AppText variant="caption" fontWeight="500" color={textColor}>
+      <AppText variant="caption" fontWeight="500" color={textColor} numberOfLines={1}>
         {label}
       </AppText>
     </BadgeFrame>

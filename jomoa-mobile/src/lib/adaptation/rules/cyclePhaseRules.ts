@@ -63,13 +63,40 @@ export function evaluateCyclePhaseRules(
     });
   }
 
+  if (phase === "follicular") {
+    const highReadiness =
+      (readiness?.energy_level ?? 5) >= 7 &&
+      !lowEnergy(readiness) &&
+      !poorSleep(readiness) &&
+      !highSoreness(readiness);
+    if (highReadiness) {
+      effects.push({
+        volumeModifier: 1.05,
+        reason: "Follikulär fas + bra readiness – bra tillfälle att pusha.",
+        ruleId: "follicular_overload",
+      });
+    }
+  }
+
   if (phase === "ovulation") {
-    effects.push({
-      volumeModifier: 1.0,
-      rpeModifier: 0,
-      reason: "Ägglossning – bra dag för hög intensitet.",
-      ruleId: "ovulation_intensity",
-    });
+    const highReadiness =
+      (readiness?.energy_level ?? 5) >= 7 &&
+      !lowEnergy(readiness) &&
+      !poorSleep(readiness);
+    if (highReadiness) {
+      effects.push({
+        volumeModifier: 1.05,
+        reason: "Ägglossning + bra readiness – utmana dig idag.",
+        ruleId: "ovulation_overload",
+      });
+    } else {
+      effects.push({
+        volumeModifier: 1.0,
+        rpeModifier: 0,
+        reason: "Ägglossning – bra dag för hög intensitet.",
+        ruleId: "ovulation_intensity",
+      });
+    }
   }
 
   return effects;

@@ -1,11 +1,14 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useCycleContext } from "../../shared/context/CycleContext";
+import { useAssignment } from "../../shared/context/AssignmentContext";
 import { fetchActiveAssignment, getWeekIdForDate } from "../services/programService";
-import { fetchSessionsByWeekId } from "../services/workoutService";
+import { fetchSessionsByWeekId, fetchSessionById } from "../services/workoutService";
+import { fetchSessionTemplateById } from "../services/sessionTemplateService";
+import { getEntriesForRange } from "../services/calendarEntryService";
 import {
   fetchLoggedWorkoutsForRange,
   type LoggedWorkout,
 } from "../services/workoutLogService";
-import { getLatestPeriodStart } from "../services/cycleService";
 import { calculateCyclePhase, type CyclePhase } from "../utils/cycleUtils";
 import type { ProgramSessionData } from "../services/workoutService";
 import { getLocalDateString } from "../utils/date";
@@ -29,6 +32,8 @@ export interface CalendarDay {
   plannedSession: ProgramSessionData | null;
   loggedWorkout: LoggedWorkout | null;
   cyclePhase: CyclePhase;
+  note: string | null;
+  customSession: ProgramSessionData | null;
 }
 
 function getWeekDays(weekStart: Date): string[] {
@@ -53,6 +58,11 @@ function getWeekStart(d: Date): Date {
 const DAY_NAMES = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
 
 export function useCalendar(clientId: string | undefined) {
+  const { latestPeriodStart, getPhaseForDate } = useCycleContext();
+  const ctx = useAssignment();
+  const assignmentRef = useRef(ctx?.assignment ?? null);
+  assignmentRef.current = ctx?.assignment ?? null;
+
   const [weekStart, setWeekStart] = useState<Date>(() =>
     getWeekStart(new Date())
   );
@@ -68,17 +78,19 @@ export function useCalendar(clientId: string | undefined) {
     const startDate = weekDates[0];
     const endDate = weekDates[6];
 
-    const [assignmentData, loggedWorkouts, { data: latestPeriodStart }] =
+    const fromContext = assignmentRef.current;
+    const [assignmentData, loggedWorkouts, calendarEntries] =
       await withTimeout(
         Promise.all([
-          fetchActiveAssignment(clientId),
+          fromContext ? Promise.resolve(fromContext) : fetchActiveAssignment(clientId),
           fetchLoggedWorkoutsForRange(clientId, startDate, endDate),
-          getLatestPeriodStart(clientId),
+          getEntriesForRange(clientId, startDate, endDate),
         ]),
         LOAD_TIMEOUT_MS
       );
 
     const logMap = new Map(loggedWorkouts.map((w) => [w.date, w]));
+    const entryMap = new Map(calendarEntries.map((e) => [e.date, e]));
 
     let sessions: ProgramSessionData[] = [];
     if (assignmentData) {
@@ -93,22 +105,35 @@ export function useCalendar(clientId: string | undefined) {
     }
 
     const todayStr = getLocalDateString();
-    const calendarDays: CalendarDay[] = weekDates.map((dateStr, i) => {
-      const d = new Date(dateStr);
-      const jsDay = d.getDay();
-      const dbDayOfWeek = jsDay === 0 ? 7 : jsDay;
-      const planned = sessions.find((s) => s.day_of_week === dbDayOfWeek);
-      const { phase: cyclePhase } = calculateCyclePhase(latestPeriodStart ?? null, d);
-      return {
-        date: dateStr,
-        dateNum: d.getDate(),
-        dayName: DAY_NAMES[i],
-        isToday: dateStr === todayStr,
-        plannedSession: planned ?? null,
-        loggedWorkout: logMap.get(dateStr) ?? null,
-        cyclePhase,
-      };
-    });
+    const calendarDays: CalendarDay[] = await Promise.all(
+      weekDates.map(async (dateStr, i) => {
+        const d = new Date(dateStr);
+        const jsDay = d.getDay();
+        const dbDayOfWeek = jsDay === 0 ? 7 : jsDay;
+        const programPlanned = sessions.find((s) => s.day_of_week === dbDayOfWeek);
+        const entry = entryMap.get(dateStr);
+        let customSession: ProgramSessionData | null = null;
+        if (entry?.program_session_id) {
+          customSession = await fetchSessionById(entry.program_session_id);
+        } else if (entry?.session_template_id) {
+          const tmpl = await fetchSessionTemplateById(entry.session_template_id);
+          customSession = tmpl ? { ...tmpl, day_of_week: 0 } : null;
+        }
+        const plannedSession = customSession ?? programPlanned ?? null;
+        const { phase: cyclePhase } = getPhaseForDate(d);
+        return {
+          date: dateStr,
+          dateNum: d.getDate(),
+          dayName: DAY_NAMES[i],
+          isToday: dateStr === todayStr,
+          plannedSession,
+          loggedWorkout: logMap.get(dateStr) ?? null,
+          cyclePhase,
+          note: entry?.note ?? null,
+          customSession,
+        };
+      })
+    );
 
     setDays(calendarDays);
     } catch {
@@ -116,7 +141,7 @@ export function useCalendar(clientId: string | undefined) {
     } finally {
     setIsLoading(false);
     }
-  }, [clientId, weekStart]);
+  }, [clientId, weekStart, latestPeriodStart, getPhaseForDate]);
 
   useEffect(() => {
     if (clientId) {

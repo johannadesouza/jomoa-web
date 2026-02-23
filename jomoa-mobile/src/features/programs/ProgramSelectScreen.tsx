@@ -118,7 +118,7 @@ export function ProgramSelectScreen({ navigation }: Props) {
                           </XStack>
 
                           <XStack gap="$4" marginTop="$2">
-                            {program.target_duration_weeks && (
+                            {program.target_duration_weeks != null && program.target_duration_weeks > 0 && (
                               <AppText
                                 variant="caption"
                                 color={isSelected ? "$background" : "$colorSecondary"}

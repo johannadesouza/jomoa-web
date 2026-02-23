@@ -9,6 +9,7 @@ import { RegisterScreen } from "../features/auth/RegisterScreen";
 import { TabNavigator } from "./TabNavigator";
 import { WorkoutSessionScreen } from "../features/workouts/WorkoutSessionScreen";
 import { WorkoutSummaryScreen } from "../features/workouts/WorkoutSummaryScreen";
+import { WorkoutPreviewScreen } from "../features/workouts/WorkoutPreviewScreen";
 import { ProgramSelectScreen } from "../features/programs/ProgramSelectScreen";
 import { ProgramListScreen } from "../features/programs/ProgramListScreen";
 import { ProgramDetailScreen } from "../features/programs/ProgramDetailScreen";
@@ -21,7 +22,8 @@ export type RootStackParamList = {
   Register: undefined;
   Onboarding: undefined;
   Main: { screen?: "DashboardTab" | "WorkoutsTab" | "CalendarTab" | "InsightsTab" | "SettingsTab" } | undefined;
-  WorkoutSession: { sessionId: string };
+  WorkoutSession: { sessionId: string; isStandalone?: boolean };
+  WorkoutPreview: { sessionId: string; isStandalone?: boolean };
   WorkoutSummary: { sessionName: string; totalSets: number; totalVolume: number };
   ProgramSelect: undefined;
   ProgramList: undefined;
@@ -72,6 +74,18 @@ export function RootNavigator() {
               options={{
                 presentation: "card",
                 gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
+              name="WorkoutPreview"
+              component={WorkoutPreviewScreen}
+              options={{
+                headerShown: true,
+                headerTitle: "Förhandsgranska pass",
+                headerBackTitle: "Tillbaka",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
+                headerTitleStyle: { fontWeight: "600" },
               }}
             />
             <Stack.Screen

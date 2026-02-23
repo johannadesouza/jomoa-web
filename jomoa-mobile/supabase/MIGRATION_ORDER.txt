@@ -1,0 +1,19 @@
+# JOMOA Mobile – Supabase migrations
+# Kör i ordning: 001 → 002 → 003 → 004 → 005 → 006 → 007 → 008 → 009
+
+001_jomoa_training_schema.sql   # Tabeller (clients, programs, workout_log, cycle_events, etc.)
+002_jomoa_rls.sql               # RLS policies + jomoa_current_client_id()
+003_add_clients_onboarding_columns.sql
+004_client_favorites_body_measurements_goals_awards.sql   # Favoriter, mätningar, mål, utmärkelser
+005_rls_favorites_measurements_goals_awards.sql           # RLS för 004 (skapar jomoa_current_client_id om saknas)
+006_client_calendar_entries.sql                            # Kalender: pass per dag, anteckningar
+007_session_templates.sql                                 # Fristående pass (utforska efter stil)
+008_calendar_workoutlog_session_template.sql              # session_template_id i calendar + workout_log
+009_exercise_duration_seconds.sql                         # duration_seconds för tidsbestämda övningar
+
+# Förutsättning: Supabase Auth (auth.users) är aktiverat.
+# Kör med: supabase db push  eller  supabase migration up
+
+# Felsökning:
+# - "function jomoa_current_client_id does not exist": Kör 002_jomoa_rls.sql först (skapar funktionen).
+#   Eller: supabase db reset (återställer och kör alla migrations från början).
