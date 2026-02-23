@@ -14,16 +14,17 @@ import { ProgramSelectScreen } from "../features/programs/ProgramSelectScreen";
 import { ProgramListScreen } from "../features/programs/ProgramListScreen";
 import { ProgramDetailScreen } from "../features/programs/ProgramDetailScreen";
 import { OnboardingNavigator } from "../features/onboarding";
-import { CycleScreen } from "../features/cycle";
+import { CycleScreen, CycleInsightsScreen } from "../features/cycle";
 import { ReadinessScreen } from "../features/readiness";
 import { CalendarScreen } from "../features/calendar";
 import { SettingsScreen } from "../features/settings";
+import { MeasurementsScreen } from "../features/log/MeasurementsScreen";
 
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   Onboarding: undefined;
-  Main: { screen?: "DashboardTab" | "WorkoutsTab" | "CalendarTab" | "InsightsTab" | "SettingsTab" } | undefined;
+  Main: { screen?: "HomeTab" | "TrainTab" | "LogTab" | "InsightsTab" | "LearnTab" } | undefined;
   WorkoutSession: { sessionId: string; isStandalone?: boolean; applyAdjustment?: boolean };
   WorkoutPreview: { sessionId: string; isStandalone?: boolean };
   WorkoutSummary: { sessionName: string; totalSets: number; totalVolume: number };
@@ -34,6 +35,8 @@ export type RootStackParamList = {
   Readiness: undefined;
   Calendar: undefined;
   Settings: undefined;
+  CycleInsights: undefined;
+  Measurements: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -166,6 +169,30 @@ export function RootNavigator() {
               options={{
                 headerShown: true,
                 headerTitle: "Kalender",
+                headerBackTitle: "Tillbaka",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
+                headerTitleStyle: { fontWeight: "600" },
+              }}
+            />
+            <Stack.Screen
+              name="CycleInsights"
+              component={CycleInsightsScreen}
+              options={{
+                headerShown: true,
+                headerTitle: "Cykelinsikter",
+                headerBackTitle: "Tillbaka",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
+                headerTitleStyle: { fontWeight: "600" },
+              }}
+            />
+            <Stack.Screen
+              name="Measurements"
+              component={MeasurementsScreen}
+              options={{
+                headerShown: true,
+                headerTitle: "Mätningar",
                 headerBackTitle: "Tillbaka",
                 headerStyle: { backgroundColor: themeColors.background },
                 headerTintColor: themeColors.textPrimary,

@@ -106,13 +106,19 @@ export async function saveReadiness(
 export async function getTodayReadiness(
   clientId: string
 ): Promise<{ data: ReadinessRecord | null; error: string | null }> {
+  return getReadinessForDate(clientId, getLocalDateString());
+}
+
+export async function getReadinessForDate(
+  clientId: string,
+  date: string
+): Promise<{ data: ReadinessRecord | null; error: string | null }> {
   try {
-    const today = getLocalDateString();
     const { data, error } = await supabase
       .from("daily_readiness")
       .select("*")
       .eq("client_id", clientId)
-      .eq("date", today)
+      .eq("date", date)
       .maybeSingle();
 
     if (error && error.code !== "PGRST116") throw error;

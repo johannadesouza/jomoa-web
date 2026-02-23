@@ -88,9 +88,10 @@ export function AddMeasurementModal({
   };
 
   const handleSave = async () => {
-    const dateMatch = date.match(/^\d{4}-\d{2}-\d{2}$/);
+    const trimmedDate = date.trim();
+    const dateMatch = trimmedDate.match(/^\d{4}-\d{2}-\d{2}$/);
     if (!dateMatch) {
-      setError("Ange datum i format ÅÅÅÅ-MM-DD");
+      setError("Ange datum som ÅÅÅÅ-MM-DD, t.ex. " + getLocalDateString());
       return;
     }
 
@@ -108,7 +109,7 @@ export function AddMeasurementModal({
     setSaving(true);
     setError(null);
     const { error: saveError } = await onSave(
-      date,
+      trimmedDate,
       parsed,
       note.trim() || null
     );
@@ -175,9 +176,12 @@ export function AddMeasurementModal({
               keyboardShouldPersistTaps="handled"
             >
               <YStack gap="$4">
+                <AppText variant="caption" muted>
+                  Fyll i de mätningar du vill logga – minst ett krävs
+                </AppText>
                 <AppInput
                   label="Datum"
-                  placeholder="ÅÅÅÅ-MM-DD"
+                  placeholder={getLocalDateString()}
                   value={date}
                   onChangeText={setDate}
                   keyboardType="numbers-and-punctuation"

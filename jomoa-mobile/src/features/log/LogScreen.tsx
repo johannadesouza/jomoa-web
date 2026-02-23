@@ -1,8 +1,9 @@
 /**
- * Log – input only. "Hur mår du idag?" + quick actions.
+ * Log – input only. Fyll i så får du insikter.
  * Tydlig skillnad mot Insikter (output/analys).
  */
 import React from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import { YStack, XStack, Text } from "tamagui";
 import { useNavigation } from "@react-navigation/native";
@@ -13,36 +14,40 @@ import {
   Section,
   Card,
   AppText,
+  AppButton,
 } from "../../shared/ui";
 import { TopBar } from "../../components/layout/TopBar";
-import { QuickLogStrip } from "../../components/log/QuickLogStrip";
+import { useAuth } from "../../shared/context/AuthContext";
+import { useReadiness } from "../../lib/hooks/useReadiness";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const QUICK_ACTIONS = [
+const SECONDARY_ACTIONS = [
   {
     icon: "🌙",
-    label: "Period",
-    desc: "Logga mensstart",
-    route: "Cycle" as const,
-  },
-  {
-    icon: "📋",
-    label: "Symtom",
-    desc: "Kramper, energi",
+    label: "Period & symtom",
+    desc: "Mensstart, kramper, energi",
     route: "Cycle" as const,
   },
   {
     icon: "📏",
     label: "Mätningar",
-    desc: "Vikt, mått",
+    desc: "Vikt och kroppsmått",
     route: "Measurements" as const,
   },
-];
+] as const;
 
 export function LogScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const { client } = useAuth();
+  const { readiness, refetch } = useReadiness(client?.id);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const handleSettings = () => navigation.navigate("Settings");
 
@@ -50,7 +55,7 @@ export function LogScreen() {
     <Screen padded>
       <TopBar
         title="Logga"
-        subtitle="Fyll i – insikter visas under Insikter"
+        subtitle="Fyll i för personliga insikter"
         rightIcons={["settings"]}
         onSettings={handleSettings}
       />
@@ -58,34 +63,58 @@ export function LogScreen() {
         <YStack gap="$6" paddingTop="$4" paddingBottom="$8">
           <Section
             title="Hur mår du idag?"
-            subtitle="Logga här – dina insikter visas under Insikter"
+            subtitle="Sömn, stress, energi – fyll i för dagens rekommendationer"
           >
-            <QuickLogStrip />
-            <Card
-              pressable
-              marginTop="$4"
-              onPress={() => navigation.navigate("Readiness")}
-            >
-              <Card.Content>
-                <YStack alignItems="center" gap="$4" paddingVertical="$4">
-                  <Text fontSize="$xxxl">💚</Text>
-                  <YStack alignItems="center" gap="$1">
-                    <AppText variant="h3">Logga energi & readiness</AppText>
-                    <AppText variant="small" muted center>
-                      Sömn, stress, energi, smärta
+            {readiness ? (
+              <Card>
+                <Card.Content>
+                  <YStack alignItems="center" gap="$3" paddingVertical="$4">
+                    <Text fontSize="$xxl">✓</Text>
+                    <AppText variant="body" center>
+                      Du har loggat hur du mår idag
                     </AppText>
+                    <AppText variant="small" muted center>
+                      Bra! Se insikter under fliken Insikter
+                    </AppText>
+                    <AppButton
+                      variant="secondary"
+                      size="sm"
+                      onPress={() => navigation.navigate("Readiness")}
+                    >
+                      Uppdatera
+                    </AppButton>
                   </YStack>
-                  <AppText variant="caption" color="$accent" fontWeight="600">
-                    Tryck för att logga →
-                  </AppText>
-                </YStack>
-              </Card.Content>
-            </Card>
+                </Card.Content>
+              </Card>
+            ) : (
+              <Card
+                pressable
+                onPress={() => navigation.navigate("Readiness")}
+              >
+                <Card.Content>
+                  <YStack alignItems="center" gap="$4" paddingVertical="$4">
+                    <Text fontSize="$xxxl">💚</Text>
+                    <YStack alignItems="center" gap="$1">
+                      <AppText variant="h3">Hur mår du idag?</AppText>
+                      <AppText variant="small" muted center>
+                        Sömn, stress, energi, ömhet – få rekommendationer
+                      </AppText>
+                    </YStack>
+                    <AppButton
+                      variant="primary"
+                      onPress={() => navigation.navigate("Readiness")}
+                    >
+                      Logga hur du mår
+                    </AppButton>
+                  </YStack>
+                </Card.Content>
+              </Card>
+            )}
           </Section>
 
-          <Section title="Mer att logga" subtitle="Cykel, symtom och mätningar">
+          <Section title="Mer att logga" subtitle="Cykel och mätningar">
             <XStack flexWrap="wrap" gap="$3">
-              {QUICK_ACTIONS.map((action) => (
+              {SECONDARY_ACTIONS.map((action) => (
                 <Card
                   key={action.label}
                   flex={1}
@@ -94,12 +123,12 @@ export function LogScreen() {
                   onPress={() => navigation.navigate(action.route)}
                 >
                   <Card.Content>
-                    <YStack alignItems="center" gap="$2" paddingVertical="$3">
-                      <Text fontSize="$xl">{action.icon}</Text>
+                    <YStack alignItems="center" gap="$2" paddingVertical="$4">
+                      <Text fontSize="$xxl">{action.icon}</Text>
                       <AppText variant="body" fontWeight="600">
                         {action.label}
                       </AppText>
-                      <AppText variant="caption" muted>
+                      <AppText variant="caption" muted center>
                         {action.desc}
                       </AppText>
                     </YStack>

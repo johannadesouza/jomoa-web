@@ -18,7 +18,7 @@ export interface ClientGoal {
 
 const GOAL_TYPE_LABELS: Record<GoalType, string> = {
   fitness: "Träning",
-  nutrition: "Nutrition",
+  nutrition: "Näring",
   wellness: "Hälsa",
   event: "Event",
 };

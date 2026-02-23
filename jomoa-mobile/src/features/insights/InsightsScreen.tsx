@@ -13,7 +13,6 @@ import {
   Section,
   Card,
   AppText,
-  AppButton,
   LoadingScreen,
 } from "../../shared/ui";
 import { TopBar } from "../../components/layout/TopBar";
@@ -177,77 +176,42 @@ export function InsightsScreen() {
               </Section>
             )}
             {!insight && !readiness && (
-              <Section title="Idag" subtitle="Baserat på cykel och readiness">
-                <Card pressable onPress={() => navigation.navigate("Readiness")}>
+              <Section title="Dagens rekommendation" subtitle="Baserat på cykel och hur du mår">
+                <Card
+                  pressable
+                  onPress={() => navigation.navigate("Main", { screen: "LogTab" })}
+                >
                   <Card.Content>
-                    <YStack alignItems="center" gap="$3">
-                      <Text fontSize="$xxl">💚</Text>
+                    <YStack alignItems="center" gap="$3" paddingVertical="$2">
+                      <Text fontSize="$xxl">📋</Text>
                       <AppText variant="body" center>
-                        Logga hur du mår idag
+                        Logga hur du mår under fliken Logga för att få dagens rekommendation
                       </AppText>
-                      <AppText variant="small" muted center>
-                        Sömn, stress, energi – få personliga rekommendationer och träningsjusteringar
+                      <AppText variant="caption" color="$accent">
+                        Gå till Logga →
                       </AppText>
-                      <AppButton variant="primary" onPress={() => navigation.navigate("Readiness")}>
-                        Logga readiness
-                      </AppButton>
                     </YStack>
                   </Card.Content>
                 </Card>
               </Section>
             )}
-            <Section
-              title="Kategorier"
-              subtitle="Välmående, näring, fysiskt"
-            >
-              <XStack flexWrap="wrap" gap="$3">
-                <Card
-                  flex={1}
-                  minWidth="30%"
-                  pressable
-                  onPress={() => navigation.navigate("Readiness")}
-                >
+            {readiness && !insight && (
+              <Section title="Idag" subtitle="Du har loggat för idag">
+                <Card>
                   <Card.Content>
-                    <YStack alignItems="center" gap="$2" paddingVertical="$3">
-                      <Text fontSize="$xl">💚</Text>
-                      <AppText variant="caption" fontWeight="600">
-                        Välmående
+                    <YStack alignItems="center" gap="$2">
+                      <Text fontSize="$xxl">✓</Text>
+                      <AppText variant="body" center>
+                        Du har loggat hur du mår idag
+                      </AppText>
+                      <AppText variant="small" muted center>
+                        Sömn, stress och energi – bra! Rekommendationer visas när vi har tillräckligt med data.
                       </AppText>
                     </YStack>
                   </Card.Content>
                 </Card>
-                <Card
-                  flex={1}
-                  minWidth="30%"
-                  pressable
-                  onPress={() => navigation.navigate("CycleInsights")}
-                >
-                  <Card.Content>
-                    <YStack alignItems="center" gap="$2" paddingVertical="$3">
-                      <Text fontSize="$xl">🥗</Text>
-                      <AppText variant="caption" fontWeight="600">
-                        Näring
-                      </AppText>
-                    </YStack>
-                  </Card.Content>
-                </Card>
-                <Card
-                  flex={1}
-                  minWidth="30%"
-                  pressable
-                  onPress={() => navigation.navigate("CycleInsights")}
-                >
-                  <Card.Content>
-                    <YStack alignItems="center" gap="$2" paddingVertical="$3">
-                      <Text fontSize="$xl">💪</Text>
-                      <AppText variant="caption" fontWeight="600">
-                        Fysiskt
-                      </AppText>
-                    </YStack>
-                  </Card.Content>
-                </Card>
-              </XStack>
-            </Section>
+              </Section>
+            )}
           </>
         )}
 
@@ -278,11 +242,11 @@ export function InsightsScreen() {
                           <Text fontSize="$xxl" fontWeight="700" color="$accent">
                             {s.value}
                           </Text>
-                          {s.unit && (
+                          {s.unit ? (
                             <Text fontSize="$sm" color="$textSecondary">
                               {s.unit}
                             </Text>
-                          )}
+                          ) : null}
                         </XStack>
                         <AppText variant="caption">{s.label}</AppText>
                       </YStack>
@@ -430,15 +394,24 @@ export function InsightsScreen() {
         )}
 
         {segment === "historik" && (
-          <Section title="Träningshistorik">
-            <Card>
+          <Section
+            title="Träningshistorik"
+            subtitle="Se kalendern för att bläddra bland dina pass"
+          >
+            <Card
+              pressable
+              onPress={() => navigation.navigate("Calendar")}
+            >
               <Card.Content>
                 <YStack alignItems="center" paddingVertical="$6" gap="$3">
-                  <Text fontSize="$xxxl">📈</Text>
+                  <Text fontSize="$xxxl">📅</Text>
                   <AppText variant="body" muted center>
                     {hasData
-                      ? "Fortsätt träna för mer historik."
-                      : "Din träningshistorik visas här när du loggat några pass."}
+                      ? "Se dina loggade pass i kalendern."
+                      : "Logga pass under Träna – historiken visas i kalendern."}
+                  </AppText>
+                  <AppText variant="caption" color="$accent">
+                    Öppna Kalender →
                   </AppText>
                 </YStack>
               </Card.Content>

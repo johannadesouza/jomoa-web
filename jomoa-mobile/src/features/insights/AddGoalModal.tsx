@@ -68,13 +68,20 @@ export function AddGoalModal({
   }, [visible, initialGoal?.goal_type, initialGoal?.description, initialGoal?.target_value]);
 
   const handleSave = async () => {
+    const desc = description.trim();
+    const target = targetValue.trim();
+    if (!desc && !target) {
+      setError("Fyll i minst beskrivning eller målsättning");
+      return;
+    }
+
     setSaving(true);
     setError(null);
 
     if (isEdit && initialGoal) {
       const { error: updateError } = await onUpdate!(initialGoal.id, {
-        description: description.trim() || null,
-        target_value: targetValue.trim() || null,
+        description: desc || null,
+        target_value: target || null,
       });
       setSaving(false);
       if (updateError) {
@@ -84,8 +91,8 @@ export function AddGoalModal({
     } else {
       const { error: saveError } = await onSave(
         goalType,
-        description.trim() || null,
-        targetValue.trim() || null
+        desc || null,
+        target || null
       );
       setSaving(false);
       if (saveError) {
@@ -172,18 +179,43 @@ export function AddGoalModal({
                       </AppText>
                     )}
 
+                    <AppText variant="small" muted>
+                      Beskriv ditt mål – minst ett fält krävs
+                    </AppText>
                     <AppInput
-                      label="Beskrivning (valfritt)"
-                      placeholder="T.ex. Bli starkare i benen"
+                      label="Beskrivning"
+                      placeholder={
+                        goalType === "fitness"
+                          ? "T.ex. Bli starkare i benen"
+                          : goalType === "nutrition"
+                            ? "T.ex. Äta mer vegetariskt"
+                            : goalType === "wellness"
+                              ? "T.ex. Sova 7 timmar per natt"
+                              : "T.ex. Springa halvmaraton i vår"
+                      }
                       value={description}
-                      onChangeText={setDescription}
+                      onChangeText={(v) => {
+                        setDescription(v);
+                        setError(null);
+                      }}
                     />
 
                     <AppInput
-                      label="Målsättning (valfritt)"
-                      placeholder="T.ex. Springa 5 km, 62 kg"
+                      label="Målsättning"
+                      placeholder={
+                        goalType === "fitness"
+                          ? "T.ex. Bänka 60 kg"
+                          : goalType === "nutrition"
+                            ? "T.ex. 5 portioner grönt/dag"
+                            : goalType === "wellness"
+                              ? "T.ex. 3 yoga-pass/vecka"
+                              : "T.ex. 2025-05-15"
+                      }
                       value={targetValue}
-                      onChangeText={setTargetValue}
+                      onChangeText={(v) => {
+                        setTargetValue(v);
+                        setError(null);
+                      }}
                     />
 
                     {error ? (

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { YStack } from "tamagui";
+import { useNavigation } from "@react-navigation/native";
 
 import {
   Screen,
@@ -23,6 +24,7 @@ function clamp(value: string, min: number, max: number): number | null {
 }
 
 export function ReadinessScreen() {
+  const navigation = useNavigation();
   const { client } = useAuth();
   const { readiness, isLoading, refetch } = useReadiness(client?.id);
   const { phaseLabel } = useCycle(client?.id);
@@ -43,13 +45,13 @@ export function ReadinessScreen() {
     }
   }, [readiness]);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleSave = async () => {
     if (!client?.id) return;
     setSaving(true);
-    setSaved(false);
-    const { success } = await saveReadiness({
+    setSaveError(null);
+    const { success, error } = await saveReadiness({
       client_id: client.id,
       date: getLocalDateString(),
       sleep_hours: clamp(sleepHours, 0, 24),
@@ -60,8 +62,10 @@ export function ReadinessScreen() {
     });
     setSaving(false);
     if (success) {
-      setSaved(true);
       refetch();
+      navigation.goBack();
+    } else {
+      setSaveError(error ?? "Kunde inte spara");
     }
   };
 
@@ -131,9 +135,9 @@ export function ReadinessScreen() {
                 >
                   Spara
                 </AppButton>
-                {saved && (
-                  <AppText variant="small" color="$success">
-                    Sparat!
+                {saveError && (
+                  <AppText variant="small" color="$error">
+                    {saveError}
                   </AppText>
                 )}
               </YStack>

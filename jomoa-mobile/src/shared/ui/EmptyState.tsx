@@ -27,7 +27,9 @@ function ActionButton({
 
 function IconWrapper({ icon, IconContainer }: { icon: React.ReactNode; IconContainer: React.ComponentType<{ children: React.ReactNode }> }) {
   if (!icon) return null;
-  return <IconContainer>{icon}</IconContainer>;
+  // I RN måste strängar (t.ex. emoji) wrappas i Text
+  const content = typeof icon === "string" ? <AppText variant="h1">{icon}</AppText> : icon;
+  return <IconContainer>{content}</IconContainer>;
 }
 
 function DescriptionWrapper({ description, DescriptionComponent }: { description?: string; DescriptionComponent: React.ComponentType<{ children: React.ReactNode }> }) {

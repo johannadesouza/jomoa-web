@@ -2,6 +2,7 @@
  * Mätningslogg – body_measurements (databas-synk)
  */
 import React, { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { YStack, XStack } from "tamagui";
 
 import {
@@ -20,8 +21,14 @@ import { AddMeasurementModal } from "./AddMeasurementModal";
 
 export function MeasurementsScreen() {
   const { client } = useAuth();
-  const { records, isLoading, save } = useMeasurements(client?.id);
+  const { records, isLoading, save, refetch } = useMeasurements(client?.id);
   const [addModalVisible, setAddModalVisible] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   if (isLoading) return <LoadingScreen message="Laddar mätningar..." />;
 
@@ -30,7 +37,7 @@ export function MeasurementsScreen() {
       <YStack gap="$6" paddingBottom="$8">
         <Section
           title="Mätningslogg"
-          subtitle="Spara vikt och mätningar över tid"
+          subtitle="Vikt, midja, höfter – fyll i det du vill spåra"
         >
           {records.length === 0 ? (
             <Card>
@@ -52,11 +59,11 @@ export function MeasurementsScreen() {
                     <XStack justifyContent="space-between" alignItems="center">
                       <AppText variant="h3">{r.date}</AppText>
                       <AppText variant="caption" muted>
-                        {Object.keys(r.measurements).length} mätvärden
+                        {(r.measurements ? Object.keys(r.measurements) : []).length} mätvärden
                       </AppText>
                     </XStack>
                     <YStack gap="$2" marginTop="$2">
-                      {Object.entries(r.measurements).map(([key, val]) => (
+                      {Object.entries(r.measurements ?? {}).map(([key, val]) => (
                         <XStack
                           key={key}
                           justifyContent="space-between"

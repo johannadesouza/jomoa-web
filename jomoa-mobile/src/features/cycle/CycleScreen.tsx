@@ -51,16 +51,23 @@ export function CycleScreen() {
   const [showCustom, setShowCustom] = useState(false);
   const [symptomCramps, setSymptomCramps] = useState("");
   const [symptomEnergy, setSymptomEnergy] = useState("");
+  const [savingSymptom, setSavingSymptom] = useState(false);
+  const [symptomError, setSymptomError] = useState<string | null>(null);
+
+  const [periodError, setPeriodError] = useState<string | null>(null);
 
   const handleLogPeriod = async (dateStr: string) => {
     if (!client?.id || !dateStr) return;
     setSaving(true);
-    const { success } = await savePeriodStart(client.id, dateStr);
+    setPeriodError(null);
+    const { success, error: saveErr } = await savePeriodStart(client.id, dateStr);
     setSaving(false);
     if (success) {
       setCustomDate("");
       setShowCustom(false);
       await refetch();
+    } else {
+      setPeriodError(saveErr ?? "Kunde inte spara");
     }
   };
 
@@ -69,8 +76,13 @@ export function CycleScreen() {
   };
 
   const handleLogCustomDate = () => {
-    const match = customDate.match(/^\d{4}-\d{2}-\d{2}$/);
-    if (match) handleLogPeriod(customDate);
+    const trimmed = customDate.trim();
+    const match = trimmed.match(/^\d{4}-\d{2}-\d{2}$/);
+    if (!match) {
+      setPeriodError("Ange datum som ÅÅÅÅ-MM-DD, t.ex. 2025-02-15");
+      return;
+    }
+    handleLogPeriod(trimmed);
   };
 
   if (isLoading) return <LoadingScreen />;
@@ -135,6 +147,11 @@ export function CycleScreen() {
           <>
             <Section title="Logga period" spacing="md">
               <YStack gap="$3">
+                {periodError && (
+                  <AppText variant="caption" color="$error">
+                    {periodError}
+                  </AppText>
+                )}
                 <AppButton
                   variant="secondary"
                   fullWidth
@@ -145,9 +162,12 @@ export function CycleScreen() {
                 </AppButton>
                 {showCustom ? (
                   <YStack gap="$2">
+                    <AppText variant="caption" muted>
+                      Ange datum i format ÅÅÅÅ-MM-DD
+                    </AppText>
                     <AppInput
-                      label="Datum (ÅÅÅÅ-MM-DD)"
-                      placeholder="t.ex. 2025-02-15"
+                      label="Datum"
+                      placeholder="2025-02-15"
                       value={customDate}
                       onChangeText={setCustomDate}
                     />
@@ -183,52 +203,80 @@ export function CycleScreen() {
               </YStack>
             </Section>
 
-            <Section title="Symtom idag" spacing="md">
+            <Section
+              title="Symtom idag"
+              subtitle="Kramper och energi – hjälper oss anpassa rekommendationer"
+              spacing="md"
+            >
               <Card>
                 <Card.Content>
                   <YStack gap="$3">
                     <XStack gap="$3">
                       <YStack flex={1} gap="$1">
                         <AppText variant="small" muted>
-                          Kramper (1–5)
+                          Kramper (1–5, 5 = värst)
                         </AppText>
                         <AppInput
                           placeholder="1–5"
                           keyboardType="number-pad"
                           value={symptomCramps}
-                          onChangeText={setSymptomCramps}
+                          onChangeText={(v) => {
+                            setSymptomCramps(v);
+                            setSymptomError(null);
+                          }}
                         />
                       </YStack>
                       <YStack flex={1} gap="$1">
                         <AppText variant="small" muted>
-                          Energi (1–10)
+                          Energi (1–10, 10 = mest)
                         </AppText>
                         <AppInput
                           placeholder="1–10"
                           keyboardType="number-pad"
                           value={symptomEnergy}
-                          onChangeText={setSymptomEnergy}
+                          onChangeText={(v) => {
+                            setSymptomEnergy(v);
+                            setSymptomError(null);
+                          }}
                         />
                       </YStack>
                     </XStack>
+                    {symptomError && (
+                      <AppText variant="caption" color="$error">
+                        {symptomError}
+                      </AppText>
+                    )}
                     <AppButton
                       variant="secondary"
                       size="sm"
+                      loading={savingSymptom}
+                      disabled={savingSymptom}
                       onPress={async () => {
-                        const today = new Date().toISOString().split("T")[0];
                         const cramps = parseInt(symptomCramps, 10);
                         const energy = parseInt(symptomEnergy, 10);
-                        await logSymptom({
+                        const hasCramps =
+                          !isNaN(cramps) && cramps >= 1 && cramps <= 5;
+                        const hasEnergy =
+                          !isNaN(energy) && energy >= 1 && energy <= 10;
+                        if (!hasCramps && !hasEnergy) {
+                          setSymptomError("Fyll i minst ett fält (1–5 eller 1–10)");
+                          return;
+                        }
+                        setSavingSymptom(true);
+                        setSymptomError(null);
+                        const today = new Date().toISOString().split("T")[0];
+                        const { error } = await logSymptom({
                           date: today,
-                          cramps_severity:
-                            !isNaN(cramps) && cramps >= 1 && cramps <= 5
-                              ? cramps
-                              : null,
-                          energy_level:
-                            !isNaN(energy) && energy >= 1 && energy <= 10
-                              ? energy
-                              : null,
+                          cramps_severity: hasCramps ? cramps : null,
+                          energy_level: hasEnergy ? energy : null,
                         });
+                        setSavingSymptom(false);
+                        if (error) {
+                          setSymptomError(error.message ?? "Kunde inte spara");
+                          return;
+                        }
+                        setSymptomCramps("");
+                        setSymptomEnergy("");
                       }}
                     >
                       Spara symtom

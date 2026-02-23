@@ -26,10 +26,16 @@ export function useReadiness(
     }
     setIsLoading(true);
     setError(null);
-    const { data, error: err } = await getReadinessForDate(clientId, viewDate);
-    setReadiness(data);
-    setError(err);
-    setIsLoading(false);
+    try {
+      const { data, error: err } = await getReadinessForDate(clientId, viewDate);
+      setReadiness(data);
+      setError(err);
+    } catch (e) {
+      setReadiness(null);
+      setError(e instanceof Error ? e.message : "Kunde inte hämta");
+    } finally {
+      setIsLoading(false);
+    }
   }, [clientId, viewDate]);
 
   useEffect(() => {

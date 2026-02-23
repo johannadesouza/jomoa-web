@@ -12,6 +12,7 @@
 009_exercise_duration_seconds.sql                         # duration_seconds för tidsbestämda övningar
 010_exercise_challenge_log.sql                            # Utmaningsfeedback per övning (ersätter RPE)
 011_strategy_decisions.sql                                # Användarens val (accepted/rejected) för lärande över tid
+012_ensure_body_measurements_column.sql                   # Säkerställ measurements-kolumn (PGRST204)
 
 # Förutsättning: Supabase Auth (auth.users) är aktiverat.
 # Kör med: supabase db push  eller  supabase migration up
