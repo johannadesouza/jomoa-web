@@ -166,7 +166,7 @@ export default async function ArticlesPage() {
               </span>
             </summary>
             <div style={{ padding: "20px", background: "#FFFBF7", borderTop: "1px solid #f0d6d7" }}>
-              {/* Status-knappar */}
+              {/* Status-knappar – ett form per knapp för att undvika nested forms */}
               <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
                 {a.status === "draft" && (
                   <form action={publishArticle}>

@@ -137,10 +137,7 @@ export default async function CycleTipsPage() {
                       </div>
                       <div style={{ display: "flex", gap: 8 }}>
                         <button type="submit" style={addBtnStyle}>Spara</button>
-                        <form action={deleteTrainingTip}>
-                          <input type="hidden" name="id" value={tip.id} />
-                          <button type="submit" style={deleteBtnStyle}>Ta bort</button>
-                        </form>
+                        <button formAction={deleteTrainingTip} style={deleteBtnStyle}>Ta bort</button>
                       </div>
                     </form>
                   </div>
@@ -189,10 +186,7 @@ export default async function CycleTipsPage() {
                       </select>
                       <div style={{ display: "flex", gap: 8 }}>
                         <button type="submit" style={addBtnStyle}>Spara</button>
-                        <form action={deleteWellnessTip}>
-                          <input type="hidden" name="id" value={tip.id} />
-                          <button type="submit" style={deleteBtnStyle}>Ta bort</button>
-                        </form>
+                        <button formAction={deleteWellnessTip} style={deleteBtnStyle}>Ta bort</button>
                       </div>
                     </form>
                   </div>

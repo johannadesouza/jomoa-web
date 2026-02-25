@@ -134,10 +134,7 @@ export default async function ProgramsPage() {
                 </div>
                 <div style={{ gridColumn: "1 / -1", display: "flex", gap: 8 }}>
                   <button type="submit" style={saveBtnStyle}>Spara ändringar</button>
-                  <form action={deleteProgram}>
-                    <input type="hidden" name="id" value={p.id} />
-                    <button type="submit" style={deleteBtnStyle}>Ta bort</button>
-                  </form>
+                  <button formAction={deleteProgram} style={deleteBtnStyle}>Ta bort</button>
                 </div>
               </form>
             </div>

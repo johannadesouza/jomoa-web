@@ -96,10 +96,7 @@ export default async function ReadinessInsightsPage() {
                 <input name="suggestion" defaultValue={ins.suggestion ?? ""} placeholder="Konkret åtgärd (valfri)" style={inputStyle} />
                 <div style={{ display: "flex", gap: 8 }}>
                   <button type="submit" style={saveBtnStyle}>Spara</button>
-                  <form action={deleteInsight}>
-                    <input type="hidden" name="id" value={ins.id} />
-                    <button type="submit" style={deleteBtnStyle}>Ta bort</button>
-                  </form>
+                  <button formAction={deleteInsight} style={deleteBtnStyle}>Ta bort</button>
                 </div>
               </form>
             </div>

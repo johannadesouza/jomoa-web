@@ -120,10 +120,7 @@ export default async function SessionTemplatesPage() {
                 </div>
                 <div style={{ gridColumn: "1 / -1", display: "flex", gap: 8 }}>
                   <button type="submit" style={saveBtnStyle}>Spara ändringar</button>
-                  <form action={deleteTemplate}>
-                    <input type="hidden" name="id" value={t.id} />
-                    <button type="submit" style={deleteBtnStyle}>Ta bort</button>
-                  </form>
+                  <button formAction={deleteTemplate} style={deleteBtnStyle}>Ta bort</button>
                 </div>
               </form>
             </div>
