@@ -37,6 +37,10 @@ import { getDayOfWeekFromDateStr } from "../../lib/utils/date";
 import type { ProgramSessionData } from "../../lib/services/workoutService";
 import { getDaysUntilNextPeriod } from "../../lib/utils/cycleUtils";
 import type { CyclePhase } from "../../lib/utils/cycleUtils";
+import {
+  fetchPhaseContent,
+  type PhaseContent,
+} from "../../lib/repos/contentRepo/cycleContent";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 
 type Props = NativeStackScreenProps<RootStackParamList, "DayDetail">;
@@ -77,11 +81,12 @@ function DayDetailÖvrigtContainer({
   );
 }
 
-const PHASE_SHORT_TIPS: Record<Exclude<CyclePhase, null>, string> = {
-  menstruation: "Vila och återhämta. Lyssna på kroppen.",
-  follicular: "Bra fas för att bygga styrka och uthållighet.",
-  ovulation: "Peak energi – passa på krävande pass.",
-  luteal: "Fokus på återhämtning och mildare träning kan passa.",
+// Mappar cykelUtils-fas till Content DB:s fas-id
+const PHASE_ID_MAP: Record<Exclude<CyclePhase, null>, string> = {
+  menstruation: "menstruation",
+  follicular: "follikular",
+  ovulation: "ovulation",
+  luteal: "luteal",
 };
 
 function DayDetailCykelView({
@@ -95,44 +100,65 @@ function DayDetailCykelView({
   const d = new Date(date + "T12:00:00");
   const { phase, cycleDay, phaseLabel } = getPhaseForDate(d);
   const daysUntilNext = getDaysUntilNextPeriod(latestPeriodStart, cycleLength, d);
-  const phaseTip = phase ? PHASE_SHORT_TIPS[phase] : null;
+
+  const [phaseContent, setPhaseContent] = useState<PhaseContent | null>(null);
+  const [loadingContent, setLoadingContent] = useState(false);
+
+  useEffect(() => {
+    if (!phase) return;
+    const phaseId = PHASE_ID_MAP[phase];
+    setLoadingContent(true);
+    fetchPhaseContent(phaseId)
+      .then(setPhaseContent)
+      .finally(() => setLoadingContent(false));
+  }, [phase]);
 
   return (
     <Screen scroll padded>
       <YStack gap="$6">
-        <Section title="Cykelinfo" subtitle={`${date} – information för denna dag`}>
+        {/* Fasöversikt */}
+        <Section title="Cykelinfo" subtitle={`Dag ${cycleDay ?? "–"} i cykeln`}>
           <Card borderRadius="$4">
             <Card.Content padding="$6">
               <YStack gap="$4">
                 {phase ? (
                   <>
-                    <YStack gap="$1">
-                      <AppText variant="small" muted>
-                        Fas
-                      </AppText>
+                    <XStack alignItems="center" gap="$3">
+                      {phaseContent?.color_hex && (
+                        <YStack
+                          width={12}
+                          height={12}
+                          borderRadius={6}
+                          backgroundColor={phaseContent.color_hex}
+                        />
+                      )}
                       <AppText variant="h3">{phaseLabel}</AppText>
-                    </YStack>
-                    <YStack gap="$1">
-                      <AppText variant="small" muted>
-                        Cykeldag
-                      </AppText>
-                      <AppText variant="body" fontWeight="600">
-                        Dag {cycleDay} i cykeln
-                      </AppText>
-                    </YStack>
-                    {phaseTip ? (
+                    </XStack>
+
+                    {phaseContent?.typical_days && (
                       <YStack gap="$1">
-                        <AppText variant="small" muted>
-                          Kort om fasen
-                        </AppText>
-                        <AppText variant="body">{phaseTip}</AppText>
+                        <AppText variant="small" muted>Typiska dagar</AppText>
+                        <AppText variant="body">{phaseContent.typical_days}</AppText>
                       </YStack>
-                    ) : null}
+                    )}
+
+                    {phaseContent?.description && (
+                      <YStack gap="$1">
+                        <AppText variant="small" muted>Om fasen</AppText>
+                        <AppText variant="body">{phaseContent.description}</AppText>
+                      </YStack>
+                    )}
+
+                    {phaseContent?.hormone_profile && (
+                      <YStack gap="$1">
+                        <AppText variant="small" muted>Hormoner</AppText>
+                        <AppText variant="body">{phaseContent.hormone_profile}</AppText>
+                      </YStack>
+                    )}
+
                     {daysUntilNext !== null && daysUntilNext >= 0 && (
                       <YStack gap="$1">
-                        <AppText variant="small" muted>
-                          Nästa mens (beräknat)
-                        </AppText>
+                        <AppText variant="small" muted>Nästa mens (beräknat)</AppText>
                         <AppText variant="body">
                           {daysUntilNext === 0
                             ? "Idag"
@@ -152,6 +178,55 @@ function DayDetailCykelView({
             </Card.Content>
           </Card>
         </Section>
+
+        {/* Träningsrekommendationer */}
+        {phaseContent && phaseContent.training_tips.length > 0 && (
+          <Section title="Träning under fasen">
+            <YStack gap="$3">
+              {phaseContent.training_tips.map((tip) => (
+                <Card key={tip.id} borderRadius="$4">
+                  <Card.Content padding="$5">
+                    <YStack gap="$2">
+                      <XStack alignItems="center" gap="$2">
+                        <AppText variant="h3" flex={1}>{tip.title}</AppText>
+                        {tip.tip_type === "warning" && (
+                          <AppText variant="caption" color="$warning">⚠</AppText>
+                        )}
+                        {tip.tip_type === "motivation" && (
+                          <AppText variant="caption">💪</AppText>
+                        )}
+                      </XStack>
+                      <AppText variant="body">{tip.body}</AppText>
+                    </YStack>
+                  </Card.Content>
+                </Card>
+              ))}
+            </YStack>
+          </Section>
+        )}
+
+        {/* Välmående och symtomlindring */}
+        {phaseContent && phaseContent.wellness_tips.length > 0 && (
+          <Section title="Välmående & symtomlindring">
+            <YStack gap="$3">
+              {phaseContent.wellness_tips.map((tip) => (
+                <Card key={tip.id} borderRadius="$4">
+                  <Card.Content padding="$5">
+                    <YStack gap="$2">
+                      <AppText variant="h3">{tip.title}</AppText>
+                      <AppText variant="body">{tip.body}</AppText>
+                      {tip.category && (
+                        <AppText variant="caption" muted style={{ textTransform: "capitalize" }}>
+                          {tip.category}
+                        </AppText>
+                      )}
+                    </YStack>
+                  </Card.Content>
+                </Card>
+              ))}
+            </YStack>
+          </Section>
+        )}
 
         <AppButton variant="secondary" onPress={onCyclePress}>
           Öppna Cykel

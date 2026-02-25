@@ -18,3 +18,6 @@ DROP TABLE IF EXISTS public.training_programs CASCADE;
 DROP TABLE IF EXISTS public.exercises CASCADE;
 DROP TABLE IF EXISTS public.articles CASCADE;
 DROP TABLE IF EXISTS public.tips_library CASCADE;
+
+-- Gamla cycle_phases (ersatt av den nya rikare versionen i Content DB)
+DROP TABLE IF EXISTS public.cycle_phases CASCADE;
