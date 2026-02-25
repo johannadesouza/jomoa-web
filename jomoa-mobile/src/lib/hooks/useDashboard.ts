@@ -74,6 +74,17 @@ export function useDashboard(clientId: string | undefined, viewDate?: string) {
         setWeeklyWorkouts(stats.weeklyWorkouts);
         setStreak(stats.streak);
 
+        const todayDb = getDayOfWeekFromDateStr(todayStr);
+        const baseDays: Omit<WeekDay, "session" | "isToday">[] = [
+          { name: "Måndag", shortName: "M", dayOfWeek: 1 },
+          { name: "Tisdag", shortName: "T", dayOfWeek: 2 },
+          { name: "Onsdag", shortName: "O", dayOfWeek: 3 },
+          { name: "Torsdag", shortName: "T", dayOfWeek: 4 },
+          { name: "Fredag", shortName: "F", dayOfWeek: 5 },
+          { name: "Lördag", shortName: "L", dayOfWeek: 6 },
+          { name: "Söndag", shortName: "S", dayOfWeek: 7 },
+        ];
+
         if (assignmentData) {
           setAssignment(assignmentData);
 
@@ -85,7 +96,6 @@ export function useDashboard(clientId: string | undefined, viewDate?: string) {
           if (weekId) {
             const sessions = await fetchSessionsByWeekId(weekId);
             const viewDayDb = getDayOfWeekFromDateStr(viewDateStr);
-            const todayDb = getDayOfWeekFromDateStr(todayStr);
             const session = sessions.find((s) => s.day_of_week === viewDayDb) || null;
 
             setTodaySession(session);
@@ -99,15 +109,7 @@ export function useDashboard(clientId: string | undefined, viewDate?: string) {
               setTodayCompletedSessionId(null);
             }
 
-            const days: WeekDay[] = [
-              { name: "Måndag", shortName: "M", dayOfWeek: 1 },
-              { name: "Tisdag", shortName: "T", dayOfWeek: 2 },
-              { name: "Onsdag", shortName: "O", dayOfWeek: 3 },
-              { name: "Torsdag", shortName: "T", dayOfWeek: 4 },
-              { name: "Fredag", shortName: "F", dayOfWeek: 5 },
-              { name: "Lördag", shortName: "L", dayOfWeek: 6 },
-              { name: "Söndag", shortName: "S", dayOfWeek: 7 },
-            ].map((day) => ({
+            const days: WeekDay[] = baseDays.map((day) => ({
               ...day,
               session: sessions.find((s) => s.day_of_week === day.dayOfWeek) || null,
               isToday: day.dayOfWeek === todayDb,
@@ -118,20 +120,47 @@ export function useDashboard(clientId: string | undefined, viewDate?: string) {
             setTodaySession(null);
             setTodaySessionCompleted(false);
             setTodayCompletedSessionId(null);
-            setWeekDays([]);
+            setWeekDays(
+              baseDays.map((day) => ({
+                ...day,
+                session: null,
+                isToday: day.dayOfWeek === todayDb,
+              }))
+            );
           }
         } else {
           setAssignment(null);
           setTodaySession(null);
           setTodaySessionCompleted(false);
           setTodayCompletedSessionId(null);
-          setWeekDays([]);
+          setWeekDays(
+            baseDays.map((day) => ({
+              ...day,
+              session: null,
+              isToday: day.dayOfWeek === todayDb,
+            }))
+          );
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Kunde inte ladda dashboard");
         setAssignment(null);
         setTodaySession(null);
-        setWeekDays([]);
+        const todayDb = getDayOfWeekFromDateStr(getLocalDateString());
+        setWeekDays(
+          [
+            { name: "Måndag", shortName: "M", dayOfWeek: 1 },
+            { name: "Tisdag", shortName: "T", dayOfWeek: 2 },
+            { name: "Onsdag", shortName: "O", dayOfWeek: 3 },
+            { name: "Torsdag", shortName: "T", dayOfWeek: 4 },
+            { name: "Fredag", shortName: "F", dayOfWeek: 5 },
+            { name: "Lördag", shortName: "L", dayOfWeek: 6 },
+            { name: "Söndag", shortName: "S", dayOfWeek: 7 },
+          ].map((day) => ({
+            ...day,
+            session: null,
+            isToday: day.dayOfWeek === todayDb,
+          }))
+        );
       } finally {
         setIsLoading(false);
       }

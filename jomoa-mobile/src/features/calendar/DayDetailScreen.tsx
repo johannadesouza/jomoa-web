@@ -15,6 +15,7 @@ import {
 } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useCycleContext } from "../../shared/context/CycleContext";
+import { DayNotesSection } from "./DayNotesSection";
 import {
   getEntriesForRange,
   upsertEntry,
@@ -35,6 +36,7 @@ import {
 import { getDayOfWeekFromDateStr } from "../../lib/utils/date";
 import type { ProgramSessionData } from "../../lib/services/workoutService";
 import { getDaysUntilNextPeriod } from "../../lib/utils/cycleUtils";
+import type { CyclePhase } from "../../lib/utils/cycleUtils";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 
 type Props = NativeStackScreenProps<RootStackParamList, "DayDetail">;
@@ -42,11 +44,11 @@ type Props = NativeStackScreenProps<RootStackParamList, "DayDetail">;
 function DayDetailKostView({ date }: { date: string }) {
   return (
     <Screen scroll padded>
-      <Section title="Kost" subtitle="För denna dag">
+      <Section title="Kost" subtitle="Logga mat för denna dag">
         <Card borderRadius="$4">
           <Card.Content padding="$6">
             <AppText variant="body" muted center>
-              Kostlogg kommer snart.
+              Kostlogg kommer snart – du kommer kunna logga måltider och näring här.
             </AppText>
           </Card.Content>
         </Card>
@@ -62,103 +64,25 @@ function DayDetailÖvrigtContainer({
   date: string;
   clientId: string | null;
 }) {
-  const [note, setNote] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-
-  const load = useCallback(async () => {
-    if (!clientId) return;
-    setIsLoading(true);
-    try {
-      const entries = await getEntriesForRange(clientId, date, date);
-      setNote(entries[0]?.note ?? "");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [clientId, date]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      load();
-    }, [load])
-  );
-
-  const handleSave = async () => {
-    if (!clientId) return;
-    setIsSaving(true);
-    try {
-      const entries = await getEntriesForRange(clientId, date, date);
-      const existing = entries[0];
-      await upsertEntry({
-        client_id: clientId,
-        date,
-        program_session_id: existing?.program_session_id ?? null,
-        session_template_id: existing?.session_template_id ?? null,
-        note: note.trim() || null,
-      });
-      load();
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   if (!clientId) return null;
-  if (isLoading) return <LoadingScreen message="Laddar..." />;
-
-  return (
-    <DayDetailÖvrigtView
-      date={date}
-      note={note}
-      onNoteChange={setNote}
-      onSave={handleSave}
-      isSaving={isSaving}
-    />
-  );
-}
-
-function DayDetailÖvrigtView({
-  date,
-  note,
-  onNoteChange,
-  onSave,
-  isSaving,
-}: {
-  date: string;
-  note: string;
-  onNoteChange: (v: string) => void;
-  onSave: () => void;
-  isSaving: boolean;
-}) {
   return (
     <Screen scroll padded>
-      <Section
-        title="Övriga aktiviteter"
-        subtitle="T.ex. läkarbesök, resa, träff med vänner"
-      >
-        <Card borderRadius="$4">
-          <Card.Content padding="$6">
-            <YStack gap="$4">
-              <AppInput
-                placeholder="Lägg till aktiviteter eller händelser för denna dag..."
-                value={note}
-                onChangeText={onNoteChange}
-                multiline
-                numberOfLines={4}
-              />
-              <AppButton
-                variant="primary"
-                onPress={onSave}
-                disabled={isSaving}
-              >
-                Spara
-              </AppButton>
-            </YStack>
-          </Card.Content>
-        </Card>
-      </Section>
+      <DayNotesSection
+        clientId={clientId}
+        date={date}
+        category="övrigt"
+        subtitle="T.ex. middag, läkarbesök, resa, träff med vänner"
+      />
     </Screen>
   );
 }
+
+const PHASE_SHORT_TIPS: Record<Exclude<CyclePhase, null>, string> = {
+  menstruation: "Vila och återhämta. Lyssna på kroppen.",
+  follicular: "Bra fas för att bygga styrka och uthållighet.",
+  ovulation: "Peak energi – passa på krävande pass.",
+  luteal: "Fokus på återhämtning och mildare träning kan passa.",
+};
 
 function DayDetailCykelView({
   date,
@@ -171,11 +95,12 @@ function DayDetailCykelView({
   const d = new Date(date + "T12:00:00");
   const { phase, cycleDay, phaseLabel } = getPhaseForDate(d);
   const daysUntilNext = getDaysUntilNextPeriod(latestPeriodStart, cycleLength, d);
+  const phaseTip = phase ? PHASE_SHORT_TIPS[phase] : null;
 
   return (
     <Screen scroll padded>
       <YStack gap="$6">
-        <Section title="Cykelinfo" subtitle="Information för denna dag">
+        <Section title="Cykelinfo" subtitle={`${date} – information för denna dag`}>
           <Card borderRadius="$4">
             <Card.Content padding="$6">
               <YStack gap="$4">
@@ -192,27 +117,35 @@ function DayDetailCykelView({
                         Cykeldag
                       </AppText>
                       <AppText variant="body" fontWeight="600">
-                        {cycleDay}
+                        Dag {cycleDay} i cykeln
                       </AppText>
                     </YStack>
+                    {phaseTip ? (
+                      <YStack gap="$1">
+                        <AppText variant="small" muted>
+                          Kort om fasen
+                        </AppText>
+                        <AppText variant="body">{phaseTip}</AppText>
+                      </YStack>
+                    ) : null}
                     {daysUntilNext !== null && daysUntilNext >= 0 && (
                       <YStack gap="$1">
                         <AppText variant="small" muted>
-                          Mens
+                          Nästa mens (beräknat)
                         </AppText>
                         <AppText variant="body">
                           {daysUntilNext === 0
-                            ? "Idag (beräknat)"
+                            ? "Idag"
                             : daysUntilNext === 1
-                            ? "Imorgon (beräknat)"
-                            : `Om ${daysUntilNext} dagar (beräknat)`}
+                            ? "Imorgon"
+                            : `Om ${daysUntilNext} dagar`}
                         </AppText>
                       </YStack>
                     )}
                   </>
                 ) : (
                   <AppText variant="body" muted>
-                    Logga din senaste mensstart i Cykel för att se fas och cykeldag.
+                    Logga din senaste mensstart i Cykel för att se fas och cykeldag för denna dag.
                   </AppText>
                 )}
               </YStack>
@@ -236,7 +169,6 @@ export function DayDetailScreen({ navigation, route }: Props) {
   const [standaloneSessions, setStandaloneSessions] = useState<Array<{ id: string; name: string; focus: string | null }>>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [selectedIsStandalone, setSelectedIsStandalone] = useState(false);
-  const [note, setNote] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showPlaneraIn, setShowPlaneraIn] = useState(false);
@@ -293,7 +225,6 @@ export function DayDetailScreen({ navigation, route }: Props) {
         setSelectedSessionId(null);
         setSelectedIsStandalone(false);
       }
-      setNote(entry?.note ?? "");
       setProgramSessions(programSessionsForWeek);
       setStandaloneSessions(standalone.map((s) => ({ id: s.id, name: s.name, focus: s.focus })));
     } finally {
@@ -315,7 +246,7 @@ export function DayDetailScreen({ navigation, route }: Props) {
       date,
       program_session_id: selectedIsStandalone ? null : selectedSessionId ?? null,
       session_template_id: selectedIsStandalone ? selectedSessionId : null,
-      note: note.trim() || null,
+      note: null,
     });
     setIsSaving(false);
     setShowPlaneraIn(false);
@@ -334,26 +265,25 @@ export function DayDetailScreen({ navigation, route }: Props) {
         date,
         program_session_id: null,
         session_template_id: null,
-        note: note.trim() || null,
+        note: null,
       });
     }
   };
 
   const handleClearAll = () => {
     Alert.alert(
-      "Rensa allt",
-      "Är du säker på att du vill ta bort pass och anteckning för denna dag?",
+      "Rensa planerat pass",
+      "Vill du ta bort det planerade passet för denna dag?",
       [
         { text: "Avbryt", style: "cancel" },
         {
-          text: "Rensa",
+          text: "Ta bort",
           style: "destructive",
           onPress: async () => {
             if (!client?.id) return;
             await deleteEntry(client.id, date);
             setSelectedSessionId(null);
             setSelectedIsStandalone(false);
-            setNote("");
           },
         },
       ]
@@ -531,30 +461,18 @@ export function DayDetailScreen({ navigation, route }: Props) {
           </Section>
         )}
 
-        <Section title="Anteckning" subtitle="T.ex. vilopass, extra löpning">
-          <AppInput
-            placeholder="Lägg till en anteckning för denna dag..."
-            value={note}
-            onChangeText={setNote}
-            multiline
-            numberOfLines={3}
+        {client?.id && (
+          <DayNotesSection
+            clientId={client.id}
+            date={date}
+            category="träning"
+            subtitle="Hur det kändes, vad du tränade, extra löpning..."
           />
-          {hasPass && (
-            <AppButton
-              variant="ghost"
-              size="sm"
-              marginTop="$3"
-              onPress={handleSave}
-              disabled={isSaving}
-            >
-              Spara anteckning
-            </AppButton>
-          )}
-        </Section>
+        )}
 
-        {(hasPass || note.trim()) && (
+        {hasPass && (
           <AppButton variant="ghost" size="sm" onPress={handleClearAll}>
-            Rensa allt
+            Rensa planerat pass
           </AppButton>
         )}
       </YStack>

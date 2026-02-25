@@ -18,6 +18,7 @@ import { RootStackParamList } from "../../navigation/RootNavigator";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useActiveProgram } from "../../lib/hooks/useActiveProgram";
 import { fetchProgramWithStructure } from "../../lib/services/programService";
+import { getProgramGoalLabel } from "../../lib/utils/profileLabels";
 import type { ProgramWithStructure, ProgramSession } from "../../lib/domain/program";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProgramDetail">;
@@ -32,17 +33,6 @@ const DAY_NAMES: Record<number, string> = {
   6: "Lördag",
   7: "Söndag",
 };
-
-function getGoalLabel(goal: string | null | undefined) {
-  if (!goal) return null;
-  const labels: Record<string, string> = {
-    hypertrophy: "Muskeluppbyggnad",
-    strength: "Styrka",
-    endurance: "Uthållighet",
-    general_fitness: "Allmän fitness",
-  };
-  return labels[goal] ?? goal;
-}
 
 export function ProgramDetailScreen({ navigation, route }: Props) {
   const nav = useNavigation<NavigationProp>();
@@ -144,12 +134,12 @@ export function ProgramDetailScreen({ navigation, route }: Props) {
                     <AppText variant="small">{prog.target_duration_weeks} veckor</AppText>
                   </XStack>
                 )}
-                {getGoalLabel(prog.target_goal) && (
+                {getProgramGoalLabel(prog.target_goal) && (
                   <XStack justifyContent="space-between">
                     <AppText variant="small" muted>
                       Mål
                     </AppText>
-                    <AppText variant="small">{getGoalLabel(prog.target_goal)}</AppText>
+                    <AppText variant="small">{getProgramGoalLabel(prog.target_goal)}</AppText>
                   </XStack>
                 )}
                 {program?.progressionPercent != null && program.progressionPercent > 0 && (

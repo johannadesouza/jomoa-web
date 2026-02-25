@@ -2,12 +2,17 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "../../config/supabase";
 
+import type { TrainingGoal, DayOfWeek } from "../types/onboarding";
+
 export interface Client {
   id: string;
   profile_id: string;
   status: string;
   onboarding_stage: string | null;
   created_at: string;
+  primary_goal?: TrainingGoal | null;
+  training_frequency?: number | null;
+  training_days?: DayOfWeek[] | null;
   cycle_length?: number | null;
   irregular_cycle?: boolean | null;
   no_period?: boolean | null;

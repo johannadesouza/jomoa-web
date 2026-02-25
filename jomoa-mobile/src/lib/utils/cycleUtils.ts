@@ -13,9 +13,14 @@ const PHASE_LABELS: Record<Exclude<CyclePhase, null>, string> = {
 
 const DEFAULT_CYCLE_LENGTH = 28;
 
+/** Max cycle length used for phase boundaries – avoids "Follikulär överallt" from bad data */
+const MAX_CYCLE_LENGTH_FOR_PHASES = 45;
+const MIN_CYCLE_LENGTH = 21;
+
 /**
  * Calculate cycle phase from period start date and target date
- * Uses cycleLength from client settings (default 28)
+ * Uses cycleLength from client settings (default 28), clamped to 21–45 days so phase
+ * boundaries stay reasonable. Days beyond one cycle wrap into the next (estimated) cycle.
  */
 export function calculateCyclePhase(
   periodStartDate: string | null,
@@ -26,16 +31,28 @@ export function calculateCyclePhase(
     return { phase: null, cycleDay: 0 };
   }
 
-  const startDate = new Date(periodStartDate);
-  startDate.setHours(0, 0, 0, 0);
+  const startDate = new Date(periodStartDate + "T12:00:00");
   const target = new Date(targetDate);
-  target.setHours(0, 0, 0, 0);
+  target.setHours(12, 0, 0, 0);
 
   const diffTime = target.getTime() - startDate.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const cycleDay = diffDays + 1;
+  let rawCycleDay = diffDays + 1;
 
-  const scale = cycleLength / DEFAULT_CYCLE_LENGTH;
+  if (rawCycleDay < 1) {
+    return { phase: null, cycleDay: rawCycleDay };
+  }
+
+  const effectiveLength = Math.max(
+    MIN_CYCLE_LENGTH,
+    Math.min(MAX_CYCLE_LENGTH_FOR_PHASES, cycleLength)
+  );
+  const cycleDay =
+    rawCycleDay > effectiveLength
+      ? ((rawCycleDay - 1) % effectiveLength) + 1
+      : rawCycleDay;
+
+  const scale = effectiveLength / DEFAULT_CYCLE_LENGTH;
   const menstruationEnd = Math.floor(5 * scale);
   const follicularEnd = Math.floor(13 * scale);
   const ovulationEnd = Math.floor(16 * scale);
@@ -47,7 +64,7 @@ export function calculateCyclePhase(
     phase = "follicular";
   } else if (cycleDay <= ovulationEnd) {
     phase = "ovulation";
-  } else if (cycleDay <= cycleLength) {
+  } else if (cycleDay <= effectiveLength) {
     phase = "luteal";
   }
 

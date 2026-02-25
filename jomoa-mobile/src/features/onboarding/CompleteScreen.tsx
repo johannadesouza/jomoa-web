@@ -11,6 +11,8 @@ import { useAuth } from "../../shared/context/AuthContext";
 import { useCycleContext } from "../../shared/context/CycleContext";
 import { supabase } from "../../config/supabase";
 import { savePeriodStart } from "../../lib/services/cycleService";
+import { createGoal } from "../../lib/services/goalsService";
+import { getPrimaryGoalLabel, getTrainingDaysLabel } from "../../lib/utils/profileLabels";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "Complete">;
 
@@ -63,6 +65,10 @@ export function CompleteScreen({ navigation }: Props) {
         await refetchCycle();
       }
 
+      if (data.onboardingPath !== "cycle_only" && data.primaryGoal) {
+        await createGoal(client.id, "fitness", getPrimaryGoalLabel(data.primaryGoal), null);
+      }
+
       await refreshClient();
     } catch (error) {
       console.error("Error completing onboarding:", error);
@@ -76,29 +82,8 @@ export function CompleteScreen({ navigation }: Props) {
     navigation.goBack();
   };
 
-  const getGoalLabel = () => {
-    const goals: Record<string, string> = {
-      muscle_growth: "Bygga muskler",
-      strength: "Bli starkare",
-      fat_loss: "Gå ner i vikt",
-      performance: "Bättre prestation",
-      maintenance: "Hålla formen",
-    };
-    return data.primaryGoal ? goals[data.primaryGoal] : "Inte valt";
-  };
-
-  const getDaysLabel = () => {
-    const dayNames: Record<number, string> = {
-      1: "Mån",
-      2: "Tis",
-      3: "Ons",
-      4: "Tor",
-      5: "Fre",
-      6: "Lör",
-      7: "Sön",
-    };
-    return data.trainingDays?.map((d) => dayNames[d]).join(", ") || "Inte valt";
-  };
+  const goalLabel = getPrimaryGoalLabel(data.primaryGoal);
+  const daysLabel = getTrainingDaysLabel(data.trainingDays);
 
   return (
     <Screen padded>
@@ -121,7 +106,7 @@ export function CompleteScreen({ navigation }: Props) {
                   <AppText variant="small" muted>
                     Ditt mål
                   </AppText>
-                  <AppText variant="h3">{getGoalLabel()}</AppText>
+                  <AppText variant="h3">{goalLabel}</AppText>
                 </YStack>
 
                 <YStack gap="$2">
@@ -137,7 +122,7 @@ export function CompleteScreen({ navigation }: Props) {
                   <AppText variant="small" muted>
                     Träningsdagar
                   </AppText>
-                  <AppText variant="h3">{getDaysLabel()}</AppText>
+                  <AppText variant="h3">{daysLabel}</AppText>
                 </YStack>
               </>
             )}

@@ -34,6 +34,7 @@ import { RootStackParamList } from "../../navigation/RootNavigator";
 import { TopBar } from "../../components/layout/TopBar";
 import { QuickActionsSection } from "./QuickActionsSection";
 import { RestTimerModal } from "./RestTimerModal";
+import { RecommendedProgramsSection } from "../train/RecommendedProgramsSection";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -511,6 +512,10 @@ export function DashboardScreen() {
               </XStack>
             </Card.Content>
           </Card>
+        )}
+
+        {!assignment && (
+          <RecommendedProgramsSection primaryGoal={client?.primary_goal} maxItems={2} />
         )}
 
         <Divider />

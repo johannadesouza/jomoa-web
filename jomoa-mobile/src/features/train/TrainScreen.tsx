@@ -15,6 +15,7 @@ import { getLocalDateString, getDayOfWeekFromDateStr } from "../../lib/utils/dat
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { FeaturedProgramCard } from "./FeaturedProgramCard";
 import { FavoritesSection } from "./FavoritesSection";
+import { RecommendedProgramsSection } from "./RecommendedProgramsSection";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -69,72 +70,100 @@ export function TrainScreen() {
         onSettings={handleSettings}
       />
       <YStack gap="$8" paddingTop="$4">
-        <Section title="Dagens pass" spacing="md">
-          <YStack gap="$4">
-            {todaySession ? (
-              <Card
-                pressable
-                onPress={() =>
-                  navigation.navigate("WorkoutSession", {
-                    sessionId: todaySession.id,
-                    isStandalone: false,
-                  })
-                }
-              >
-                <Card.Header>
-                  <Card.Title>{todaySession.name}</Card.Title>
-                  {todaySession.focus && (
-                    <AppText variant="caption" color="$colorSecondary">
-                      {todaySession.focus}
-                    </AppText>
-                  )}
-                </Card.Header>
-                <Card.Content>
-                  <AppText variant="small" muted>
-                    {(todaySession.session_exercises ?? []).length} övningar ·{" "}
-                    {(todaySession.session_exercises ?? []).reduce(
-                      (sum, e) => sum + (e.sets_planned || 0),
-                      0
-                    )}{" "}
-                    set
-                  </AppText>
-                </Card.Content>
-                <Card.Footer>
-                  <AppButton
-                    variant="primary"
-                    size="sm"
-                    onPress={() =>
-                      navigation.navigate("WorkoutSession", {
-                        sessionId: todaySession.id,
-                        isStandalone: false,
-                      })
-                    }
-                  >
-                    Starta pass
-                  </AppButton>
-                </Card.Footer>
-              </Card>
-            ) : (
+        {!assignment ? (
+          <>
+            <Section title="Dagens pass" spacing="md">
               <Card>
                 <Card.Content padding="$6">
-                  <AppText variant="body" muted center>
-                    Inget pass idag i programmet.
-                  </AppText>
-                  <AppText variant="small" muted center marginTop="$2">
-                    Kika i programmet för att se hela veckan.
-                  </AppText>
+                  <YStack alignItems="center" gap="$3">
+                    <AppText variant="h3" center>
+                      Du har inget program valt
+                    </AppText>
+                    <AppText variant="body" muted center>
+                      Välj ett program så får du dagens pass och en plan som passar dig.
+                    </AppText>
+                    <AppButton
+                      variant="primary"
+                      size="sm"
+                      onPress={() => navigation.navigate("ProgramSelect")}
+                    >
+                      Utforska och välj program
+                    </AppButton>
+                  </YStack>
                 </Card.Content>
               </Card>
-            )}
-            <AppButton
-              variant="ghost"
-              size="sm"
-              onPress={() => navigation.navigate("ProgramList")}
-            >
-              Se alla pass i programmet →
-            </AppButton>
-          </YStack>
-        </Section>
+            </Section>
+
+            <RecommendedProgramsSection primaryGoal={client?.primary_goal} maxItems={3} />
+          </>
+        ) : (
+          <Section title="Dagens pass" spacing="md">
+            <YStack gap="$4">
+              {todaySession ? (
+                <Card
+                  pressable
+                  onPress={() =>
+                    navigation.navigate("WorkoutSession", {
+                      sessionId: todaySession.id,
+                      isStandalone: false,
+                    })
+                  }
+                >
+                  <Card.Header>
+                    <Card.Title>{todaySession.name}</Card.Title>
+                    {todaySession.focus && (
+                      <AppText variant="caption" color="$colorSecondary">
+                        {todaySession.focus}
+                      </AppText>
+                    )}
+                  </Card.Header>
+                  <Card.Content>
+                    <AppText variant="small" muted>
+                      {(todaySession.session_exercises ?? []).length} övningar ·{" "}
+                      {(todaySession.session_exercises ?? []).reduce(
+                        (sum, e) => sum + (e.sets_planned || 0),
+                        0
+                      )}{" "}
+                      set
+                    </AppText>
+                  </Card.Content>
+                  <Card.Footer>
+                    <AppButton
+                      variant="primary"
+                      size="sm"
+                      onPress={() =>
+                        navigation.navigate("WorkoutSession", {
+                          sessionId: todaySession.id,
+                          isStandalone: false,
+                        })
+                      }
+                    >
+                      Starta pass
+                    </AppButton>
+                  </Card.Footer>
+                </Card>
+              ) : (
+                <Card>
+                  <Card.Content padding="$6">
+                    <AppText variant="body" muted center>
+                      Inget pass idag i programmet.
+                    </AppText>
+                    <AppText variant="small" muted center marginTop="$2">
+                      Kika i programmet för att se hela veckan.
+                    </AppText>
+                  </Card.Content>
+                </Card>
+              )}
+              <AppButton
+                variant="ghost"
+                size="sm"
+                onPress={() => navigation.navigate("ProgramList")}
+              >
+                Se alla pass i programmet →
+              </AppButton>
+            </YStack>
+          </Section>
+        )}
 
         <Section title="Träna mer eller planera in" spacing="md">
           <YStack gap="$4">

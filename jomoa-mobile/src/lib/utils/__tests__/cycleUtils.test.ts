@@ -54,6 +54,22 @@ describe("cycle utils", () => {
       expect(result.phase).toBe("menstruation");
       expect(result.cycleDay).toBe(1);
     });
+
+    it("caps very long cycle length so phase boundaries stay reasonable", () => {
+      const start = "2026-01-27";
+      const target = new Date("2026-02-16T12:00:00");
+      const result = calculateCyclePhase(start, target, 60);
+      expect(result.phase).toBe("ovulation");
+    });
+
+    it("wraps cycle day when past cycle length so phase is shown", () => {
+      const start = "2026-02-01";
+      const target = new Date("2026-03-05");
+      const result = calculateCyclePhase(start, target, 28);
+      expect(result.phase).not.toBeNull();
+      expect(result.cycleDay).toBeGreaterThanOrEqual(1);
+      expect(result.cycleDay).toBeLessThanOrEqual(28);
+    });
   });
 
   describe("getPhaseLabel", () => {

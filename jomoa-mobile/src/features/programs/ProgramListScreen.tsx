@@ -17,6 +17,7 @@ import {
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useActiveProgram } from "../../lib/hooks/useActiveProgram";
+import { getProgramGoalLabel, programMatchesPrimaryGoal } from "../../lib/utils/profileLabels";
 import type { ProgramWithStatus } from "../../lib/domain/program";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProgramList">;
@@ -32,17 +33,6 @@ function getStatusLabel(status: ProgramWithStatus["status"]) {
     default:
       return "";
   }
-}
-
-function getGoalLabel(goal: string | null | undefined) {
-  if (!goal) return null;
-  const labels: Record<string, string> = {
-    hypertrophy: "Muskeluppbyggnad",
-    strength: "Styrka",
-    endurance: "Uthållighet",
-    general_fitness: "Allmän fitness",
-  };
-  return labels[goal] ?? goal;
 }
 
 export function ProgramListScreen({ navigation }: Props) {
@@ -140,10 +130,15 @@ export function ProgramListScreen({ navigation }: Props) {
                                 </AppText>
                               )}
                             </YStack>
-                            <Badge
-                              variant={isActive ? "accent" : "outline"}
-                              label={getStatusLabel(program.status)}
-                            />
+                            <XStack gap="$2" alignItems="center">
+                              {programMatchesPrimaryGoal(program.target_goal, client?.primary_goal) && (
+                                <Badge variant="outline" label="Passar ditt mål" />
+                              )}
+                              <Badge
+                                variant={isActive ? "accent" : "outline"}
+                                label={getStatusLabel(program.status)}
+                              />
+                            </XStack>
                           </XStack>
 
                           <XStack gap="$3" flexWrap="wrap">
@@ -152,9 +147,9 @@ export function ProgramListScreen({ navigation }: Props) {
                                 {program.target_duration_weeks} veckor
                               </AppText>
                             )}
-                            {getGoalLabel(program.target_goal) && (
+                            {getProgramGoalLabel(program.target_goal) && (
                               <AppText variant="caption" muted>
-                                {getGoalLabel(program.target_goal)}
+                                {getProgramGoalLabel(program.target_goal)}
                               </AppText>
                             )}
                             {program.status === "active" && program.progressionPercent > 0 && (

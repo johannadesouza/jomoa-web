@@ -17,7 +17,7 @@ import { ProgramDetailScreen } from "../features/programs/ProgramDetailScreen";
 import { OnboardingNavigator } from "../features/onboarding";
 import { CycleScreen, CycleInsightsScreen } from "../features/cycle";
 import { ReadinessScreen } from "../features/readiness";
-import { CalendarScreen } from "../features/calendar";
+import { CalendarScreen, DayDetailScreen } from "../features/calendar";
 import { SettingsScreen } from "../features/settings";
 import { MeasurementsScreen } from "../features/log/MeasurementsScreen";
 import { ProfileScreen } from "../features/profile/ProfileScreen";
@@ -36,6 +36,7 @@ export type RootStackParamList = {
   Cycle: undefined;
   Readiness: undefined;
   Calendar: undefined;
+  DayDetail: { date: string; mode?: "cykel" | "träning" | "kost" | "övrigt" };
   Settings: undefined;
   CycleInsights: { initialSegment?: string } | undefined;
   Measurements: undefined;
@@ -178,6 +179,23 @@ export function RootNavigator() {
                 headerStyle: { backgroundColor: themeColors.background },
                 headerTintColor: themeColors.textPrimary,
                 headerTitleStyle: { fontWeight: "600" },
+              }}
+            />
+            <Stack.Screen
+              name="DayDetail"
+              component={DayDetailScreen}
+              options={({ route }) => {
+                const d = new Date(route.params.date + "T12:00:00");
+                const dayName = ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"][d.getDay()];
+                const dateStr = `${d.getDate()}/${d.getMonth() + 1}`;
+                return {
+                  headerShown: true,
+                  headerTitle: `${dayName} ${dateStr}`,
+                  headerBackTitle: "Tillbaka",
+                  headerStyle: { backgroundColor: themeColors.background },
+                  headerTintColor: themeColors.textPrimary,
+                  headerTitleStyle: { fontWeight: "600" },
+                };
               }}
             />
             <Stack.Screen

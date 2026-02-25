@@ -8,6 +8,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Screen, AppText, LoadingScreen } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useCycleContext } from "../../shared/context/CycleContext";
+import { useTheme } from "../../shared/context/ThemeContext";
+import { getThemeColors } from "../../shared/theme/colors";
 import { useCalendarMonth } from "../../lib/hooks/useCalendarMonth";
 import { getPhaseLabel, getPhaseColor } from "../../lib/utils/cycleUtils";
 import { RootStackParamList } from "../../navigation/RootNavigator";
@@ -28,6 +30,8 @@ const WEEKDAY_LETTERS = ["M", "T", "O", "T", "F", "L", "S"];
 export function CalendarScreen() {
   const navigation = useNavigation<NavigationProp>();
   const { client } = useAuth();
+  const { theme } = useTheme();
+  const colors = getThemeColors(theme);
   const { refetch: refetchCycle } = useCycleContext();
   const [category, setCategory] = useState<CalendarCategory>("cykel");
   const {
@@ -152,7 +156,7 @@ export function CalendarScreen() {
                   : undefined;
                 const isDimmed = !day.isCurrentMonth;
                 const showPhaseLabel = category === "cykel" && day.cyclePhase;
-                const showWorkout = category === "träning" && (day.loggedWorkout || day.plannedSession);
+                const showWorkout = day.loggedWorkout || day.plannedSession;
                 const showNote = category === "övrigt" && day.note;
 
                 return (
@@ -219,14 +223,20 @@ export function CalendarScreen() {
                         </AppText>
                       )}
                       {showWorkout && (
-                        <AppText
-                          variant="caption"
-                          color="$success"
-                          numberOfLines={1}
-                          style={{ fontSize: 10 }}
-                        >
-                          {day.loggedWorkout ? "✓" : "○"}
-                        </AppText>
+                        <View
+                          style={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: 3,
+                            backgroundColor: day.loggedWorkout
+                              ? colors.success
+                              : "transparent",
+                            borderWidth: 1.5,
+                            borderColor: colors.success,
+                            opacity: day.loggedWorkout ? 1 : 0.7,
+                            marginTop: 4,
+                          }}
+                        />
                       )}
                       {showNote && (
                         <AppText
