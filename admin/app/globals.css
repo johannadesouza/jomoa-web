@@ -1,0 +1,30 @@
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, sans-serif; font-size: 14px; color: #462324; }
+h1 { font-size: 24px; font-weight: 700; margin: 0 0 24px; }
+h2 { font-size: 18px; font-weight: 600; margin: 0 0 16px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #f0d6d7; font-size: 13px; }
+th { background: #f0d6d7; font-weight: 600; }
+tr:hover td { background: #fffbf7; }
+input, textarea, select {
+  border: 1px solid #f0d6d7; border-radius: 8px; padding: 8px 12px;
+  font-size: 14px; width: 100%; color: #462324; background: #fff;
+}
+input:focus, textarea:focus { outline: none; border-color: #D96D46; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 8px; font-size: 13px;
+  font-weight: 600; cursor: pointer; border: none; text-decoration: none;
+}
+.btn-primary { background: #D96D46; color: #fff; }
+.btn-primary:hover { background: #C45D36; }
+.btn-secondary { background: #f0d6d7; color: #462324; }
+.btn-secondary:hover { background: #e8c5c6; }
+.btn-danger { background: #F44336; color: #fff; }
+.btn-danger:hover { background: #d32f2f; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-draft { background: #f0d6d7; color: #976568; }
+.badge-published { background: #e8f5e9; color: #2e7d32; }
+.badge-archived { background: #f5f5f5; color: #9e9e9e; }
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+label { font-size: 12px; font-weight: 600; color: #976568; text-transform: uppercase; letter-spacing: 0.5px; }

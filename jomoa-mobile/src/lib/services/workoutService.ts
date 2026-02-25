@@ -1,5 +1,20 @@
-import { supabase } from "../../config/supabase";
-import { getWeekIdForDate } from "./programService";
+/**
+ * workoutService – thin wrapper för bakåtkompatibilitet.
+ *
+ * Content-queries (program_sessions, session_exercises, exercises)
+ * delegeras till contentRepo/programs.
+ * User-queries (client_program_assignments) delegeras till userRepo/assignments.
+ *
+ * FAS 3: importera direkt från repos och ta bort denna fil.
+ */
+import { fetchActiveAssignment } from "../repos/userRepo/assignments";
+import {
+  fetchSessionsByWeekId as _fetchSessionsByWeekId,
+  fetchSessionById as _fetchSessionById,
+  fetchSessionsByIds as _fetchSessionsByIds,
+  getWeekIdForDate,
+} from "../repos/contentRepo/programs";
+import { userClient } from "../supabase/userClient";
 
 export interface SessionExercise {
   id: string;
@@ -8,7 +23,6 @@ export interface SessionExercise {
   sets_planned: number;
   reps_planned: string;
   rest_seconds?: number | null;
-  /** Tidsbestämd övning: antal sekunder (t.ex. 55). Om null: set/reps-baserad */
   duration_seconds?: number | null;
   exercise: {
     id: string;
@@ -28,24 +42,10 @@ export interface ProgramSessionData {
 export async function fetchSessionsForWorkouts(
   clientId: string
 ): Promise<{ sessions: ProgramSessionData[]; programName: string | null }> {
-  const { data: assignmentData } = await supabase
-    .from("client_program_assignments")
-    .select(`
-      id,
-      program_id,
-      start_date,
-      program:training_programs (id, name)
-    `)
-    .eq("client_id", clientId)
-    .eq("is_active", true)
-    .single();
+  const assignmentData = await fetchActiveAssignment(clientId);
+  if (!assignmentData) return { sessions: [], programName: null };
 
-  if (!assignmentData) {
-    return { sessions: [], programName: null };
-  }
-
-  const program = assignmentData.program;
-  const programName = (Array.isArray(program) ? program[0] : program)?.name ?? null;
+  const programName = assignmentData.program?.name ?? null;
   const today = new Date().toISOString().split("T")[0];
   const weekId = await getWeekIdForDate(
     assignmentData.program_id,
@@ -53,108 +53,29 @@ export async function fetchSessionsForWorkouts(
     today
   );
 
-  if (!weekId) {
-    return { sessions: [], programName };
-  }
+  if (!weekId) return { sessions: [], programName };
 
-  const { data: sessionsData } = await supabase
-    .from("program_sessions")
-    .select(`
-      id,
-      name,
-      day_of_week,
-      focus,
-      session_exercises (
-        id,
-        exercise_id,
-        order_index,
-        sets_planned,
-        reps_planned,
-        exercise:exercises (id, name)
-      )
-    `)
-    .eq("week_id", weekId)
-    .order("day_of_week", { ascending: true });
-
-  const sessions = (sessionsData || []) as unknown as ProgramSessionData[];
-  return { sessions, programName };
+  const sessions = await _fetchSessionsByWeekId(weekId);
+  return { sessions: sessions as unknown as ProgramSessionData[], programName };
 }
 
 export async function fetchSessionById(
   sessionId: string
 ): Promise<ProgramSessionData | null> {
-  const { data, error } = await supabase
-    .from("program_sessions")
-    .select(`
-      id,
-      name,
-      focus,
-      session_exercises (
-        id,
-        exercise_id,
-        order_index,
-        sets_planned,
-        reps_planned,
-        rest_seconds,
-        duration_seconds,
-        exercise:exercises (id, name, default_video_url)
-      )
-    `)
-    .eq("id", sessionId)
-    .single();
-
-  if (error || !data) return null;
-
-  return data as unknown as ProgramSessionData;
+  const result = await _fetchSessionById(sessionId);
+  return result as unknown as ProgramSessionData | null;
 }
 
-export async function fetchSessionsByWeekId(weekId: string): Promise<ProgramSessionData[]> {
-  const { data } = await supabase
-    .from("program_sessions")
-    .select(`
-      id,
-      name,
-      day_of_week,
-      focus,
-      session_exercises (
-        id,
-        exercise_id,
-        order_index,
-        sets_planned,
-        reps_planned,
-        rest_seconds,
-        exercise:exercises (id, name)
-      )
-    `)
-    .eq("week_id", weekId)
-    .order("day_of_week", { ascending: true });
-
-  return (data || []) as unknown as ProgramSessionData[];
+export async function fetchSessionsByWeekId(
+  weekId: string
+): Promise<ProgramSessionData[]> {
+  const result = await _fetchSessionsByWeekId(weekId);
+  return result as unknown as ProgramSessionData[];
 }
 
 export async function fetchSessionsByIds(
   sessionIds: string[]
 ): Promise<ProgramSessionData[]> {
-  if (sessionIds.length === 0) return [];
-
-  const { data, error } = await supabase
-    .from("program_sessions")
-    .select(`
-      id,
-      name,
-      day_of_week,
-      focus,
-      session_exercises (
-        id,
-        exercise_id,
-        order_index,
-        sets_planned,
-        reps_planned,
-        exercise:exercises (id, name)
-      )
-    `)
-    .in("id", sessionIds);
-
-  if (error || !data) return [];
-  return (data || []) as unknown as ProgramSessionData[];
+  const result = await _fetchSessionsByIds(sessionIds);
+  return result as unknown as ProgramSessionData[];
 }
