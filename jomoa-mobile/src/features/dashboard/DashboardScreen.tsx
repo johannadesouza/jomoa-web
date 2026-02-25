@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { Pressable } from "react-native";
 import { YStack, XStack, Text } from "tamagui";
@@ -35,6 +35,7 @@ import { TopBar } from "../../components/layout/TopBar";
 import { QuickActionsSection } from "./QuickActionsSection";
 import { RestTimerModal } from "./RestTimerModal";
 import { RecommendedProgramsSection } from "../train/RecommendedProgramsSection";
+import { fetchReadinessInsight, type ReadinessInsight } from "../../lib/repos/contentRepo/cycleContent";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -117,6 +118,15 @@ export function DashboardScreen() {
 
   const firstName = user?.user_metadata?.full_name?.split(" ")[0] || "du";
   const [restTimerVisible, setRestTimerVisible] = useState(false);
+  const [readinessInsight, setReadinessInsight] = useState<ReadinessInsight | null>(null);
+
+  useEffect(() => {
+    if (readiness?.readiness_score != null) {
+      fetchReadinessInsight(readiness.readiness_score).then(setReadinessInsight);
+    } else {
+      setReadinessInsight(null);
+    }
+  }, [readiness?.readiness_score]);
 
   if (isLoading) return <LoadingScreen />;
 
@@ -462,8 +472,28 @@ export function DashboardScreen() {
           </Card>
         )}
 
-        {(insight || (phase && phaseInsight)) && (
+        {(insight || (phase && phaseInsight) || readinessInsight) && (
           <Section title="Insikter">
+            {readinessInsight && (
+              <Card pressable onPress={() => navigation.navigate("Readiness")}>
+                <Card.Content>
+                  <YStack gap="$2">
+                    <XStack alignItems="center" gap="$2">
+                      <AppText variant="caption" muted>
+                        {readiness?.readiness_score != null ? `Readiness ${readiness.readiness_score}` : "Readiness"}
+                      </AppText>
+                    </XStack>
+                    <AppText variant="h3">{readinessInsight.title}</AppText>
+                    <AppText variant="small" muted>{readinessInsight.body}</AppText>
+                    {readinessInsight.suggestion && (
+                      <AppText variant="caption" color="$accent" fontWeight="600">
+                        → {readinessInsight.suggestion}
+                      </AppText>
+                    )}
+                  </YStack>
+                </Card.Content>
+              </Card>
+            )}
             {insight && (
               <Card>
                 <Card.Content>
