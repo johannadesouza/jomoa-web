@@ -32,6 +32,17 @@ async function addTrainingTip(formData: FormData) {
   revalidatePath("/cycle-tips");
 }
 
+async function updateTrainingTip(formData: FormData) {
+  "use server";
+  await adminContentClient.from("phase_training_tips").update({
+    title: formData.get("title"),
+    body: formData.get("body"),
+    intensity: formData.get("intensity") || null,
+    tip_type: formData.get("tip_type") || null,
+  }).eq("id", formData.get("id"));
+  revalidatePath("/cycle-tips");
+}
+
 async function deleteTrainingTip(formData: FormData) {
   "use server";
   await adminContentClient.from("phase_training_tips").delete().eq("id", formData.get("id"));
@@ -46,6 +57,16 @@ async function addWellnessTip(formData: FormData) {
     body: formData.get("body"),
     category: formData.get("category") || null,
   });
+  revalidatePath("/cycle-tips");
+}
+
+async function updateWellnessTip(formData: FormData) {
+  "use server";
+  await adminContentClient.from("phase_wellness_tips").update({
+    title: formData.get("title"),
+    body: formData.get("body"),
+    category: formData.get("category") || null,
+  }).eq("id", formData.get("id"));
   revalidatePath("/cycle-tips");
 }
 
@@ -90,21 +111,40 @@ export default async function CycleTipsPage() {
 
             {/* Träningsrekommendationer */}
             <h3 style={{ fontSize: 14, color: "#462324", marginBottom: 12 }}>Träning ({phaseTrain.length})</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 2, marginBottom: 16 }}>
               {phaseTrain.map((tip: any) => (
-                <div key={tip.id} style={tipRowStyle}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{tip.title}</div>
-                    <div style={{ fontSize: 12, color: "#976568", marginTop: 2 }}>{tip.body}</div>
-                    <div style={{ fontSize: 11, color: "#aaa", marginTop: 4 }}>
-                      {tip.tip_type} · {tip.intensity}
-                    </div>
+                <details key={tip.id} style={{ background: "#fff", borderRadius: 8, border: "1px solid #f0d6d7", overflow: "hidden" }}>
+                  <summary style={{ display: "flex", alignItems: "center", padding: "10px 14px", cursor: "pointer", gap: 8 }}>
+                    <span style={{ fontWeight: 600, fontSize: 14, flex: 1 }}>{tip.title}</span>
+                    <span style={{ fontSize: 11, color: "#aaa" }}>{tip.tip_type} · {tip.intensity}</span>
+                  </summary>
+                  <div style={{ padding: "12px 14px", background: "#FFFBF7", borderTop: "1px solid #f0d6d7" }}>
+                    <form action={updateTrainingTip} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      <input type="hidden" name="id" value={tip.id} />
+                      <input name="title" defaultValue={tip.title} style={inputStyle} />
+                      <textarea name="body" defaultValue={tip.body} rows={2} style={{ ...inputStyle, resize: "vertical" }} />
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <select name="tip_type" defaultValue={tip.tip_type ?? ""} style={selectStyle}>
+                          <option value="recommendation">Rekommendation</option>
+                          <option value="warning">Varning</option>
+                          <option value="motivation">Motivation</option>
+                        </select>
+                        <select name="intensity" defaultValue={tip.intensity ?? ""} style={selectStyle}>
+                          <option value="light">Lätt</option>
+                          <option value="moderate">Måttlig</option>
+                          <option value="high">Hög</option>
+                        </select>
+                      </div>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <button type="submit" style={addBtnStyle}>Spara</button>
+                        <form action={deleteTrainingTip}>
+                          <input type="hidden" name="id" value={tip.id} />
+                          <button type="submit" style={deleteBtnStyle}>Ta bort</button>
+                        </form>
+                      </div>
+                    </form>
                   </div>
-                  <form action={deleteTrainingTip}>
-                    <input type="hidden" name="id" value={tip.id} />
-                    <button type="submit" style={deleteBtnStyle}>Ta bort</button>
-                  </form>
-                </div>
+                </details>
               ))}
             </div>
             <form action={addTrainingTip} style={addFormStyle}>
@@ -128,19 +168,35 @@ export default async function CycleTipsPage() {
 
             {/* Välmåendetips */}
             <h3 style={{ fontSize: 14, color: "#462324", marginBottom: 12, marginTop: 24 }}>Välmående ({phaseWell.length})</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 2, marginBottom: 16 }}>
               {phaseWell.map((tip: any) => (
-                <div key={tip.id} style={tipRowStyle}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{tip.title}</div>
-                    <div style={{ fontSize: 12, color: "#976568", marginTop: 2 }}>{tip.body}</div>
-                    <div style={{ fontSize: 11, color: "#aaa", marginTop: 4 }}>{tip.category}</div>
+                <details key={tip.id} style={{ background: "#fff", borderRadius: 8, border: "1px solid #f0d6d7", overflow: "hidden" }}>
+                  <summary style={{ display: "flex", alignItems: "center", padding: "10px 14px", cursor: "pointer", gap: 8 }}>
+                    <span style={{ fontWeight: 600, fontSize: 14, flex: 1 }}>{tip.title}</span>
+                    <span style={{ fontSize: 11, color: "#aaa" }}>{tip.category}</span>
+                  </summary>
+                  <div style={{ padding: "12px 14px", background: "#FFFBF7", borderTop: "1px solid #f0d6d7" }}>
+                    <form action={updateWellnessTip} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      <input type="hidden" name="id" value={tip.id} />
+                      <input name="title" defaultValue={tip.title} style={inputStyle} />
+                      <textarea name="body" defaultValue={tip.body} rows={2} style={{ ...inputStyle, resize: "vertical" }} />
+                      <select name="category" defaultValue={tip.category ?? ""} style={selectStyle}>
+                        <option value="nutrition">Nutrition</option>
+                        <option value="sleep">Sömn</option>
+                        <option value="stress">Stress</option>
+                        <option value="symptoms">Symtom</option>
+                        <option value="mindfulness">Mindfulness</option>
+                      </select>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <button type="submit" style={addBtnStyle}>Spara</button>
+                        <form action={deleteWellnessTip}>
+                          <input type="hidden" name="id" value={tip.id} />
+                          <button type="submit" style={deleteBtnStyle}>Ta bort</button>
+                        </form>
+                      </div>
+                    </form>
                   </div>
-                  <form action={deleteWellnessTip}>
-                    <input type="hidden" name="id" value={tip.id} />
-                    <button type="submit" style={deleteBtnStyle}>Ta bort</button>
-                  </form>
-                </div>
+                </details>
               ))}
             </div>
             <form action={addWellnessTip} style={addFormStyle}>
@@ -162,16 +218,6 @@ export default async function CycleTipsPage() {
     </div>
   );
 }
-
-const tipRowStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "flex-start",
-  gap: 12,
-  padding: "12px 16px",
-  background: "#fff",
-  borderRadius: 8,
-  border: "1px solid #f0d6d7",
-};
 
 const addFormStyle: React.CSSProperties = {
   display: "flex",

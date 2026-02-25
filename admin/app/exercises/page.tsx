@@ -20,18 +20,26 @@ async function getExercises(): Promise<Exercise[]> {
 async function createExercise(formData: FormData) {
   "use server";
   const name = formData.get("name") as string;
-  const muscle = formData.get("primary_muscle_group") as string;
-  const equipment = formData.get("equipment") as string;
-  const videoUrl = formData.get("default_video_url") as string;
-
   if (!name?.trim()) return;
-
   await adminContentClient.from("exercises").insert({
     name: name.trim(),
-    primary_muscle_group: muscle?.trim() || null,
-    equipment: equipment?.trim() || null,
-    default_video_url: videoUrl?.trim() || null,
+    primary_muscle_group: (formData.get("primary_muscle_group") as string)?.trim() || null,
+    equipment: (formData.get("equipment") as string)?.trim() || null,
+    default_video_url: (formData.get("default_video_url") as string)?.trim() || null,
   });
+  revalidatePath("/exercises");
+}
+
+async function updateExercise(formData: FormData) {
+  "use server";
+  const id = formData.get("id") as string;
+  if (!id) return;
+  await adminContentClient.from("exercises").update({
+    name: (formData.get("name") as string)?.trim(),
+    primary_muscle_group: (formData.get("primary_muscle_group") as string)?.trim() || null,
+    equipment: (formData.get("equipment") as string)?.trim() || null,
+    default_video_url: (formData.get("default_video_url") as string)?.trim() || null,
+  }).eq("id", id);
   revalidatePath("/exercises");
 }
 
@@ -51,72 +59,104 @@ export default async function ExercisesPage() {
       <h1>Övningar ({exercises.length})</h1>
 
       <details style={{ marginBottom: 32 }}>
-        <summary className="btn btn-primary" style={{ cursor: "pointer", marginBottom: 16 }}>
-          + Ny övning
-        </summary>
-        <form action={createExercise} style={{
-          background: "#fff", border: "1px solid #f0d6d7", borderRadius: 12, padding: 24, marginTop: 12,
-          display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, maxWidth: 600,
-        }}>
-          <div className="form-group" style={{ gridColumn: "1 / -1" }}>
-            <label>Namn *</label>
-            <input name="name" required placeholder="T.ex. Marklyft" />
+        <summary style={summaryStyle}>+ Ny övning</summary>
+        <form action={createExercise} style={formGridStyle}>
+          <div style={{ ...fieldStyle, gridColumn: "1 / -1" }}>
+            <label style={labelStyle}>Namn *</label>
+            <input name="name" required placeholder="T.ex. Marklyft" style={inputStyle} />
           </div>
-          <div className="form-group">
-            <label>Muskelgrupp</label>
-            <input name="primary_muscle_group" placeholder="T.ex. Rygg" />
+          <div style={fieldStyle}>
+            <label style={labelStyle}>Muskelgrupp</label>
+            <input name="primary_muscle_group" placeholder="T.ex. Rygg" style={inputStyle} />
           </div>
-          <div className="form-group">
-            <label>Utrustning</label>
-            <input name="equipment" placeholder="T.ex. Skivstång" />
+          <div style={fieldStyle}>
+            <label style={labelStyle}>Utrustning</label>
+            <input name="equipment" placeholder="T.ex. Skivstång" style={inputStyle} />
           </div>
-          <div className="form-group" style={{ gridColumn: "1 / -1" }}>
-            <label>Video URL</label>
-            <input name="default_video_url" placeholder="https://..." type="url" />
+          <div style={{ ...fieldStyle, gridColumn: "1 / -1" }}>
+            <label style={labelStyle}>Video URL</label>
+            <input name="default_video_url" placeholder="https://..." type="url" style={inputStyle} />
           </div>
-          <button type="submit" className="btn btn-primary">Spara övning</button>
+          <button type="submit" style={saveBtnStyle}>Spara övning</button>
         </form>
       </details>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Namn</th>
-            <th>Muskelgrupp</th>
-            <th>Utrustning</th>
-            <th>Video</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {exercises.map((ex) => (
-            <tr key={ex.id}>
-              <td style={{ fontWeight: 600 }}>{ex.name}</td>
-              <td>{ex.primary_muscle_group ?? "–"}</td>
-              <td>{ex.equipment ?? "–"}</td>
-              <td>
-                {ex.default_video_url ? (
-                  <a href={ex.default_video_url} target="_blank" rel="noreferrer" style={{ color: "#D96D46" }}>
-                    Video
-                  </a>
-                ) : "–"}
-              </td>
-              <td>
-                <form action={deleteExercise}>
-                  <input type="hidden" name="id" value={ex.id} />
-                  <button
-                    type="submit"
-                    className="btn btn-danger"
-                    style={{ fontSize: 11, padding: "4px 10px" }}
-                  >
-                    Ta bort
-                  </button>
-                </form>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {exercises.map((ex) => (
+          <details key={ex.id} style={rowDetailsStyle}>
+            <summary style={rowSummaryStyle}>
+              <span style={{ fontWeight: 600, flex: 1 }}>{ex.name}</span>
+              <span style={{ fontSize: 12, color: "#976568", marginRight: 8 }}>
+                {[ex.primary_muscle_group, ex.equipment].filter(Boolean).join(" · ") || "–"}
+              </span>
+            </summary>
+            <div style={{ padding: "16px 16px 16px 20px", background: "#FFFBF7", borderTop: "1px solid #f0d6d7" }}>
+              <form action={updateExercise} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, maxWidth: 560 }}>
+                <input type="hidden" name="id" value={ex.id} />
+                <div style={fieldStyle}>
+                  <label style={labelStyle}>Namn *</label>
+                  <input name="name" defaultValue={ex.name} required style={inputStyle} />
+                </div>
+                <div style={fieldStyle}>
+                  <label style={labelStyle}>Muskelgrupp</label>
+                  <input name="primary_muscle_group" defaultValue={ex.primary_muscle_group ?? ""} style={inputStyle} />
+                </div>
+                <div style={fieldStyle}>
+                  <label style={labelStyle}>Utrustning</label>
+                  <input name="equipment" defaultValue={ex.equipment ?? ""} style={inputStyle} />
+                </div>
+                <div style={fieldStyle}>
+                  <label style={labelStyle}>Video URL</label>
+                  <input name="default_video_url" defaultValue={ex.default_video_url ?? ""} type="url" style={inputStyle} />
+                </div>
+                <div style={{ gridColumn: "1 / -1", display: "flex", gap: 8 }}>
+                  <button type="submit" style={saveBtnStyle}>Spara ändringar</button>
+                  <form action={deleteExercise}>
+                    <input type="hidden" name="id" value={ex.id} />
+                    <button type="submit" style={deleteBtnStyle}>Ta bort</button>
+                  </form>
+                </div>
+              </form>
+            </div>
+          </details>
+        ))}
+      </div>
     </div>
   );
 }
+
+const summaryStyle: React.CSSProperties = {
+  cursor: "pointer", display: "inline-block",
+  padding: "10px 20px", background: "#462324", color: "#FEE7AB",
+  borderRadius: 8, fontSize: 14, fontWeight: 600, marginBottom: 16,
+  listStyle: "none",
+};
+const formGridStyle: React.CSSProperties = {
+  background: "#fff", border: "1px solid #f0d6d7", borderRadius: 12,
+  padding: 24, marginTop: 4, display: "grid",
+  gridTemplateColumns: "1fr 1fr", gap: 16, maxWidth: 600,
+};
+const rowDetailsStyle: React.CSSProperties = {
+  background: "#fff", borderRadius: 8, border: "1px solid #f0d6d7", overflow: "hidden",
+};
+const rowSummaryStyle: React.CSSProperties = {
+  display: "flex", alignItems: "center", padding: "12px 16px",
+  cursor: "pointer", gap: 8,
+};
+const fieldStyle: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 4 };
+const labelStyle: React.CSSProperties = {
+  fontSize: 11, fontWeight: 600, color: "#462324",
+  textTransform: "uppercase", letterSpacing: "0.05em",
+};
+const inputStyle: React.CSSProperties = {
+  padding: "8px 12px", borderRadius: 8, border: "1px solid #f0d6d7",
+  fontSize: 14, fontFamily: "inherit", width: "100%", boxSizing: "border-box",
+};
+const saveBtnStyle: React.CSSProperties = {
+  padding: "8px 20px", background: "#462324", color: "#FEE7AB",
+  border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer",
+};
+const deleteBtnStyle: React.CSSProperties = {
+  padding: "8px 16px", background: "transparent", color: "#E57373",
+  border: "1px solid #E57373", borderRadius: 8, fontSize: 13, cursor: "pointer",
+};
