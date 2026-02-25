@@ -12,7 +12,7 @@ import type {
   ProgramWithStatus,
   ProgramStatus,
 } from "../../domain/program";
-import { computeProgression } from "../../services/programService";
+import { computeProgression } from "../../utils/programUtils";
 
 export interface AssignmentData {
   id: string;

@@ -1,24 +1,14 @@
 /**
  * contentRepo/sessionTemplates – queries mot session_templates
  * och session_template_exercises (fristående pass).
- *
- * FAS 1–2: dual-read via USE_SEPARATE_CONTENT_DB-flaggan.
- * FAS 3:   ta bort fallback och använd contentClient direkt.
  */
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { contentClient } from "../../supabase/contentClient";
-import { userClient } from "../../supabase/userClient";
-import { USE_SEPARATE_CONTENT_DB } from "../../supabase/featureFlags";
 import type { SessionTemplateData, SessionTemplateExercise } from "../../services/sessionTemplateService";
-
-function getDb(): SupabaseClient {
-  return USE_SEPARATE_CONTENT_DB ? contentClient : userClient;
-}
 
 export async function fetchStandaloneSessions(
   focus?: string | null
 ): Promise<SessionTemplateData[]> {
-  let query = getDb()
+  let query = contentClient
     .from("session_templates")
     .select(`
       id, name, focus, description, duration_minutes,
@@ -56,7 +46,7 @@ export async function fetchStandaloneSessions(
 export async function fetchSessionTemplateById(
   id: string
 ): Promise<SessionTemplateData | null> {
-  const { data, error } = await getDb()
+  const { data, error } = await contentClient
     .from("session_templates")
     .select(`
       id, name, focus, description, duration_minutes,

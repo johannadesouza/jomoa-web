@@ -1,14 +1,8 @@
 /**
  * contentRepo/programs – queries mot training_programs, program_blocks,
  * program_weeks, program_sessions, session_exercises (+ exercises join).
- *
- * FAS 1–2: dual-read via USE_SEPARATE_CONTENT_DB-flaggan.
- * FAS 3:   ta bort fallback och använd contentClient direkt.
  */
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { contentClient } from "../../supabase/contentClient";
-import { userClient } from "../../supabase/userClient";
-import { USE_SEPARATE_CONTENT_DB } from "../../supabase/featureFlags";
 import type {
   Program,
   ProgramBlock,
@@ -18,12 +12,8 @@ import type {
   ProgramWithStructure,
 } from "../../domain/program";
 
-function getDb(): SupabaseClient {
-  return USE_SEPARATE_CONTENT_DB ? contentClient : userClient;
-}
-
 export async function fetchTemplatePrograms(): Promise<Program[]> {
-  const { data, error } = await getDb()
+  const { data, error } = await contentClient
     .from("training_programs")
     .select("id, name, description, target_goal, target_duration_weeks")
     .eq("is_template", true)
@@ -43,7 +33,7 @@ export async function fetchTemplatePrograms(): Promise<Program[]> {
 }
 
 export async function fetchProgramById(programId: string): Promise<Program | null> {
-  const { data, error } = await getDb()
+  const { data, error } = await contentClient
     .from("training_programs")
     .select("id, name, description, target_goal, target_duration_weeks")
     .eq("id", programId)
@@ -60,7 +50,7 @@ export async function fetchProgramById(programId: string): Promise<Program | nul
 }
 
 export async function getFirstWeekId(programId: string): Promise<string | null> {
-  const { data } = await getDb()
+  const { data } = await contentClient
     .from("program_weeks")
     .select("id")
     .eq("program_id", programId)
@@ -86,7 +76,7 @@ export async function getWeekIdForDate(
 
   const weekNumber = Math.floor(daysSinceStart / 7) + 1;
 
-  const { data: weeks } = await getDb()
+  const { data: weeks } = await contentClient
     .from("program_weeks")
     .select("id, week_number")
     .eq("program_id", programId)
@@ -101,9 +91,7 @@ export async function getWeekIdForDate(
 export async function fetchProgramWithStructure(
   programId: string
 ): Promise<ProgramWithStructure | null> {
-  const db = getDb();
-
-  const { data: program, error: programErr } = await db
+  const { data: program, error: programErr } = await contentClient
     .from("training_programs")
     .select("id, name, description, target_goal, target_duration_weeks")
     .eq("id", programId)
@@ -111,13 +99,13 @@ export async function fetchProgramWithStructure(
 
   if (programErr || !program) return null;
 
-  const { data: blocks } = await db
+  const { data: blocks } = await contentClient
     .from("program_blocks")
     .select("id, program_id, name, order_index, weeks_count")
     .eq("program_id", programId)
     .order("order_index", { ascending: true });
 
-  const { data: weeks } = await db
+  const { data: weeks } = await contentClient
     .from("program_weeks")
     .select("id, program_id, block_id, week_number, name")
     .eq("program_id", programId)
@@ -134,7 +122,7 @@ export async function fetchProgramWithStructure(
     };
   }
 
-  const { data: sessions } = await db
+  const { data: sessions } = await contentClient
     .from("program_sessions")
     .select("id, program_id, week_id, name, day_of_week, focus")
     .in("week_id", weekIds)
@@ -151,7 +139,7 @@ export async function fetchProgramWithStructure(
     };
   }
 
-  const { data: sessionExercisesRaw } = await db
+  const { data: sessionExercisesRaw } = await contentClient
     .from("session_exercises")
     .select(`
       id,
@@ -216,7 +204,7 @@ export async function fetchProgramWithStructure(
 export async function fetchSessionsByWeekId(
   weekId: string
 ): Promise<Array<{ id: string; name: string; day_of_week: number; focus: string | null; session_exercises: SessionExercise[] }>> {
-  const { data } = await getDb()
+  const { data } = await contentClient
     .from("program_sessions")
     .select(`
       id, name, day_of_week, focus,
@@ -234,7 +222,7 @@ export async function fetchSessionsByWeekId(
 export async function fetchSessionById(
   sessionId: string
 ): Promise<{ id: string; name: string; day_of_week?: number; focus: string | null; session_exercises: SessionExercise[] } | null> {
-  const { data, error } = await getDb()
+  const { data, error } = await contentClient
     .from("program_sessions")
     .select(`
       id, name, focus,
@@ -254,7 +242,7 @@ export async function fetchSessionsByIds(
   sessionIds: string[]
 ): Promise<Array<{ id: string; name: string; day_of_week: number; focus: string | null; session_exercises: SessionExercise[] }>> {
   if (sessionIds.length === 0) return [];
-  const { data, error } = await getDb()
+  const { data, error } = await contentClient
     .from("program_sessions")
     .select(`
       id, name, day_of_week, focus,
