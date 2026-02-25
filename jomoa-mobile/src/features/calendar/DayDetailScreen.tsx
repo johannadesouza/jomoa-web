@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { YStack, XStack } from "tamagui";
+import { YStack, XStack, View } from "tamagui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import {
@@ -12,6 +12,7 @@ import {
   AppButton,
   AppInput,
   LoadingScreen,
+  AppIcon,
 } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useCycleContext } from "../../shared/context/CycleContext";
@@ -89,6 +90,20 @@ const PHASE_ID_MAP: Record<Exclude<CyclePhase, null>, string> = {
   luteal: "luteal",
 };
 
+const WELLNESS_CATEGORY_ICON: Record<string, string> = {
+  nutrition: "nutrition-outline",
+  sleep: "moon-outline",
+  stress: "leaf-outline",
+  symptoms: "medkit-outline",
+  mindfulness: "heart-outline",
+};
+
+const TRAINING_TIP_ICON: Record<string, string> = {
+  recommendation: "checkmark-circle-outline",
+  warning: "warning-outline",
+  motivation: "flash-outline",
+};
+
 function DayDetailCykelView({
   date,
   onCyclePress,
@@ -113,91 +128,107 @@ function DayDetailCykelView({
       .finally(() => setLoadingContent(false));
   }, [phase]);
 
+  const phaseColor = phaseContent?.color_hex ?? "#888";
+
   return (
     <Screen scroll padded>
-      <YStack gap="$6">
-        {/* Fasöversikt */}
-        <Section title="Cykelinfo" subtitle={`Dag ${cycleDay ?? "–"} i cykeln`}>
+      <YStack gap="$5" paddingBottom="$6">
+
+        {/* Hero-banner med fasens färg */}
+        {phase ? (
+          <View
+            borderRadius="$4"
+            overflow="hidden"
+            style={{ backgroundColor: phaseColor + "22", borderLeftWidth: 4, borderLeftColor: phaseColor }}
+            padding="$5"
+          >
+            <YStack gap="$3">
+              <XStack alignItems="center" gap="$3">
+                <View
+                  width={14}
+                  height={14}
+                  borderRadius={7}
+                  style={{ backgroundColor: phaseColor }}
+                />
+                <AppText variant="h2">{phaseLabel}</AppText>
+              </XStack>
+
+              <XStack gap="$4" flexWrap="wrap">
+                <YStack gap="$1">
+                  <AppText variant="caption" muted>Cykeldag</AppText>
+                  <AppText variant="body" fontWeight="600">Dag {cycleDay}</AppText>
+                </YStack>
+                {phaseContent?.typical_days && (
+                  <YStack gap="$1">
+                    <AppText variant="caption" muted>Typiska dagar</AppText>
+                    <AppText variant="body" fontWeight="600">{phaseContent.typical_days}</AppText>
+                  </YStack>
+                )}
+                {daysUntilNext !== null && daysUntilNext >= 0 && (
+                  <YStack gap="$1">
+                    <AppText variant="caption" muted>Nästa mens</AppText>
+                    <AppText variant="body" fontWeight="600">
+                      {daysUntilNext === 0 ? "Idag" : daysUntilNext === 1 ? "Imorgon" : `Om ${daysUntilNext} d`}
+                    </AppText>
+                  </YStack>
+                )}
+              </XStack>
+
+              {phaseContent?.description && (
+                <AppText variant="body">{phaseContent.description}</AppText>
+              )}
+
+              {phaseContent?.hormone_profile && (
+                <XStack gap="$2" alignItems="flex-start">
+                  <AppIcon name="flask-outline" size={16} color="$textMuted" style={{ marginTop: 2 }} />
+                  <AppText variant="small" muted flex={1}>{phaseContent.hormone_profile}</AppText>
+                </XStack>
+              )}
+            </YStack>
+          </View>
+        ) : (
           <Card borderRadius="$4">
             <Card.Content padding="$6">
-              <YStack gap="$4">
-                {phase ? (
-                  <>
-                    <XStack alignItems="center" gap="$3">
-                      {phaseContent?.color_hex && (
-                        <YStack
-                          width={12}
-                          height={12}
-                          borderRadius={6}
-                          backgroundColor={phaseContent.color_hex}
-                        />
-                      )}
-                      <AppText variant="h3">{phaseLabel}</AppText>
-                    </XStack>
-
-                    {phaseContent?.typical_days && (
-                      <YStack gap="$1">
-                        <AppText variant="small" muted>Typiska dagar</AppText>
-                        <AppText variant="body">{phaseContent.typical_days}</AppText>
-                      </YStack>
-                    )}
-
-                    {phaseContent?.description && (
-                      <YStack gap="$1">
-                        <AppText variant="small" muted>Om fasen</AppText>
-                        <AppText variant="body">{phaseContent.description}</AppText>
-                      </YStack>
-                    )}
-
-                    {phaseContent?.hormone_profile && (
-                      <YStack gap="$1">
-                        <AppText variant="small" muted>Hormoner</AppText>
-                        <AppText variant="body">{phaseContent.hormone_profile}</AppText>
-                      </YStack>
-                    )}
-
-                    {daysUntilNext !== null && daysUntilNext >= 0 && (
-                      <YStack gap="$1">
-                        <AppText variant="small" muted>Nästa mens (beräknat)</AppText>
-                        <AppText variant="body">
-                          {daysUntilNext === 0
-                            ? "Idag"
-                            : daysUntilNext === 1
-                            ? "Imorgon"
-                            : `Om ${daysUntilNext} dagar`}
-                        </AppText>
-                      </YStack>
-                    )}
-                  </>
-                ) : (
-                  <AppText variant="body" muted>
-                    Logga din senaste mensstart i Cykel för att se fas och cykeldag för denna dag.
-                  </AppText>
-                )}
+              <YStack gap="$3" alignItems="center">
+                <AppIcon name="moon-outline" size={32} color="$textMuted" />
+                <AppText variant="body" muted center>
+                  Logga din senaste mensstart i Cykel för att se fas och cykeldag.
+                </AppText>
+                <AppButton variant="secondary" size="sm" onPress={onCyclePress}>
+                  Öppna Cykel
+                </AppButton>
               </YStack>
             </Card.Content>
           </Card>
-        </Section>
+        )}
 
         {/* Träningsrekommendationer */}
         {phaseContent && phaseContent.training_tips.length > 0 && (
-          <Section title="Träning under fasen">
+          <Section title="Träning">
             <YStack gap="$3">
               {phaseContent.training_tips.map((tip) => (
                 <Card key={tip.id} borderRadius="$4">
-                  <Card.Content padding="$5">
-                    <YStack gap="$2">
-                      <XStack alignItems="center" gap="$2">
-                        <AppText variant="h3" flex={1}>{tip.title}</AppText>
-                        {tip.tip_type === "warning" && (
-                          <AppText variant="caption" color="$warning">⚠</AppText>
-                        )}
-                        {tip.tip_type === "motivation" && (
-                          <AppText variant="caption">💪</AppText>
-                        )}
-                      </XStack>
-                      <AppText variant="body">{tip.body}</AppText>
-                    </YStack>
+                  <Card.Content padding="$4">
+                    <XStack gap="$3" alignItems="flex-start">
+                      <View
+                        width={36}
+                        height={36}
+                        borderRadius="$3"
+                        style={{ backgroundColor: phaseColor + "22" }}
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <AppIcon
+                          name={(TRAINING_TIP_ICON[tip.tip_type ?? "recommendation"] ?? "checkmark-circle-outline") as any}
+                          size={18}
+                          color={phaseColor}
+                        />
+                      </View>
+                      <YStack flex={1} gap="$1">
+                        <AppText variant="h3">{tip.title}</AppText>
+                        <AppText variant="small" muted>{tip.body}</AppText>
+                      </YStack>
+                    </XStack>
                   </Card.Content>
                 </Card>
               ))}
@@ -211,16 +242,27 @@ function DayDetailCykelView({
             <YStack gap="$3">
               {phaseContent.wellness_tips.map((tip) => (
                 <Card key={tip.id} borderRadius="$4">
-                  <Card.Content padding="$5">
-                    <YStack gap="$2">
-                      <AppText variant="h3">{tip.title}</AppText>
-                      <AppText variant="body">{tip.body}</AppText>
-                      {tip.category && (
-                        <AppText variant="caption" muted style={{ textTransform: "capitalize" }}>
-                          {tip.category}
-                        </AppText>
-                      )}
-                    </YStack>
+                  <Card.Content padding="$4">
+                    <XStack gap="$3" alignItems="flex-start">
+                      <View
+                        width={36}
+                        height={36}
+                        borderRadius="$3"
+                        backgroundColor="$surface3"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <AppIcon
+                          name={(WELLNESS_CATEGORY_ICON[tip.category ?? ""] ?? "sparkles-outline") as any}
+                          size={18}
+                          color="$textSecondary"
+                        />
+                      </View>
+                      <YStack flex={1} gap="$1">
+                        <AppText variant="h3">{tip.title}</AppText>
+                        <AppText variant="small" muted>{tip.body}</AppText>
+                      </YStack>
+                    </XStack>
                   </Card.Content>
                 </Card>
               ))}
@@ -228,9 +270,11 @@ function DayDetailCykelView({
           </Section>
         )}
 
-        <AppButton variant="secondary" onPress={onCyclePress}>
-          Öppna Cykel
-        </AppButton>
+        {phase && (
+          <AppButton variant="secondary" onPress={onCyclePress}>
+            Öppna Cykel
+          </AppButton>
+        )}
       </YStack>
     </Screen>
   );
