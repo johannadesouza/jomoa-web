@@ -209,7 +209,6 @@ export default async function ArticlesPage() {
                       type="submit"
                       className="btn btn-danger"
                       style={{ fontSize: 11, padding: "4px 10px" }}
-                      onClick={(e) => { if (!confirm(`Ta bort "${a.title}"?`)) e.preventDefault(); }}
                     >
                       Ta bort
                     </button>

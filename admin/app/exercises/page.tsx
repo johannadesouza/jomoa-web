@@ -108,7 +108,6 @@ export default async function ExercisesPage() {
                     type="submit"
                     className="btn btn-danger"
                     style={{ fontSize: 11, padding: "4px 10px" }}
-                    onClick={(e) => { if (!confirm(`Ta bort "${ex.name}"?`)) e.preventDefault(); }}
                   >
                     Ta bort
                   </button>

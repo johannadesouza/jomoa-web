@@ -104,7 +104,6 @@ export default async function SessionTemplatesPage() {
                     type="submit"
                     className="btn btn-danger"
                     style={{ fontSize: 11, padding: "4px 10px" }}
-                    onClick={(e) => { if (!confirm(`Ta bort "${t.name}"?`)) e.preventDefault(); }}
                   >
                     Ta bort
                   </button>
