@@ -27,9 +27,15 @@ export default function RootLayout({
             <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 24, color: "#FDB499" }}>
               JOMOA Admin
             </div>
+            <div style={{ fontSize: 11, color: "#976568", textTransform: "uppercase", letterSpacing: "0.08em", padding: "4px 12px", marginTop: 8 }}>Träning</div>
             <NavLink href="/exercises">Övningar</NavLink>
             <NavLink href="/programs">Program</NavLink>
             <NavLink href="/session-templates">Passmallar</NavLink>
+            <div style={{ fontSize: 11, color: "#976568", textTransform: "uppercase", letterSpacing: "0.08em", padding: "4px 12px", marginTop: 8 }}>Cykel</div>
+            <NavLink href="/cycle-phases">Cykelns faser</NavLink>
+            <NavLink href="/cycle-tips">Cykeltips</NavLink>
+            <NavLink href="/readiness-insights">Readiness-insikter</NavLink>
+            <div style={{ fontSize: 11, color: "#976568", textTransform: "uppercase", letterSpacing: "0.08em", padding: "4px 12px", marginTop: 8 }}>Innehåll</div>
             <NavLink href="/articles">Artiklar</NavLink>
             <NavLink href="/tips">Tips</NavLink>
           </nav>
