@@ -35,10 +35,11 @@ export function useMeasurements(clientId: string | undefined, limit = 30) {
     async (
       date: string,
       measurements: Record<string, number>,
-      note?: string | null
+      note?: string | null,
+      photoUrl?: string | null
     ): Promise<{ error: Error | null }> => {
       if (!clientId) return { error: new Error("No client") };
-      const { error } = await upsertMeasurement(clientId, date, measurements, note);
+      const { error } = await upsertMeasurement(clientId, date, measurements, note, photoUrl);
       if (!error) {
         await load();
       }

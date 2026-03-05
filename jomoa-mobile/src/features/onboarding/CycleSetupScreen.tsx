@@ -13,11 +13,13 @@ import {
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
 import { OnboardingStepDots } from "./OnboardingStepDots";
+import { useOnboardingCopy, getCopy } from "../../lib/hooks/useOnboardingCopy";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "CycleSetup">;
 
 export function CycleSetupScreen({ navigation }: Props) {
   const { data, updateData, setCurrentStep } = useOnboarding();
+  const copy = useOnboardingCopy("sv");
   const [lastPeriodInput, setLastPeriodInput] = useState(
     data.lastPeriodStart ?? ""
   );
@@ -40,7 +42,7 @@ export function CycleSetupScreen({ navigation }: Props) {
     } else if (wantsTracking && lastPeriodInput.trim() === "") {
       updateData({ lastPeriodStart: null });
     }
-    setCurrentStep(5);
+    setCurrentStep(isCycleOnly ? 3 : 6);
     navigation.navigate("Complete");
   };
 
@@ -54,12 +56,14 @@ export function CycleSetupScreen({ navigation }: Props) {
         <YStack gap="$6" paddingTop="$4">
           <YStack gap="$2">
             <AppText variant="h1">
-              {isCycleOnly ? "Logga din period" : "Menscykel"}
+              {isCycleOnly
+                ? getCopy(copy, "cycle_setup_title_cycle_only", "Logga din period")
+                : getCopy(copy, "cycle_setup_title", "Menscykel")}
             </AppText>
             <AppText variant="body" muted>
               {isCycleOnly
-                ? "När började din senaste period? Vi anpassar rekommendationer utifrån din cykelfas."
-                : "Vill du spåra din cykel för anpassade träningsrekommendationer?"}
+                ? getCopy(copy, "cycle_setup_subtitle_cycle_only", "När började din senaste period? Vi anpassar rekommendationer utifrån din cykelfas.")
+                : getCopy(copy, "cycle_setup_subtitle", "Vill du spåra din cykel för anpassade träningsrekommendationer?")}
             </AppText>
           </YStack>
 

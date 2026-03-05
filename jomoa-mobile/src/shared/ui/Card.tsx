@@ -1,3 +1,4 @@
+import React from "react";
 import { YStack, XStack, styled, GetProps } from "tamagui";
 import { AppText } from "./AppText";
 
@@ -66,17 +67,6 @@ const CardHeader = styled(XStack, {
   gap: "$3",
 });
 
-const CardTitle = styled(AppText, {
-  name: "CardTitle",
-  variant: "h3",
-});
-
-const CardDescription = styled(AppText, {
-  name: "CardDescription",
-  variant: "small",
-  marginTop: "$1",
-});
-
 const CardContent = styled(YStack, {
   name: "CardContent",
   gap: "$3", // 12px
@@ -89,6 +79,14 @@ const CardFooter = styled(XStack, {
   justifyContent: "flex-end",
   gap: "$3",
 });
+
+// Wrappers that render AppText (avoid styled(AppText) to prevent "class as function" with Tamagui)
+function CardTitle(props: React.ComponentProps<typeof AppText>) {
+  return <AppText variant="h3" {...props} />;
+}
+function CardDescription(props: React.ComponentProps<typeof AppText>) {
+  return <AppText variant="small" marginTop="$1" {...props} />;
+}
 
 // Types
 export type CardProps = GetProps<typeof CardFrame>;

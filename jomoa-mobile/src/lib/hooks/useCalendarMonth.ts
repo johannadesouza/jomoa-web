@@ -68,7 +68,10 @@ const MONTH_NAMES = [
 ];
 
 export function useCalendarMonth(clientId: string | undefined) {
-  const { getPhaseForDate } = useCycleContext();
+  const cycleCtx = useCycleContext();
+  const getPhaseForDateRef = useRef(cycleCtx.getPhaseForDate);
+  getPhaseForDateRef.current = cycleCtx.getPhaseForDate;
+
   const ctx = useAssignment();
   const assignmentRef = useRef(ctx?.assignment ?? null);
   assignmentRef.current = ctx?.assignment ?? null;
@@ -134,7 +137,7 @@ export function useCalendarMonth(clientId: string | undefined) {
             customSession = tmpl ? { ...tmpl, day_of_week: 0 } : null;
           }
           const plannedSession = customSession ?? programPlanned ?? null;
-          const { phase: cyclePhase } = getPhaseForDate(d);
+          const { phase: cyclePhase } = getPhaseForDateRef.current(d);
           const isCurrentMonth =
             d >= firstOfMonth && d <= lastOfMonth;
           return {
@@ -156,7 +159,7 @@ export function useCalendarMonth(clientId: string | undefined) {
     } finally {
       setIsLoading(false);
     }
-  }, [clientId, monthStart, getPhaseForDate]);
+  }, [clientId, monthStart]);
 
   useEffect(() => {
     if (clientId) {

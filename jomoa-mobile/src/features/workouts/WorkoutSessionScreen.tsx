@@ -191,7 +191,23 @@ function RestTimer({
 }
 
 export function WorkoutSessionScreen({ navigation, route }: Props) {
-  const { sessionId, isStandalone, applyAdjustment } = route.params;
+  const sessionId = route.params?.sessionId;
+  const isStandalone = route.params?.isStandalone;
+  const applyAdjustment = route.params?.applyAdjustment;
+
+  if (!sessionId) {
+    return (
+      <Screen padded centered>
+        <AppText variant="body" muted center>
+          Passet kunde inte laddas. Gå tillbaka och försök igen.
+        </AppText>
+        <AppButton variant="secondary" onPress={() => navigation.goBack()}>
+          Tillbaka
+        </AppButton>
+      </Screen>
+    );
+  }
+
   const { client } = useAuth();
   const { theme } = useTheme();
   const colors = getThemeColors(theme);
@@ -262,10 +278,11 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
           sessionName: session.name ?? "Pass",
           totalSets: logs.length,
           totalVolume: Math.round(totalVolume),
+          adaptationApplied: applyAdjustment === true,
         });
       }
     })();
-  }, [phase, currentExerciseIndex, sortedExercises.length, session, completeWorkout, logs, navigation]);
+  }, [phase, currentExerciseIndex, sortedExercises.length, session, completeWorkout, logs, navigation, applyAdjustment]);
 
   const handleAbort = () => {
     Alert.alert(
@@ -306,6 +323,7 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
                 sessionName: session?.name ?? "Pass",
                 totalSets: logs.length,
                 totalVolume: Math.round(totalVolume),
+                adaptationApplied: applyAdjustment === true,
               });
             }
           },

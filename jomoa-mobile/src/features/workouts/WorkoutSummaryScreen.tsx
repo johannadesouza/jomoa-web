@@ -14,7 +14,10 @@ import { RootStackParamList } from "../../navigation/RootNavigator";
 type Props = NativeStackScreenProps<RootStackParamList, "WorkoutSummary">;
 
 export function WorkoutSummaryScreen({ navigation, route }: Props) {
-  const { sessionName, totalSets, totalVolume } = route.params;
+  const sessionName = route.params?.sessionName ?? "Pass";
+  const totalSets = route.params?.totalSets ?? 0;
+  const totalVolume = route.params?.totalVolume ?? 0;
+  const adaptationApplied = route.params?.adaptationApplied ?? false;
 
   return (
     <Screen padded>
@@ -27,6 +30,11 @@ export function WorkoutSummaryScreen({ navigation, route }: Props) {
             <AppText variant="body" muted center>
               {sessionName}
             </AppText>
+            {adaptationApplied && (
+              <AppText variant="caption" color="$accent" center marginTop="$1">
+                Du tränade smart idag – anpassat för din kropp
+              </AppText>
+            )}
           </YStack>
 
           <Section title="Sammanfattning">

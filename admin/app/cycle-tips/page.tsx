@@ -1,5 +1,7 @@
 import { adminContentClient } from "../../lib/contentClient";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { ConfirmDeleteButton } from "../ConfirmDeleteButton";
 
 async function getTips() {
   const { data: phases } = await adminContentClient
@@ -30,6 +32,7 @@ async function addTrainingTip(formData: FormData) {
     tip_type: formData.get("tip_type") || null,
   });
   revalidatePath("/cycle-tips");
+  redirect("/cycle-tips?saved=1");
 }
 
 async function updateTrainingTip(formData: FormData) {
@@ -41,12 +44,14 @@ async function updateTrainingTip(formData: FormData) {
     tip_type: formData.get("tip_type") || null,
   }).eq("id", formData.get("id"));
   revalidatePath("/cycle-tips");
+  redirect("/cycle-tips?saved=1");
 }
 
 async function deleteTrainingTip(formData: FormData) {
   "use server";
   await adminContentClient.from("phase_training_tips").delete().eq("id", formData.get("id"));
   revalidatePath("/cycle-tips");
+  redirect("/cycle-tips?saved=1");
 }
 
 async function addWellnessTip(formData: FormData) {
@@ -58,6 +63,7 @@ async function addWellnessTip(formData: FormData) {
     category: formData.get("category") || null,
   });
   revalidatePath("/cycle-tips");
+  redirect("/cycle-tips?saved=1");
 }
 
 async function updateWellnessTip(formData: FormData) {
@@ -68,12 +74,14 @@ async function updateWellnessTip(formData: FormData) {
     category: formData.get("category") || null,
   }).eq("id", formData.get("id"));
   revalidatePath("/cycle-tips");
+  redirect("/cycle-tips?saved=1");
 }
 
 async function deleteWellnessTip(formData: FormData) {
   "use server";
   await adminContentClient.from("phase_wellness_tips").delete().eq("id", formData.get("id"));
   revalidatePath("/cycle-tips");
+  redirect("/cycle-tips?saved=1");
 }
 
 const PHASE_COLORS: Record<string, string> = {
@@ -83,11 +91,21 @@ const PHASE_COLORS: Record<string, string> = {
   luteal: "#9575CD",
 };
 
-export default async function CycleTipsPage() {
+export default async function CycleTipsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ saved?: string }>;
+}) {
+  const { saved } = await searchParams;
   const { phases, trainingTips, wellnessTips } = await getTips();
 
   return (
     <div>
+      {saved === "1" && (
+        <p style={{ marginBottom: 16, padding: "10px 16px", background: "#E8F5E9", color: "#2E7D32", borderRadius: 8, fontSize: 14 }}>
+          Sparat!
+        </p>
+      )}
       <h1 style={{ marginBottom: 8 }}>Cykeltips</h1>
       <p style={{ color: "#976568", marginBottom: 32 }}>
         Hantera träningsrekommendationer och välmåendetips per fas.
@@ -137,7 +155,7 @@ export default async function CycleTipsPage() {
                       </div>
                       <div style={{ display: "flex", gap: 8 }}>
                         <button type="submit" style={addBtnStyle}>Spara</button>
-                        <button formAction={deleteTrainingTip} style={deleteBtnStyle}>Ta bort</button>
+                        <ConfirmDeleteButton action={deleteTrainingTip} formData={{ id: tip.id }} style={deleteBtnStyle} />
                       </div>
                     </form>
                   </div>
@@ -186,7 +204,7 @@ export default async function CycleTipsPage() {
                       </select>
                       <div style={{ display: "flex", gap: 8 }}>
                         <button type="submit" style={addBtnStyle}>Spara</button>
-                        <button formAction={deleteWellnessTip} style={deleteBtnStyle}>Ta bort</button>
+                        <ConfirmDeleteButton action={deleteWellnessTip} formData={{ id: tip.id }} style={deleteBtnStyle} />
                       </div>
                     </form>
                   </div>

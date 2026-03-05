@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { YStack, XStack } from "tamagui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Pressable } from "react-native";
@@ -8,46 +8,34 @@ import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
 import { OnboardingStepDots } from "./OnboardingStepDots";
 import { TrainingGoal } from "../../shared/types/onboarding";
+import { fetchTrainingGoals, type TrainingGoalEntry } from "../../lib/repos/contentRepo";
+import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "Goals">;
 
-const GOALS: { id: TrainingGoal; label: string; icon: string; description: string }[] = [
-  {
-    id: "muscle_growth",
-    label: "Bygga muskler",
-    icon: "💪",
-    description: "Öka muskelmassa och forma kroppen",
-  },
-  {
-    id: "strength",
-    label: "Bli starkare",
-    icon: "🏋️",
-    description: "Öka styrka och kraft",
-  },
-  {
-    id: "fat_loss",
-    label: "Gå ner i vikt",
-    icon: "🔥",
-    description: "Bränna fett och bli smalare",
-  },
-  {
-    id: "performance",
-    label: "Bättre prestation",
-    icon: "⚡",
-    description: "Förbättra uthållighet och kondition",
-  },
-  {
-    id: "maintenance",
-    label: "Hålla formen",
-    icon: "✨",
-    description: "Behålla nuvarande nivå",
-  },
+const FALLBACK_GOALS: TrainingGoalEntry[] = [
+  { id: "muscle_growth", label: "Bygga muskler", description: "Öka muskelmassa och forma kroppen", icon: "💪", program_target_goal: "hypertrophy", order_index: 0 },
+  { id: "strength", label: "Bli starkare", description: "Öka styrka och kraft", icon: "🏋️", program_target_goal: "strength", order_index: 1 },
+  { id: "fat_loss", label: "Gå ner i vikt", description: "Bränna fett och bli smalare", icon: "🔥", program_target_goal: "general_fitness", order_index: 2 },
+  { id: "performance", label: "Bättre prestation", description: "Förbättra uthållighet och kondition", icon: "⚡", program_target_goal: "endurance", order_index: 3 },
+  { id: "maintenance", label: "Hålla formen", description: "Behålla nuvarande nivå", icon: "✨", program_target_goal: "general_fitness", order_index: 4 },
 ];
 
 export function GoalsScreen({ navigation }: Props) {
   const { data, updateData, setCurrentStep } = useOnboarding();
+  const [goals, setGoals] = useState<TrainingGoalEntry[]>(FALLBACK_GOALS);
+  const copy = useAppCopy("sv", data.presentationProfile);
 
-  const handleSelectGoal = (goal: TrainingGoal) => {
+  useEffect(() => {
+    let cancelled = false;
+    fetchTrainingGoals()
+      .then((list) => { if (!cancelled) setGoals(list.length ? list : FALLBACK_GOALS); })
+      .catch(() => { if (!cancelled) setGoals(FALLBACK_GOALS); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleSelectGoal = (goalId: string) => {
+    const goal = goalId as TrainingGoal;
     if (data.primaryGoal === goal) {
       updateData({ primaryGoal: null });
     } else {
@@ -67,14 +55,14 @@ export function GoalsScreen({ navigation }: Props) {
       <YStack flex={1} justifyContent="space-between">
         <YStack gap="$6" paddingTop="$4">
           <YStack gap="$2">
-            <AppText variant="h1">Vad är ditt mål?</AppText>
+            <AppText variant="h1">{getAppCopy(copy, "goals_title", "Vad är ditt mål?")}</AppText>
             <AppText variant="body" muted>
-              Välj det som passar dig bäst
+              {getAppCopy(copy, "goals_subtitle", "Välj det som passar dig bäst")}
             </AppText>
           </YStack>
 
           <YStack gap="$3">
-            {GOALS.map((goal) => {
+            {goals.map((goal) => {
               const isSelected = data.primaryGoal === goal.id;
               return (
                 <Pressable key={goal.id} onPress={() => handleSelectGoal(goal.id)}>
@@ -93,7 +81,7 @@ export function GoalsScreen({ navigation }: Props) {
                           alignItems="center"
                           justifyContent="center"
                         >
-                          <AppText variant="h2">{goal.icon}</AppText>
+                          <AppText variant="h2">{goal.icon ?? "•"}</AppText>
                         </XStack>
                         <YStack flex={1}>
                           <AppText
@@ -106,7 +94,7 @@ export function GoalsScreen({ navigation }: Props) {
                             variant="small"
                             color={isSelected ? "$background" : "$colorSecondary"}
                           >
-                            {goal.description}
+                            {goal.description ?? ""}
                           </AppText>
                         </YStack>
                         <XStack

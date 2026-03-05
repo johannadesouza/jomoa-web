@@ -7,10 +7,12 @@ import { Screen, AppText, AppButton } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
 import { OnboardingStepDots } from "./OnboardingStepDots";
+import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useCycleContext } from "../../shared/context/CycleContext";
 import { supabase } from "../../config/supabase";
 import { savePeriodStart } from "../../lib/services/cycleService";
+import { updateCycleMode } from "../../lib/services/cycleEngineService";
 import { createGoal } from "../../lib/services/goalsService";
 import { getPrimaryGoalLabel, getTrainingDaysLabel } from "../../lib/utils/profileLabels";
 
@@ -20,6 +22,7 @@ export function CompleteScreen({ navigation }: Props) {
   const { data } = useOnboarding();
   const { client, refreshClient } = useAuth();
   const { refetch: refetchCycle } = useCycleContext();
+  const copy = useAppCopy("sv", data.presentationProfile);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleComplete = async () => {
@@ -33,6 +36,8 @@ export function CompleteScreen({ navigation }: Props) {
     try {
       const clientUpdate: Record<string, unknown> = {
         onboarding_stage: "completed",
+        presentation_profile: data.presentationProfile ?? "female",
+        presentation_theme: data.presentationTheme ?? "neutral",
       };
 
       if (data.onboardingPath !== "cycle_only") {
@@ -59,6 +64,11 @@ export function CompleteScreen({ navigation }: Props) {
         .eq("id", client.id);
 
       if (error) throw error;
+
+      if (data.wantsCycleTracking === false) {
+        await updateCycleMode(client.id, "missing_period");
+        await refetchCycle();
+      }
 
       if (data.lastPeriodStart) {
         await savePeriodStart(client.id, data.lastPeriodStart);
@@ -92,10 +102,10 @@ export function CompleteScreen({ navigation }: Props) {
           <YStack gap="$2" alignItems="center">
             <Text fontSize={64}>🎉</Text>
             <AppText variant="h1" center>
-              Allt klart!
+              {getAppCopy(copy, "complete_title", "Allt klart!")}
             </AppText>
             <AppText variant="body" muted center>
-              Här är en sammanfattning av dina val
+              {getAppCopy(copy, "complete_subtitle", "Här är en sammanfattning av dina val")}
             </AppText>
           </YStack>
 
@@ -140,6 +150,28 @@ export function CompleteScreen({ navigation }: Props) {
               </YStack>
             )}
           </YStack>
+
+          <AppText variant="small" muted center paddingHorizontal="$4">
+            {getAppCopy(copy, "complete_checkin_copy", "Varje dag kan du logga sömn, energi och stress – då får du tydliga beslut: Öka, Behåll eller Justera.")}
+          </AppText>
+
+          <YStack gap="$3" paddingHorizontal="$2">
+            <AppText variant="h3">Nästa steg</AppText>
+            <YStack gap="$2">
+              <XStack gap="$2" alignItems="center">
+                <AppText variant="body" fontWeight="600" minWidth={24}>1.</AppText>
+                <AppText variant="body">{getAppCopy(copy, "complete_next_step_1", "Gå till Hem")}</AppText>
+              </XStack>
+              <XStack gap="$2" alignItems="center">
+                <AppText variant="body" fontWeight="600" minWidth={24}>2.</AppText>
+                <AppText variant="body">{getAppCopy(copy, "complete_next_step_2", "Välj program om du inte har ett")}</AppText>
+              </XStack>
+              <XStack gap="$2" alignItems="center">
+                <AppText variant="body" fontWeight="600" minWidth={24}>3.</AppText>
+                <AppText variant="body">{getAppCopy(copy, "complete_next_step_3", "Logga check-in imorgon")}</AppText>
+              </XStack>
+            </YStack>
+          </YStack>
         </YStack>
 
         <YStack gap="$4" paddingBottom="$8">
@@ -150,8 +182,11 @@ export function CompleteScreen({ navigation }: Props) {
             loading={isLoading}
             onPress={handleComplete}
           >
-            Starta min resa
+            Kom igång
           </AppButton>
+          <AppText variant="small" muted center>
+            Du kommer till Hem
+          </AppText>
           <AppButton
             variant="ghost"
             size="md"

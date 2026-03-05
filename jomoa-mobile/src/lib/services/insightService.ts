@@ -2,10 +2,13 @@
  * Hormone / training insights engine
  * Generates daily cues from cycle phase + readiness + symptoms
  * Persists to daily_insight_log for stable home screen
+ * Copy: template key from domain, then Content DB (insight_templates) with fallback to in-code copy.
  */
 
 import { supabase } from "../../config/supabase";
 import { getLocalDateString } from "../utils/date";
+import { getInsightTemplateKey } from "../domain/insightKeys";
+import { fetchInsightTemplate } from "../repos/contentRepo/insightTemplates";
 
 export interface DailyInsight {
   id: string;
@@ -113,11 +116,14 @@ export function generateInsight(input: InsightInput): Omit<DailyInsight, "id" | 
   };
 }
 
+const DEFAULT_INSIGHT_TITLE_FALLBACK = "Dagens träningsrekommendation";
+
 export async function getOrCreateTodayInsight(
   clientId: string,
-  input: InsightInput
+  input: InsightInput,
+  options?: { date?: string; defaultTitle?: string }
 ): Promise<{ data: DailyInsight | null; error: string | null }> {
-  const date = getLocalDateString();
+  const date = options?.date ?? getLocalDateString();
   try {
     const { data: existing } = await supabase
       .from("daily_insight_log")
@@ -130,7 +136,36 @@ export async function getOrCreateTodayInsight(
       return { data: existing as DailyInsight, error: null };
     }
 
-    const insight = generateInsight(input);
+    const templateKey = getInsightTemplateKey(input);
+    let insight: Omit<DailyInsight, "id" | "client_id" | "date">;
+    try {
+      const template = await fetchInsightTemplate(templateKey);
+      if (template) {
+        insight = {
+          phase: input.phase,
+          insight_title: template.title,
+          insight_body: template.body,
+          actions: template.actions ?? [],
+          tags: computeTags(input),
+        };
+      } else {
+        insight = generateInsight(input);
+        if (
+          options?.defaultTitle &&
+          insight.insight_title === DEFAULT_INSIGHT_TITLE_FALLBACK
+        ) {
+          insight = { ...insight, insight_title: options.defaultTitle };
+        }
+      }
+    } catch {
+      insight = generateInsight(input);
+      if (
+        options?.defaultTitle &&
+        insight.insight_title === DEFAULT_INSIGHT_TITLE_FALLBACK
+      ) {
+        insight = { ...insight, insight_title: options.defaultTitle };
+      }
+    }
     const { data: inserted, error } = await supabase
       .from("daily_insight_log")
       .insert({
@@ -143,10 +178,10 @@ export async function getOrCreateTodayInsight(
         tags: insight.tags,
       })
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
-    return { data: inserted as DailyInsight, error: null };
+    return { data: inserted as DailyInsight | null, error: null };
   } catch (err) {
     const e = err as { code?: string; message?: string };
     const isTableMissing = e?.code === "PGRST205" || (e?.message && String(e.message).includes("daily_insight_log"));
@@ -159,15 +194,16 @@ export async function getOrCreateTodayInsight(
 }
 
 export async function getTodayInsight(
-  clientId: string
+  clientId: string,
+  date?: string
 ): Promise<{ data: DailyInsight | null; error: string | null }> {
   try {
-    const date = getLocalDateString();
+    const dateStr = date ?? getLocalDateString();
     const { data, error } = await supabase
       .from("daily_insight_log")
       .select("*")
       .eq("client_id", clientId)
-      .eq("date", date)
+      .eq("date", dateStr)
       .maybeSingle();
 
     if (error) throw error;

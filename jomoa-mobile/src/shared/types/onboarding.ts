@@ -19,7 +19,15 @@ export type DayOfWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7; // 1 = Monday, 7 = Sunday
 
 export type OnboardingPath = "cycle_only" | "training_only" | "both";
 
+/** Kön/presentation – styr visuell upplevelse och anpassat innehåll */
+export type PresentationProfile = "male" | "female" | "neutral";
+
+/** Tema – ton och stil (mer kraftfull vs ljusare/mjukare) */
+export type PresentationTheme = "bold" | "soft" | "neutral";
+
 export interface OnboardingData {
+  presentationProfile: PresentationProfile | null;
+  presentationTheme: PresentationTheme | null;
   onboardingPath: OnboardingPath | null;
   // Step 1: Goals
   primaryGoal: TrainingGoal | null;

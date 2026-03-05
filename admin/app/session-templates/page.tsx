@@ -1,5 +1,7 @@
 import { adminContentClient } from "@/lib/contentClient";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { ConfirmDeleteButton } from "../ConfirmDeleteButton";
 
 interface SessionTemplate {
   id: string;
@@ -29,6 +31,7 @@ async function createTemplate(formData: FormData) {
     duration_minutes: formData.get("duration_minutes") ? parseInt(formData.get("duration_minutes") as string, 10) : null,
   });
   revalidatePath("/session-templates");
+  redirect("/session-templates?saved=1");
 }
 
 async function updateTemplate(formData: FormData) {
@@ -42,6 +45,7 @@ async function updateTemplate(formData: FormData) {
     duration_minutes: formData.get("duration_minutes") ? parseInt(formData.get("duration_minutes") as string, 10) : null,
   }).eq("id", id);
   revalidatePath("/session-templates");
+  redirect("/session-templates?saved=1");
 }
 
 async function deleteTemplate(formData: FormData) {
@@ -50,6 +54,7 @@ async function deleteTemplate(formData: FormData) {
   if (!id) return;
   await adminContentClient.from("session_templates").delete().eq("id", id);
   revalidatePath("/session-templates");
+  redirect("/session-templates?saved=1");
 }
 
 const FOCUS_OPTIONS = ["Styrka", "Kondition", "Pilates", "Yoga", "Barre", "Recovery", "Mindfulness", "Pre"];
@@ -120,7 +125,7 @@ export default async function SessionTemplatesPage() {
                 </div>
                 <div style={{ gridColumn: "1 / -1", display: "flex", gap: 8 }}>
                   <button type="submit" style={saveBtnStyle}>Spara ändringar</button>
-                  <button formAction={deleteTemplate} style={deleteBtnStyle}>Ta bort</button>
+                  <ConfirmDeleteButton action={deleteTemplate} formData={{ id: t.id }} style={deleteBtnStyle} />
                 </div>
               </form>
             </div>

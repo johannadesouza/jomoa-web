@@ -13,10 +13,7 @@ import {
   type ClientGoal,
   type GoalType,
 } from "../../lib/services/goalsService";
-import {
-  GOAL_OPTIONS,
-  GOAL_SELECT_LIMITS,
-} from "../../lib/data/goalOptions";
+import { useGoalTypeOptions } from "../../lib/hooks/useGoalTypeOptions";
 import { useTheme } from "../../shared/context/ThemeContext";
 import { getThemeColors } from "../../shared/theme/colors";
 
@@ -58,6 +55,7 @@ export function AddGoalModal({
 }: AddGoalModalProps) {
   const { theme } = useTheme();
   const colors = getThemeColors(theme);
+  const { optionsByType, selectLimits } = useGoalTypeOptions();
   const isEdit = !!initialGoal && !!onUpdate;
 
   const [step, setStep] = useState<"type" | "options">("type");
@@ -68,8 +66,8 @@ export function AddGoalModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const options = GOAL_OPTIONS[goalType];
-  const limit = GOAL_SELECT_LIMITS[goalType];
+  const options = optionsByType[goalType];
+  const limit = selectLimits[goalType];
   const isMulti = limit > 1;
 
   useEffect(() => {

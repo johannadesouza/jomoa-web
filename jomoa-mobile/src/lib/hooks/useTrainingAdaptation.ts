@@ -1,25 +1,34 @@
 import { useMemo } from "react";
-import { useCycle } from "./useCycle";
+import { useCycleContext } from "../../shared/context/CycleContext";
 import { useReadiness } from "./useReadiness";
 import { useRecentLoad } from "./useRecentLoad";
 import { useWeeklyProgression } from "./useWeeklyProgression";
 import { useStrategyAcceptanceRate } from "./useStrategyAcceptanceRate";
 import { computeAdaptation } from "../adaptation/engine";
 import type { AdaptationResult } from "../adaptation/types";
+import { useTodayPerimenopauseSymptoms } from "./useTodayPerimenopauseSymptoms";
 
 export function useTrainingAdaptation(
   clientId: string | undefined,
   _date?: Date
 ): AdaptationResult {
-  const { phase } = useCycle(clientId);
+  const { phase, mode } = useCycleContext();
   const { readiness } = useReadiness(clientId);
   const recentLoad = useRecentLoad(clientId);
   const weeklyProgression = useWeeklyProgression(clientId);
   const strategyStats = useStrategyAcceptanceRate(clientId);
+  const periSymptoms = useTodayPerimenopauseSymptoms(
+    mode === "perimenopause" ? clientId : undefined
+  );
 
   return useMemo(() => {
     return computeAdaptation({
-      cyclePhase: phase ?? null,
+      mode: mode ?? "regular",
+      // Phase only passed in regular mode
+      cyclePhase: mode === "regular" ? (phase ?? null) : null,
+      // Peri symptoms only in perimenopause mode
+      perimenopauseSymptoms:
+        mode === "perimenopause" ? (periSymptoms ?? null) : null,
       readiness: readiness
         ? {
             energy_level: readiness.energy_level,
@@ -48,5 +57,5 @@ export function useTrainingAdaptation(
           }
         : null,
     });
-  }, [phase, readiness, recentLoad, weeklyProgression, strategyStats]);
+  }, [mode, phase, periSymptoms, readiness, recentLoad, weeklyProgression, strategyStats]);
 }

@@ -34,7 +34,7 @@ export function TrainingDaysScreen({ navigation }: Props) {
   };
 
   const handleContinue = () => {
-    setCurrentStep(4);
+    setCurrentStep(data.onboardingPath === "training_only" ? 5 : 4);
     const nextScreen =
       data.onboardingPath === "training_only" ? "Complete" : "CycleSetup";
     navigation.navigate(nextScreen);

@@ -32,7 +32,7 @@ psql $DATABASE_URL -f seed.sql
 - `cycle_events` – period_start för valda datum
 - `clients` – cycle_length, irregular_cycle, no_period, peri_menopause
 - `workout_sessions_log` – loggade pass med set_logs
-- `readiness_check_ins` – energi, sömn, stress
+- `daily_readiness` – energi, sömn, stress, ömhet
 - Program, sessions, övningar – via befintlig schema
 
 ## QA-flows (manual checklista)

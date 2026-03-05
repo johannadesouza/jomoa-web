@@ -1,10 +1,14 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { getThemeColors } from "../../shared/theme/colors";
+import { useThemeColors } from "../../shared/theme/useThemeColors";
 import { useTheme } from "../../shared/context/ThemeContext";
-import { OnboardingProvider } from "./OnboardingContext";
+import { ThemePreviewProvider } from "../../shared/context/ThemePreviewContext";
+import { OnboardingProvider, useOnboarding } from "./OnboardingContext";
 import { WelcomeScreen } from "./WelcomeScreen";
+import { GenderScreen } from "./GenderScreen";
+import { ThemeScreen } from "./ThemeScreen";
+import { CycleQuestionScreen } from "./CycleQuestionScreen";
 import { PathChoiceScreen } from "./PathChoiceScreen";
 import { GoalsScreen } from "./GoalsScreen";
 import { FrequencyScreen } from "./FrequencyScreen";
@@ -14,6 +18,9 @@ import { CompleteScreen } from "./CompleteScreen";
 
 export type OnboardingStackParamList = {
   Welcome: undefined;
+  Gender: undefined;
+  Theme: undefined;
+  CycleQuestion: undefined;
   PathChoice: undefined;
   Goals: undefined;
   Frequency: undefined;
@@ -24,13 +31,12 @@ export type OnboardingStackParamList = {
 
 const Stack = createNativeStackNavigator<OnboardingStackParamList>();
 
-export function OnboardingNavigator() {
+function OnboardingStack() {
   const { theme } = useTheme();
-  const colors = getThemeColors(theme);
-
+  const colors = useThemeColors();
+  const { data } = useOnboarding();
   return (
-    <OnboardingProvider>
-      <Stack.Navigator
+    <Stack.Navigator
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: colors.background },
@@ -38,6 +44,9 @@ export function OnboardingNavigator() {
         }}
       >
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Gender" component={GenderScreen} />
+        <Stack.Screen name="Theme" component={ThemeScreen} />
+        <Stack.Screen name="CycleQuestion" component={CycleQuestionScreen} />
         <Stack.Screen name="PathChoice" component={PathChoiceScreen} />
         <Stack.Screen name="Goals" component={GoalsScreen} />
         <Stack.Screen name="Frequency" component={FrequencyScreen} />
@@ -45,6 +54,22 @@ export function OnboardingNavigator() {
         <Stack.Screen name="CycleSetup" component={CycleSetupScreen} />
         <Stack.Screen name="Complete" component={CompleteScreen} />
       </Stack.Navigator>
+  );
+}
+
+export function OnboardingNavigator() {
+  return (
+    <OnboardingProvider>
+      <OnboardingStackWithPreview />
     </OnboardingProvider>
+  );
+}
+
+function OnboardingStackWithPreview() {
+  const { data } = useOnboarding();
+  return (
+    <ThemePreviewProvider value={data.presentationTheme ?? null}>
+      <OnboardingStack />
+    </ThemePreviewProvider>
   );
 }

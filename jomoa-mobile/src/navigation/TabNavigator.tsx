@@ -5,7 +5,7 @@ import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Text, YStack } from "tamagui";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { getThemeColors } from "../shared/theme/colors";
+import { useThemeColors } from "../shared/theme/useThemeColors";
 import { useTheme } from "../shared/context/ThemeContext";
 import { DashboardScreen } from "../features/dashboard/DashboardScreen";
 import { TrainScreen } from "../features/train/TrainScreen";
@@ -37,7 +37,7 @@ interface TabIconProps {
 
 function TabIcon({ label, icon, focused }: TabIconProps) {
   const { theme } = useTheme();
-  const colors = getThemeColors(theme);
+  const colors = useThemeColors();
   const iconColor = focused ? colors.accent : colors.textSecondary;
 
   return (
@@ -56,7 +56,7 @@ function TabIcon({ label, icon, focused }: TabIconProps) {
 
 function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const { theme } = useTheme();
-  const colors = getThemeColors(theme);
+  const colors = useThemeColors();
 
   const barStyle = {
     backgroundColor: colors.card,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
 
 export function TabNavigator() {
   const { theme } = useTheme();
-  const colors = getThemeColors(theme);
+  const colors = useThemeColors();
 
   return (
     <Tab.Navigator

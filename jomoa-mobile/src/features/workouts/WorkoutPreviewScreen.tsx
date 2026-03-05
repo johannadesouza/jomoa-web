@@ -24,12 +24,29 @@ import { getThemeColors } from "../../shared/theme/colors";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { fetchSessionById } from "../../lib/services/workoutService";
 import { fetchSessionTemplateById } from "../../lib/services/sessionTemplateService";
+import { AdaptationInsightCard } from "./AdaptationInsightCard";
 import type { ProgramSessionData } from "../../lib/services/workoutService";
 import type { SessionTemplateData } from "../../lib/services/sessionTemplateService";
 
 type Props = NativeStackScreenProps<RootStackParamList, "WorkoutPreview">;
 
 export function WorkoutPreviewScreen({ navigation, route }: Props) {
+  const sessionId = route.params?.sessionId;
+  const isStandalone = route.params?.isStandalone;
+
+  if (!sessionId) {
+    return (
+      <Screen padded centered>
+        <AppText variant="body" muted center>
+          Passet kunde inte laddas. Gå tillbaka och försök igen.
+        </AppText>
+        <AppButton variant="secondary" onPress={() => navigation.goBack()}>
+          Tillbaka
+        </AppButton>
+      </Screen>
+    );
+  }
+
   const { client } = useAuth();
   const { theme } = useTheme();
   const colors = getThemeColors(theme);
@@ -38,7 +55,6 @@ export function WorkoutPreviewScreen({ navigation, route }: Props) {
   const { readiness } = useReadiness(client?.id);
   const adaptation = useTrainingAdaptation(client?.id);
   const recommendation = getAdjustmentRecommendation(phase ?? null, readiness);
-  const { sessionId, isStandalone } = route.params;
   const [session, setSession] = useState<(ProgramSessionData | SessionTemplateData) | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [applyAdjustment, setApplyAdjustment] = useState<boolean | null>(null);
@@ -116,77 +132,14 @@ export function WorkoutPreviewScreen({ navigation, route }: Props) {
           </XStack>
         </YStack>
 
-        {(recommendation || (adaptation.volumeModifier !== 1 && !adaptation.appliedRules.includes("weekly_progression"))) && (
-          <Card backgroundColor="$surface3">
-            <Card.Content>
-              <YStack gap="$2">
-                <AppText variant="h3">Dagens strategi</AppText>
-                <AppText variant="small" color="$accent" fontWeight="600">
-                  {recommendation?.reason ??
-                    (adaptation.volumeModifier < 1
-                      ? `−${Math.round((1 - adaptation.volumeModifier) * 100)}% volym`
-                      : `+${Math.round((adaptation.volumeModifier - 1) * 100)}% volym`)}
-                </AppText>
-                {!recommendation && adaptation.topDrivers.length > 0 && (
-                  <AppText variant="caption" muted>
-                    Varför: {adaptation.topDrivers.join(" ")}
-                  </AppText>
-                )}
-                <XStack gap="$3" marginTop="$2">
-                  <Pressable
-                    onPress={() => setApplyAdjustment(true)}
-                    style={({ pressed }) => ({
-                      opacity: pressed ? 0.8 : 1,
-                      flex: 1,
-                    })}
-                  >
-                    <Card
-                      backgroundColor={applyAdjustment === true ? "$accent" : "$surface3"}
-                      padding="$3"
-                      borderWidth={applyAdjustment === true ? 2 : 0}
-                      borderColor="$accent"
-                    >
-                      <Card.Content padding="$0">
-                        <AppText
-                          variant="small"
-                          fontWeight="600"
-                          color={applyAdjustment === true ? "$softLight" : "$color"}
-                          textAlign="center"
-                        >
-                          Tillämpa justering
-                        </AppText>
-                      </Card.Content>
-                    </Card>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => setApplyAdjustment(false)}
-                    style={({ pressed }) => ({
-                      opacity: pressed ? 0.8 : 1,
-                      flex: 1,
-                    })}
-                  >
-                    <Card
-                      backgroundColor={applyAdjustment === false ? "$surface3" : "$card"}
-                      padding="$3"
-                      borderWidth={applyAdjustment === false ? 2 : 0}
-                      borderColor="$borderSoft"
-                    >
-                      <Card.Content padding="$0">
-                        <AppText
-                          variant="small"
-                          fontWeight="600"
-                          color="$color"
-                          textAlign="center"
-                        >
-                          Behåll plan
-                        </AppText>
-                      </Card.Content>
-                    </Card>
-                  </Pressable>
-                </XStack>
-              </YStack>
-            </Card.Content>
-          </Card>
+        {hasSuggestion && (
+          <AdaptationInsightCard
+            adaptation={adaptation}
+            phase={phase ?? null}
+            decision={applyAdjustment}
+            onAccept={() => setApplyAdjustment(true)}
+            onDecline={() => setApplyAdjustment(false)}
+          />
         )}
 
         <Section title="Övningar">

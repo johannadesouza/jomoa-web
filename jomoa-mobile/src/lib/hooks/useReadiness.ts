@@ -1,4 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useAppNow } from "../../shared/context/AppNowContext";
+import { useScenario } from "../../shared/context/ScenarioContext";
 import { getReadinessForDate } from "../services/readinessService";
 import { getLocalDateString } from "../utils/date";
 import type { ReadinessRecord } from "../services/readinessService";
@@ -14,7 +16,9 @@ export function useReadiness(
   clientId: string | undefined,
   date?: string
 ): UseReadinessResult {
-  const viewDate = date ?? getLocalDateString();
+  const appNow = useAppNow();
+  const scenario = useScenario();
+  const viewDate = date ?? appNow.todayString();
   const [readiness, setReadiness] = useState<ReadinessRecord | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,5 +46,24 @@ export function useReadiness(
     fetchReadiness();
   }, [fetchReadiness]);
 
-  return { readiness, isLoading, error, refetch: fetchReadiness };
+  // __DEV__ scenario: override today's readiness score when set
+  const effectiveReadiness = useMemo(() => {
+    if (scenario.readinessOverride == null || viewDate !== appNow.todayString()) return readiness;
+    const base = readiness ?? {
+      id: "",
+      client_id: clientId ?? "",
+      date: viewDate,
+      sleep_hours: null,
+      sleep_quality: null,
+      stress_level: null,
+      energy_level: null,
+      soreness: null,
+      readiness_score: null,
+      created_at: "",
+      updated_at: "",
+    };
+    return { ...base, readiness_score: scenario.readinessOverride };
+  }, [readiness, scenario.readinessOverride, viewDate, appNow, clientId]);
+
+  return { readiness: effectiveReadiness, isLoading, error, refetch: fetchReadiness };
 }

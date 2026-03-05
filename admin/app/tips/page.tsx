@@ -1,5 +1,7 @@
 import { adminContentClient } from "@/lib/contentClient";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { ConfirmDeleteButton } from "../ConfirmDeleteButton";
 
 interface Tip {
   id: string;
@@ -43,6 +45,7 @@ async function createTip(formData: FormData) {
     status: "published",
   });
   revalidatePath("/tips");
+  redirect("/tips?saved=1");
 }
 
 async function deleteTip(formData: FormData) {
@@ -51,13 +54,24 @@ async function deleteTip(formData: FormData) {
   if (!id) return;
   await adminContentClient.from("tips_library").delete().eq("id", id);
   revalidatePath("/tips");
+  redirect("/tips?saved=1");
 }
 
-export default async function TipsPage() {
+export default async function TipsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ saved?: string }>;
+}) {
+  const { saved } = await searchParams;
   const tips = await getTips();
 
   return (
     <div>
+      {saved === "1" && (
+        <p style={{ marginBottom: 16, padding: "10px 16px", background: "#E8F5E9", color: "#2E7D32", borderRadius: 8, fontSize: 14 }}>
+          Sparat!
+        </p>
+      )}
       <h1>Tips ({tips.length})</h1>
 
       <details style={{ marginBottom: 32 }}>
@@ -119,16 +133,13 @@ export default async function TipsPage() {
                 </span>
               </td>
               <td>
-                <form action={deleteTip}>
-                  <input type="hidden" name="id" value={t.id} />
-                  <button
-                    type="submit"
-                    className="btn btn-danger"
-                    style={{ fontSize: 11, padding: "4px 10px" }}
-                  >
-                    Ta bort
-                  </button>
-                </form>
+                <ConfirmDeleteButton
+                  action={deleteTip}
+                  formData={{ id: t.id }}
+                  style={{ fontSize: 11, padding: "4px 10px", background: "transparent", color: "#E57373", border: "1px solid #E57373", borderRadius: 6, cursor: "pointer" }}
+                >
+                  Ta bort
+                </ConfirmDeleteButton>
               </td>
             </tr>
           ))}

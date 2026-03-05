@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useAssignment } from "../../shared/context/AssignmentContext";
+import { useAppNow } from "../../shared/context/AppNowContext";
 import { fetchActiveAssignment, getWeekIdForDate } from "../services/programService";
 import { fetchWeeklyStats, fetchCompletedSessionForDate } from "../services/workoutLogService";
 import { fetchSessionsByWeekId } from "../services/workoutService";
-import { getLocalDateString } from "../utils/date";
 import { ProgramAssignmentData } from "../services/programService";
 import { ProgramSessionData } from "../services/workoutService";
 
@@ -34,15 +34,21 @@ export interface WeekDay {
 }
 
 export function useDashboard(clientId: string | undefined, viewDate?: string) {
-  const viewDateStr = viewDate ?? getLocalDateString();
-  const todayStr = getLocalDateString();
+  const appNow = useAppNow();
+  const viewDateStr = viewDate ?? appNow.todayString();
+  const todayStr = appNow.todayString();
   const isViewingToday = viewDateStr === todayStr;
 
   const ctx = useAssignment();
+  // Keep a ref so the async load() callback always reads the latest context value
+  // without needing to be in the dependency array.
   const assignmentRef = useRef<ProgramAssignmentData | null>(ctx?.assignment ?? null);
   assignmentRef.current = ctx?.assignment ?? null;
 
-  const [assignment, setAssignment] = useState<ProgramAssignmentData | null>(null);
+  // assignment is read directly from context (single source of truth).
+  // We keep a local shadow only for the derived todaySession/weekDays data.
+  const assignment = ctx?.assignment ?? null;
+
   const [todaySession, setTodaySession] = useState<ProgramSessionData | null>(null);
   const [todaySessionCompleted, setTodaySessionCompleted] = useState(false);
   const [todayCompletedSessionId, setTodayCompletedSessionId] = useState<string | null>(null);
@@ -86,8 +92,6 @@ export function useDashboard(clientId: string | undefined, viewDate?: string) {
         ];
 
         if (assignmentData) {
-          setAssignment(assignmentData);
-
           const weekId = await getWeekIdForDate(
             assignmentData.program_id,
             assignmentData.start_date,
@@ -129,7 +133,6 @@ export function useDashboard(clientId: string | undefined, viewDate?: string) {
             );
           }
         } else {
-          setAssignment(null);
           setTodaySession(null);
           setTodaySessionCompleted(false);
           setTodayCompletedSessionId(null);
@@ -143,9 +146,8 @@ export function useDashboard(clientId: string | undefined, viewDate?: string) {
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Kunde inte ladda dashboard");
-        setAssignment(null);
         setTodaySession(null);
-        const todayDb = getDayOfWeekFromDateStr(getLocalDateString());
+        const todayDb = getDayOfWeekFromDateStr(todayStr);
         setWeekDays(
           [
             { name: "Måndag", shortName: "M", dayOfWeek: 1 },
@@ -165,7 +167,7 @@ export function useDashboard(clientId: string | undefined, viewDate?: string) {
         setIsLoading(false);
       }
     },
-    [clientId, viewDateStr]
+    [clientId, viewDateStr, todayStr]
   );
 
   useEffect(() => {

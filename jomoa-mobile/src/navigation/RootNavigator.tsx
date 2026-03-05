@@ -2,7 +2,7 @@ import React from "react";
 import { ActivityIndicator, View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { getThemeColors } from "../shared/theme/colors";
+import { useThemeColors } from "../shared/theme/useThemeColors";
 import { useAuth } from "../shared/context/AuthContext";
 import { useTheme } from "../shared/context/ThemeContext";
 import { LoginScreen } from "../features/auth/LoginScreen";
@@ -21,6 +21,9 @@ import { CalendarScreen, DayDetailScreen } from "../features/calendar";
 import { SettingsScreen } from "../features/settings";
 import { MeasurementsScreen } from "../features/log/MeasurementsScreen";
 import { ProfileScreen } from "../features/profile/ProfileScreen";
+import { ArticleDetailScreen } from "../features/learn/ArticleDetailScreen";
+import { PhaseDetailScreen } from "../features/learn/PhaseDetailScreen";
+import { ScenarioScreen } from "../features/settings/ScenarioScreen";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -29,7 +32,7 @@ export type RootStackParamList = {
   Main: { screen?: "HomeTab" | "TrainTab" | "JourneyTab" | "NutritionTab" | "LearnTab" } | undefined;
   WorkoutSession: { sessionId: string; isStandalone?: boolean; applyAdjustment?: boolean };
   WorkoutPreview: { sessionId: string; isStandalone?: boolean };
-  WorkoutSummary: { sessionName: string; totalSets: number; totalVolume: number };
+  WorkoutSummary: { sessionName: string; totalSets: number; totalVolume: number; adaptationApplied?: boolean };
   ProgramSelect: undefined;
   ProgramList: undefined;
   ProgramDetail: { programId: string };
@@ -41,15 +44,22 @@ export type RootStackParamList = {
   CycleInsights: { initialSegment?: string } | undefined;
   Measurements: undefined;
   Profile: undefined;
+  ArticleDetail: { slug: string; title?: string };
+  PhaseDetail: { phaseId: string; phaseName?: string };
+  Scenario: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootNavigator() {
   const { theme } = useTheme();
-  const themeColors = getThemeColors(theme);
+  const themeColors = useThemeColors();
   const { isAuthenticated, isLoading, client } = useAuth();
 
+  // client === null: either new user with no clients row (→ onboarding) OR
+  // DB error on fetchClient (AuthContext logs the error but keeps client=null).
+  // Both cases correctly route to Onboarding; new users complete it and get a
+  // clients row; DB-error users will retry on next token refresh.
   const needsOnboarding = client?.onboarding_stage !== "completed";
 
   if (isLoading) {
@@ -185,12 +195,13 @@ export function RootNavigator() {
               name="DayDetail"
               component={DayDetailScreen}
               options={({ route }) => {
-                const d = new Date(route.params.date + "T12:00:00");
+                const dateStr = route.params?.date;
+                const d = dateStr ? new Date(dateStr + "T12:00:00") : new Date();
                 const dayName = ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"][d.getDay()];
-                const dateStr = `${d.getDate()}/${d.getMonth() + 1}`;
+                const dateDisplay = `${d.getDate()}/${d.getMonth() + 1}`;
                 return {
                   headerShown: true,
-                  headerTitle: `${dayName} ${dateStr}`,
+                  headerTitle: dateStr ? `${dayName} ${dateDisplay}` : "Okänd dag",
                   headerBackTitle: "Tillbaka",
                   headerStyle: { backgroundColor: themeColors.background },
                   headerTintColor: themeColors.textPrimary,
@@ -246,6 +257,43 @@ export function RootNavigator() {
                 headerTitleStyle: { fontWeight: "600" },
               }}
             />
+            <Stack.Screen
+              name="ArticleDetail"
+              component={ArticleDetailScreen}
+              options={({ route }) => ({
+                headerShown: true,
+                headerTitle: route.params?.title ?? "Artikel",
+                headerBackTitle: "Tillbaka",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
+                headerTitleStyle: { fontWeight: "600" },
+              })}
+            />
+            <Stack.Screen
+              name="PhaseDetail"
+              component={PhaseDetailScreen}
+              options={({ route }) => ({
+                headerShown: true,
+                headerTitle: route.params?.phaseName ?? "Fas",
+                headerBackTitle: "Tillbaka",
+                headerStyle: { backgroundColor: themeColors.background },
+                headerTintColor: themeColors.textPrimary,
+                headerTitleStyle: { fontWeight: "600" },
+              })}
+            />
+            {__DEV__ && (
+              <Stack.Screen
+                name="Scenario"
+                component={ScenarioScreen}
+                options={{
+                  headerShown: true,
+                  headerTitle: "Scenario (dev)",
+                  headerBackTitle: "Tillbaka",
+                  headerStyle: { backgroundColor: themeColors.background },
+                  headerTintColor: themeColors.textPrimary,
+                }}
+              />
+            )}
           </>
         )
       ) : (

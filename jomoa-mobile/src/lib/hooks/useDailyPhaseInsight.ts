@@ -1,13 +1,16 @@
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useCycle } from "./useCycle";
 import { useReadiness } from "./useReadiness";
-import { getDailyPhaseInsight } from "../services/phaseKnowledgeService";
+import { getDailyPhaseInsightAsync } from "../services/phaseKnowledgeService";
+import type { DailyPhaseInsight } from "../services/phaseKnowledgeService";
 
-export function useDailyPhaseInsight(clientId: string | undefined) {
+export function useDailyPhaseInsight(clientId: string | undefined): DailyPhaseInsight | null {
   const { phase } = useCycle(clientId);
   const { readiness } = useReadiness(clientId);
+  const [insight, setInsight] = useState<DailyPhaseInsight | null>(null);
 
-  return useMemo(() => {
+  useEffect(() => {
+    let cancelled = false;
     const readinessInput =
       readiness != null
         ? {
@@ -17,6 +20,11 @@ export function useDailyPhaseInsight(clientId: string | undefined) {
             soreness: readiness.soreness,
           }
         : null;
-    return getDailyPhaseInsight(phase ?? null, readinessInput);
+    getDailyPhaseInsightAsync(phase ?? null, readinessInput).then((result) => {
+      if (!cancelled) setInsight(result);
+    });
+    return () => { cancelled = true; };
   }, [phase, readiness]);
+
+  return insight;
 }

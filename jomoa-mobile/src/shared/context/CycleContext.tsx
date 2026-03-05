@@ -1,110 +1,258 @@
 /**
- * CycleContext – single source of truth for cycle data
- * All cycle UI (calendar, dashboard, insights, training adjustments) reads from here.
- * Invalidate when period is logged so all consumers refresh.
+ * CycleContext – single source of truth for cycle data.
+ *
+ * Extended to support:
+ *  - Dynamic cycle length from rolling stats
+ *  - Overdue state (none / soft / hard)
+ *  - Cycle mode (regular / missing_period / perimenopause)
+ *  - logPeriodStart action (replaces direct cycleService calls)
+ *  - updateMode action
+ *  - First-run migration for existing users
  */
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { getLatestPeriodStart } from "../../lib/services/cycleService";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import {
-  calculateCyclePhase,
-  getPhaseLabel,
+  getCyclePhase,
+  getOverdueState,
+  dateDiffDays,
+} from "../../lib/utils/cycleEngine";
+import type { CycleMode, OverdueState } from "../../lib/utils/cycleEngine";
+import {
+  getActiveCycle,
+  getCycleStats,
+  getUserCycleSettings,
+  openCloseCycle,
+  updateCycleMode,
+  migrateExistingUser,
+  type CycleRecord,
+  type CycleStats,
+  type UserCycleSettings,
+} from "../../lib/services/cycleEngineService";
+import {
   getDaysUntilNextPeriod,
+  getPhaseLabel,
   type CyclePhase,
 } from "../../lib/utils/cycleUtils";
 import { useAuth } from "./AuthContext";
+import { useAppNow } from "./AppNowContext";
+import { useScenario } from "./ScenarioContext";
 
-const DEFAULT_CYCLE_LENGTH = 28;
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-export interface CycleState {
-  latestPeriodStart: string | null;
-  cycleLength: number;
+export interface CycleContextValue {
+  // Core phase info
   phase: CyclePhase;
   phaseLabel: string;
   cycleDay: number;
   daysUntilNextPeriod: number | null;
   isLoading: boolean;
   error: string | null;
-}
 
-interface CycleContextType extends CycleState {
+  // Backward-compat fields
+  latestPeriodStart: string | null;
+  cycleLength: number; // round(rollingAvg) or 28
+
+  // New engine fields
+  mode: CycleMode;
+  cycleLengthDisplay: number;         // round(rollingAvg) or 28 – shown as "av ~Y"
+  rollingAvg: number | null;
+  rollingStdDev: number;
+  overdueState: OverdueState;
+  activeCycleStartDate: string | null;
+  stats: CycleStats | null;
+  settings: UserCycleSettings | null;
+  missingPeriodSuggestion: boolean;   // true when days since last period > threshold
+
+  // Actions
+  logPeriodStart: (date: string) => Promise<{ error: string | null }>;
+  updateMode: (mode: CycleMode) => Promise<void>;
   refetch: () => Promise<void>;
   getPhaseForDate: (date: Date) => { phase: CyclePhase; cycleDay: number; phaseLabel: string };
 }
 
-const CycleContext = createContext<CycleContextType | undefined>(undefined);
+const CycleContext = createContext<CycleContextValue | undefined>(undefined);
+
+// ─── Provider ─────────────────────────────────────────────────────────────────
 
 export function CycleProvider({ children }: { children: React.ReactNode }) {
-  const { client } = useAuth();
-  const [latestPeriodStart, setLatestPeriodStart] = useState<string | null>(null);
+  const { user } = useAuth();
+  const appNow = useAppNow();
+  const scenario = useScenario();
+
+  const [activeCycle, setActiveCycle] = useState<CycleRecord | null>(null);
+  const [stats, setStats] = useState<CycleStats | null>(null);
+  const [settings, setSettings] = useState<UserCycleSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const loadingRef = useRef(false);
 
-  const cycleLength =
-    client?.cycle_length != null && client.cycle_length > 0
-      ? client.cycle_length
-      : DEFAULT_CYCLE_LENGTH;
+  // Use auth user.id (= auth.uid()) so RLS policies pass.
+  // client.id is the clients-table PK and does NOT match auth.uid().
+  const clientId = user?.id;
 
-  const fetchLatestPeriod = useCallback(async () => {
-    if (!client?.id) {
-      setLatestPeriodStart(null);
+  const load = useCallback(async () => {
+    if (!clientId) {
       setIsLoading(false);
       return;
     }
+    // Prevent concurrent overlapping loads (e.g. rapid re-mounts / token refresh)
+    if (loadingRef.current) return;
+    loadingRef.current = true;
+
     setIsLoading(true);
     setError(null);
+
     try {
-      const { data, error } = await getLatestPeriodStart(client.id);
-      setLatestPeriodStart(data);
-      setError(error);
+      // Run migration for users with no stats yet (no-op if already migrated)
+      await migrateExistingUser(clientId, 1, appNow.todayString());
+
+      const [activeResult, statsResult, settingsResult] = await Promise.all([
+        getActiveCycle(clientId),
+        getCycleStats(clientId),
+        getUserCycleSettings(clientId),
+      ]);
+
+      setActiveCycle(activeResult);
+      setStats(statsResult);
+      setSettings(settingsResult);
     } catch (e) {
-      setLatestPeriodStart(null);
-      setError(e instanceof Error ? e.message : "Kunde inte hämta");
+      setError(e instanceof Error ? e.message : "Kunde inte ladda cykeldata");
     } finally {
       setIsLoading(false);
+      loadingRef.current = false;
     }
-  }, [client?.id]);
+  }, [clientId, appNow]);
 
   useEffect(() => {
-    fetchLatestPeriod();
-  }, [fetchLatestPeriod]);
+    load();
+  }, [load]);
 
-  const { phase, cycleDay } = calculateCyclePhase(
-    latestPeriodStart,
-    new Date(),
-    cycleLength
-  );
+  // ─── Derived values ──────────────────────────────────────────────────────
+
+  const mode: CycleMode = settings?.mode ?? "regular";
+  const rollingAvg = stats?.rolling_avg_days ?? null;
+  const rollingStdDev = stats?.rolling_std_dev_days ?? 0;
+  const activeCycleStartDate = activeCycle?.start_date ?? null;
+
+  // Effective cycle length for display and phase calculation
+  const cycleLengthDisplay =
+    rollingAvg != null ? Math.round(rollingAvg) : 28;
+  const cycleLength = cycleLengthDisplay; // backward-compat alias
+
+  // Current cycle day (1-based) – use AppNow so scenario/debug can override "today"
+  const today = appNow.todayString();
+  const cycleDay =
+    activeCycleStartDate
+      ? dateDiffDays(activeCycleStartDate, today) + 1
+      : 0;
+
+  // Phase (only in regular mode) – scenario override for __DEV__ testing (only when mode is regular)
+  const computedPhase: CyclePhase =
+    mode === "regular" && cycleDay > 0
+      ? getCyclePhase(cycleDay, cycleLengthDisplay)
+      : null;
+  const phase: CyclePhase =
+    mode === "regular" && scenario.phaseOverride != null
+      ? scenario.phaseOverride
+      : computedPhase;
   const phaseLabel = getPhaseLabel(phase);
-  const daysUntilNextPeriod = getDaysUntilNextPeriod(
-    latestPeriodStart,
-    cycleLength
+
+  // Days until next period estimate
+  const daysUntilNextPeriod =
+    mode === "regular" && activeCycleStartDate
+      ? getDaysUntilNextPeriod(activeCycleStartDate, cycleLengthDisplay)
+      : null;
+
+  // Overdue state (only in regular mode)
+  const overdueState: OverdueState =
+    mode === "regular" && activeCycleStartDate && rollingAvg
+      ? getOverdueState(
+          today,
+          activeCycleStartDate,
+          rollingAvg,
+          settings?.overdue_soft_days ?? 3,
+          settings?.overdue_hard_days ?? 7
+        )
+      : "none";
+
+  // Suggest switching to missing_period mode if > threshold days since last period
+  const daysSincePeriod =
+    activeCycleStartDate ? dateDiffDays(activeCycleStartDate, today) + 1 : 0;
+  const missingPeriodSuggestion =
+    mode === "regular" &&
+    !!activeCycleStartDate &&
+    daysSincePeriod > (settings?.missing_period_threshold_days ?? 60);
+
+  // ─── Actions ────────────────────────────────────────────────────────────
+
+  const handleLogPeriodStart = useCallback(
+    async (date: string): Promise<{ error: string | null }> => {
+      if (!clientId) return { error: "Ingen användare" };
+      const result = await openCloseCycle(clientId, date);
+      if (!result.error) {
+        // Force a fresh load even if guard is set
+        loadingRef.current = false;
+        await load();
+      }
+      return result;
+    },
+    [clientId, load]
+  );
+
+  const handleUpdateMode = useCallback(
+    async (newMode: CycleMode): Promise<void> => {
+      if (!clientId) return;
+      await updateCycleMode(clientId, newMode);
+      setSettings((prev) =>
+        prev ? { ...prev, mode: newMode } : null
+      );
+    },
+    [clientId]
   );
 
   const getPhaseForDate = useCallback(
-    (date: Date) => {
-      const { phase: p, cycleDay: cd } = calculateCyclePhase(
-        latestPeriodStart,
-        date,
-        cycleLength
-      );
-      return {
-        phase: p,
-        cycleDay: cd,
-        phaseLabel: getPhaseLabel(p),
-      };
+    (date: Date): { phase: CyclePhase; cycleDay: number; phaseLabel: string } => {
+      if (mode !== "regular" || !activeCycleStartDate) {
+        return { phase: null, cycleDay: 0, phaseLabel: getPhaseLabel(null) };
+      }
+      const dateStr = date.toISOString().slice(0, 10);
+      const day = dateDiffDays(activeCycleStartDate, dateStr) + 1;
+      if (day < 1) return { phase: null, cycleDay: day, phaseLabel: getPhaseLabel(null) };
+      const p = getCyclePhase(day, cycleLengthDisplay);
+      return { phase: p, cycleDay: day, phaseLabel: getPhaseLabel(p) };
     },
-    [latestPeriodStart, cycleLength]
+    [mode, activeCycleStartDate, cycleLengthDisplay]
   );
 
-  const value: CycleContextType = {
-    latestPeriodStart,
-    cycleLength,
+  // ─── Context value ───────────────────────────────────────────────────────
+
+  const value: CycleContextValue = {
     phase,
     phaseLabel,
     cycleDay,
     daysUntilNextPeriod,
     isLoading,
     error,
-    refetch: fetchLatestPeriod,
+    latestPeriodStart: activeCycleStartDate,
+    cycleLength,
+    mode,
+    cycleLengthDisplay,
+    rollingAvg,
+    rollingStdDev,
+    overdueState,
+    activeCycleStartDate,
+    stats,
+    settings,
+    missingPeriodSuggestion,
+    logPeriodStart: handleLogPeriodStart,
+    updateMode: handleUpdateMode,
+    refetch: load,
     getPhaseForDate,
   };
 

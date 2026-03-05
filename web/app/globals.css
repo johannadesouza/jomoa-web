@@ -67,10 +67,8 @@
   --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.15);
   --shadow-large: 0 8px 24px rgba(0, 0, 0, 0.2);
   
-  /* Typography - Inter for UI/body, Cormorant for headings */
   --font-inter: var(--font-inter);
-  --font-cormorant: var(--font-cormorant);
-  
+
   /* Legacy JOMOA colors (for backward compatibility during transition) */
   --color-soft-pink: #FFFBF7;
   --color-terracotta: #D96D46;
@@ -317,36 +315,6 @@
   animation: gradient-shift 8s ease infinite;
 }
 
-/* Typography - Inter for UI/body, Cormorant for headings */
 .font-inter {
   font-family: var(--font-inter), Inter, system-ui, -apple-system, sans-serif;
-}
-
-.font-cormorant {
-  font-family: var(--font-cormorant), Cormorant, Georgia, serif;
-}
-
-/* Legacy typography classes (for backward compatibility) */
-.font-league-spartan {
-  font-family: var(--font-league-spartan), system-ui, -apple-system, sans-serif;
-}
-
-.font-the-seasons {
-  font-family: var(--font-the-seasons);
-  font-style: italic;
-}
-
-/* Brand typography classes */
-.heading-brand {
-  font-family: var(--font-cormorant), Cormorant, Georgia, serif;
-  font-weight: 600;
-  line-height: 1.25;
-  color: var(--color-soft-light);
-}
-
-.body-brand {
-  font-family: var(--font-inter), Inter, system-ui, sans-serif;
-  font-weight: 400;
-  line-height: 1.35;
-  color: var(--color-soft-light);
 }

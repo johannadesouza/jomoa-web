@@ -1,5 +1,6 @@
 import { adminContentClient } from "../../lib/contentClient";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 async function getPhases() {
   const { data } = await adminContentClient
@@ -35,11 +36,21 @@ const PHASE_COLORS: Record<string, string> = {
   luteal: "#9575CD",
 };
 
-export default async function CyclePhasesPage() {
+export default async function CyclePhasesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ saved?: string }>;
+}) {
+  const { saved } = await searchParams;
   const phases = await getPhases();
 
   return (
     <div>
+      {saved === "1" && (
+        <p style={{ marginBottom: 16, padding: "10px 16px", background: "#E8F5E9", color: "#2E7D32", borderRadius: 8, fontSize: 14 }}>
+          Sparat!
+        </p>
+      )}
       <h1 style={{ marginBottom: 8 }}>Cykelns faser</h1>
       <p style={{ color: "#976568", marginBottom: 32 }}>
         Redigera fasernas beskrivning och hormonprofil. Namn, dagar och färg sätts via SQL.

@@ -4,10 +4,16 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { Screen, AppText, AppButton } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
+import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "Welcome">;
 
+const WELCOME_SUBTITLE_FALLBACK = "Din personliga träningscoach som anpassar sig efter dig";
+
 export function WelcomeScreen({ navigation }: Props) {
+  const copy = useAppCopy("sv");
+  const welcomeSubtitle = getAppCopy(copy, "welcome_subtitle", WELCOME_SUBTITLE_FALLBACK);
+
   return (
     <Screen padded>
       <YStack flex={1} justifyContent="space-between">
@@ -18,7 +24,7 @@ export function WelcomeScreen({ navigation }: Props) {
               Välkommen till JOMOA
             </AppText>
             <AppText variant="body" muted center>
-              Din personliga träningscoach som anpassar sig efter dig
+              {welcomeSubtitle}
             </AppText>
           </YStack>
 
@@ -87,7 +93,7 @@ export function WelcomeScreen({ navigation }: Props) {
             variant="primary"
             size="lg"
             fullWidth
-            onPress={() => navigation.navigate("PathChoice")}
+            onPress={() => navigation.navigate("Gender")}
           >
             Kom igång
           </AppButton>

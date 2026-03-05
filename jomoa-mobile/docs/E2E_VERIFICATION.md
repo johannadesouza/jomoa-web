@@ -4,9 +4,9 @@ Manuellt test av hela flödet för att säkerställa att produkten fungerar.
 
 ## Förutsättningar
 
-- Supabase-migrationer är körda (se `web/supabase/migrations/` för befintliga migrations)
-- `EXPO_PUBLIC_SUPABASE_URL` och `EXPO_PUBLIC_SUPABASE_ANON_KEY` sätts i miljön
-- Appen startar med `npx expo start`
+- User DB- och Content DB-migrationer är körda (`jomoa-mobile/supabase/migrations/`, `supabase/user/migrations/`, `supabase/content/migrations/`).
+- Miljö: `EXPO_PUBLIC_USER_SUPABASE_URL`, `EXPO_PUBLIC_USER_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_CONTENT_SUPABASE_URL`, `EXPO_PUBLIC_CONTENT_SUPABASE_ANON_KEY`.
+- Appen startar med `npx expo start`.
 
 ---
 
@@ -23,12 +23,11 @@ Manuellt test av hela flödet för att säkerställa att produkten fungerar.
 
 ## 2. Onboarding
 
-1. Välj mål (Goals)
-2. Välj frekvens (Frequency)
-3. Välj träningsdagar (TrainingDays)
-4. Välj om cykelspårning ska användas (CycleSetup)
-5. Fyll i periodstart om cykel valdes
-6. Tryck "Starta min resa" (Complete)
+1. PathChoice (om träna/fokus)
+2. Välj mål (Goals), frekvens (Frequency), träningsdagar (TrainingDays)
+3. Kön/Tema (presentation_profile, presentation_theme)
+4. CycleSetup – välj om cykelspårning ska användas; fyll i periodstart om ja
+5. Tryck "Starta min resa" (Complete)
 
 **Förväntat:** Data sparas till `clients` och `cycle_events`, `onboarding_stage = completed`, navigering till huvudflöde (Main).
 

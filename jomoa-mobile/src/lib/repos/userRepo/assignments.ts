@@ -6,6 +6,7 @@
  */
 import { userClient } from "../../supabase/userClient";
 import { fetchProgramById, fetchTemplatePrograms } from "../contentRepo/programs";
+import { getLocalDateString } from "../../utils/date";
 import type {
   Program,
   ProgramAssignment,
@@ -33,7 +34,7 @@ export async function fetchActiveAssignment(
     .select("id, program_id, start_date")
     .eq("client_id", clientId)
     .eq("is_active", true)
-    .single();
+    .maybeSingle();
 
   if (error || !data) return null;
 
@@ -61,7 +62,7 @@ export async function fetchActiveAssignmentForView(
     .select("id, program_id, start_date, end_date, is_active")
     .eq("client_id", clientId)
     .eq("is_active", true)
-    .single();
+    .maybeSingle();
 
   if (error || !data) return null;
 
@@ -89,7 +90,7 @@ export async function assignProgram(
 
   if (error) return { error };
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = getLocalDateString();
   const { error: insertError } = await userClient
     .from("client_program_assignments")
     .insert({
@@ -106,7 +107,7 @@ export async function archiveAndSwitchProgram(
   clientId: string,
   newProgramId: string
 ): Promise<{ error: Error | null }> {
-  const today = new Date().toISOString().split("T")[0];
+  const today = getLocalDateString();
 
   const { error: updateErr } = await userClient
     .from("client_program_assignments")

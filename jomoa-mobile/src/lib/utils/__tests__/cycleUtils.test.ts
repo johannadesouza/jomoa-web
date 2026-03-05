@@ -19,23 +19,25 @@ describe("cycle utils", () => {
       expect(result.cycleDay).toBe(1);
     });
 
-    it("returns follicular around day 8 (28-day cycle)", () => {
+    it("returns follicular around day 8 (28-day proportional cycle)", () => {
+      // Proportional 28-day: menstrual=5, follicular=9 (days 6-14), ovulation=3, luteal=11
       const start = "2025-02-01";
-      const target = new Date("2025-02-08");
+      const target = new Date("2025-02-08"); // day 8 → follicular
       const result = calculateCyclePhase(start, target);
       expect(result.phase).toBe("follicular");
     });
 
-    it("returns ovulation around day 14 (28-day cycle)", () => {
+    it("returns ovulation around day 15 (28-day proportional cycle)", () => {
+      // Ovulation: days 15-17 (after menstrual=5 + follicular=9)
       const start = "2025-02-01";
-      const target = new Date("2025-02-14");
+      const target = new Date("2025-02-15"); // day 15 → ovulation
       const result = calculateCyclePhase(start, target);
       expect(result.phase).toBe("ovulation");
     });
 
     it("returns luteal around day 20 (28-day cycle)", () => {
       const start = "2025-02-01";
-      const target = new Date("2025-02-20");
+      const target = new Date("2025-02-20"); // day 20 → luteal
       const result = calculateCyclePhase(start, target);
       expect(result.phase).toBe("luteal");
     });
@@ -55,11 +57,13 @@ describe("cycle utils", () => {
       expect(result.cycleDay).toBe(1);
     });
 
-    it("caps very long cycle length so phase boundaries stay reasonable", () => {
+    it("proportional engine maps correctly for 60-day cycle (day 21 = follicular)", () => {
+      // 60-day proportional: menstrual=7(max), follicular≈19, ovulation=4, luteal=30
+      // Day 21 falls in follicular range (8-26)
       const start = "2026-01-27";
-      const target = new Date("2026-02-16T12:00:00");
+      const target = new Date("2026-02-16T12:00:00"); // 20 days later = day 21
       const result = calculateCyclePhase(start, target, 60);
-      expect(result.phase).toBe("ovulation");
+      expect(result.phase).toBe("follicular");
     });
 
     it("wraps cycle day when past cycle length so phase is shown", () => {

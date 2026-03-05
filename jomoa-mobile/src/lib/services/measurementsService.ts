@@ -9,6 +9,7 @@ export interface BodyMeasurementRecord {
   date: string;
   measurements: Record<string, number>;
   note: string | null;
+  photo_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -70,7 +71,8 @@ export async function upsertMeasurement(
   clientId: string,
   date: string,
   measurements: Record<string, number>,
-  note?: string | null
+  note?: string | null,
+  photoUrl?: string | null
 ): Promise<{ error: Error | null }> {
   const { error } = await supabase.from("body_measurements").upsert(
     {
@@ -78,6 +80,7 @@ export async function upsertMeasurement(
       date,
       measurements,
       note: note ?? null,
+      photo_url: photoUrl ?? null,
       updated_at: new Date().toISOString(),
     },
     {

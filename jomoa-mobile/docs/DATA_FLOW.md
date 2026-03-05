@@ -32,7 +32,9 @@
 
 ## Cycle
 
-**Source of truth**: `cycle_events` (period_start, etc.).
+**Primary source of truth**: Cycle engine – tabellerna `cycles`, `cycle_stats`, `user_cycle_settings` (User DB, se `supabase/user/migrations/003_cycle_engine.sql`).
 
-- `getLatestPeriodStart` provides the basis for phase calculation.
-- Phases are computed via `calculateCyclePhase` in `cycleUtils.ts`.
+- **cycleEngineService** läser/skriver `cycles` och `cycle_stats`, använder **cycleEngine.ts** (pure) för fas, overdue, fasgränser.
+- **user_cycle_settings** styr läge: `regular` | `missing_period` | `perimenopause` (cycle mode).
+- Legacy **cycle_events** används fortfarande för periodloggning; `getLatestPeriodStart` (cycleService) anropas av cycleEngineService för migrering/fallback.
+- UI använder **CycleContext** och hooks (useCycle, useCyclePhase, useTrainingAdaptation) som bygger på cycleEngineService.

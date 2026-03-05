@@ -1,5 +1,5 @@
-import React from "react";
-import { Alert } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Switch } from "react-native";
 import { YStack, XStack, Text } from "tamagui";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -14,22 +14,69 @@ import {
   type AppIconName,
   Divider,
 } from "../../shared/ui";
+import { CycleModeSettingsSection } from "./CycleModeSettingsSection";
+import { PresentationSettingsSection } from "./PresentationSettingsSection";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useTheme } from "../../shared/context/ThemeContext";
 import { RootStackParamList } from "../../navigation/RootNavigator";
+import {
+  requestNotificationPermissions,
+  scheduleDailyCheckin,
+  cancelDailyCheckin,
+  isDailyCheckinScheduled,
+} from "../../lib/services/notificationService";
+import { getItem, setItem, storageKeys } from "../../lib/store/storage";
+import { useThemeColors } from "../../shared/theme/useThemeColors";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface SettingsItem {
   iconName: AppIconName;
   label: string;
-  onPress: () => void;
+  subtitle?: string;
+  onPress?: () => void;
 }
 
 export function SettingsScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const { user, signOut } = useAuth();
+  const { user, client, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
+  const colors = useThemeColors();
+  const showCycleInUI = client?.presentation_profile !== "male";
+
+  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const stored = await getItem<boolean>(storageKeys.DAILY_CHECKIN_NOTIFICATIONS);
+      const scheduled = await isDailyCheckinScheduled();
+      if (!cancelled) {
+        setNotificationsEnabled(stored ?? scheduled);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleNotificationsToggle = async (value: boolean) => {
+    setNotificationsEnabled(value);
+    await setItem(storageKeys.DAILY_CHECKIN_NOTIFICATIONS, value);
+    if (value) {
+      const granted = await requestNotificationPermissions();
+      if (granted) {
+        await scheduleDailyCheckin();
+      } else {
+        setNotificationsEnabled(false);
+        await setItem(storageKeys.DAILY_CHECKIN_NOTIFICATIONS, false);
+        Alert.alert(
+          "Tillstånd krävs",
+          "Aktivera notiser i enhetsinställningarna för att få daglig check-in-påminnelse."
+        );
+      }
+    } else {
+      await cancelDailyCheckin();
+    }
+  };
 
   const handleSignOut = () => {
     Alert.alert(
@@ -42,24 +89,21 @@ export function SettingsScreen() {
     );
   };
 
-  const showComingSoon = (label: string) => () => {
-    Alert.alert("Kommer snart", `${label} kommer snart.`);
-  };
-
   const settingsItems: SettingsItem[] = [
-    { iconName: "person-outline", label: "Profil", onPress: showComingSoon("Profil") },
+    { iconName: "person-outline", label: "Min profil", onPress: () => navigation.navigate("Profile") },
     { iconName: "barbell-outline", label: "Mina program", onPress: () => navigation.navigate("ProgramList") },
-    { iconName: "flag-outline", label: "Mål", onPress: () => navigation.navigate("Profile") },
-    { iconName: "heart-outline", label: "Hur mår du idag?", onPress: () => navigation.navigate("Readiness") },
-    { iconName: "notifications-outline", label: "Notifikationer", onPress: showComingSoon("Notifikationer") },
-    { iconName: "moon-outline", label: "Menscykel", onPress: () => navigation.navigate("Cycle") },
+    ...(showCycleInUI ? [{ iconName: "moon-outline" as const, label: "Menscykel", onPress: () => navigation.navigate("Cycle") }] : []),
   ];
 
   const supportItems: SettingsItem[] = [
-    { iconName: "help-circle-outline", label: "Hjälp & support", onPress: showComingSoon("Hjälp") },
-    { iconName: "chatbubble-outline", label: "Feedback", onPress: showComingSoon("Feedback") },
-    { iconName: "document-text-outline", label: "Villkor", onPress: showComingSoon("Villkor") },
+    { iconName: "help-circle-outline", label: "Hjälp & support", subtitle: "Kommer snart" },
+    { iconName: "chatbubble-outline", label: "Feedback", subtitle: "Kommer snart" },
+    { iconName: "document-text-outline", label: "Villkor", subtitle: "Kommer snart" },
   ];
+
+  const devItems: SettingsItem[] = __DEV__
+    ? [{ iconName: "bug-outline", label: "Scenario (dev)", subtitle: "Sätt idag, fas, readiness", onPress: () => navigation.navigate("Scenario") }]
+    : [];
 
   return (
     <Screen scroll padded>
@@ -145,6 +189,42 @@ export function SettingsScreen() {
           </Card>
         </Section>
 
+        <PresentationSettingsSection />
+
+        {showCycleInUI && <CycleModeSettingsSection />}
+
+        {devItems.length > 0 && (
+          <Section title="Utvecklare">
+            <Card>
+              <Card.Content>
+                <YStack gap="$1">
+                  {devItems.map((item, index) => (
+                    <React.Fragment key={item.label}>
+                      <XStack
+                        paddingVertical="$3"
+                        alignItems="center"
+                        gap="$3"
+                        pressStyle={item.onPress ? { opacity: 0.7 } : undefined}
+                        onPress={item.onPress}
+                      >
+                        <AppIcon name={item.iconName} size={22} />
+                        <YStack flex={1}>
+                          <AppText variant="body">{item.label}</AppText>
+                          {item.subtitle && (
+                            <AppText variant="small" color="$colorSecondary">{item.subtitle}</AppText>
+                          )}
+                        </YStack>
+                        {item.onPress ? <Text color="$textSecondary">→</Text> : null}
+                      </XStack>
+                      {index < devItems.length - 1 && <Divider />}
+                    </React.Fragment>
+                  ))}
+                </YStack>
+              </Card.Content>
+            </Card>
+          </Section>
+        )}
+
         <Section title="Konto">
           <Card>
             <Card.Content>
@@ -155,18 +235,38 @@ export function SettingsScreen() {
                       paddingVertical="$3"
                       alignItems="center"
                       gap="$3"
-                      pressStyle={{ opacity: 0.7 }}
+                      pressStyle={item.onPress ? { opacity: 0.7 } : undefined}
                       onPress={item.onPress}
                     >
                       <AppIcon name={item.iconName} size={22} />
-                      <AppText variant="body" flex={1}>
-                        {item.label}
-                      </AppText>
-                      <Text color="$textSecondary">→</Text>
+                      <YStack flex={1}>
+                        <AppText variant="body">{item.label}</AppText>
+                        {item.subtitle && (
+                          <AppText variant="small" color="$colorSecondary">{item.subtitle}</AppText>
+                        )}
+                      </YStack>
+                      {item.onPress ? <Text color="$textSecondary">→</Text> : null}
                     </XStack>
                     {index < settingsItems.length - 1 && <Divider />}
                   </React.Fragment>
                 ))}
+                <Divider />
+                <XStack paddingVertical="$3" alignItems="center" gap="$3">
+                  <AppIcon name="notifications-outline" size={22} />
+                  <YStack flex={1}>
+                    <AppText variant="body">Daglig check-in-påminnelse</AppText>
+                    <AppText variant="small" color="$colorSecondary">
+                      Påminnelse kl. 07:30 varje dag
+                    </AppText>
+                  </YStack>
+                  <Switch
+                    value={notificationsEnabled ?? false}
+                    onValueChange={handleNotificationsToggle}
+                    disabled={notificationsEnabled === null}
+                    trackColor={{ false: colors.borderSoft, true: colors.accent }}
+                    thumbColor="#FFF"
+                  />
+                </XStack>
               </YStack>
             </Card.Content>
           </Card>
@@ -182,14 +282,17 @@ export function SettingsScreen() {
                       paddingVertical="$3"
                       alignItems="center"
                       gap="$3"
-                      pressStyle={{ opacity: 0.7 }}
+                      pressStyle={item.onPress ? { opacity: 0.7 } : undefined}
                       onPress={item.onPress}
                     >
                       <AppIcon name={item.iconName} size={22} />
-                      <AppText variant="body" flex={1}>
-                        {item.label}
-                      </AppText>
-                      <Text color="$textSecondary">→</Text>
+                      <YStack flex={1}>
+                        <AppText variant="body">{item.label}</AppText>
+                        {item.subtitle && (
+                          <AppText variant="small" color="$colorSecondary">{item.subtitle}</AppText>
+                        )}
+                      </YStack>
+                      {item.onPress ? <Text color="$textSecondary">→</Text> : null}
                     </XStack>
                     {index < supportItems.length - 1 && <Divider />}
                   </React.Fragment>

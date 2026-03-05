@@ -1,5 +1,12 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
-import { OnboardingData, TrainingGoal, DayOfWeek } from "../../shared/types/onboarding";
+import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
+import { OnboardingData, OnboardingPath } from "../../shared/types/onboarding";
+
+function getTotalSteps(path: OnboardingPath | null): number {
+  if (path === "cycle_only") return 3;
+  if (path === "training_only") return 5;
+  if (path === "both") return 6;
+  return 5;
+}
 
 interface OnboardingContextType {
   data: OnboardingData;
@@ -11,6 +18,8 @@ interface OnboardingContextType {
 }
 
 const initialData: OnboardingData = {
+  presentationProfile: null,
+  presentationTheme: null,
   onboardingPath: null,
   primaryGoal: null,
   secondaryGoals: [],
@@ -37,7 +46,7 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(undef
 export function OnboardingProvider({ children }: { children: React.ReactNode }) {
   const [data, setData] = useState<OnboardingData>(initialData);
   const [currentStep, setCurrentStep] = useState(0);
-  const totalSteps = 5;
+  const totalSteps = useMemo(() => getTotalSteps(data.onboardingPath), [data.onboardingPath]);
 
   const updateData = useCallback((updates: Partial<OnboardingData>) => {
     setData((prev) => ({ ...prev, ...updates }));

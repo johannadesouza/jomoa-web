@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { YStack, XStack } from "tamagui";
@@ -15,13 +15,19 @@ import {
   EmptyState,
   ErrorState,
 } from "../../shared/ui";
+import { getLocalDateString } from "../../lib/utils/date";
 import { useAuth } from "../../shared/context/AuthContext";
-import { useCycle } from "../../lib/hooks/useCycle";
+import { useCycleContext } from "../../shared/context/CycleContext";
+import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
 import { useCyclePhase } from "../../lib/hooks/useCyclePhase";
-import { savePeriodStart } from "../../lib/services/cycleService";
 import { RootStackParamList } from "../../navigation/RootNavigator";
+import { OverdueBanner } from "./OverdueBanner";
 import { CycleHeroCard } from "../insights/CycleHeroCard";
 import { CycleCategoryStrip } from "../../components/cycle/CycleCategoryStrip";
+import {
+  fetchSymptomOptions,
+  type SymptomOption,
+} from "../../lib/repos/contentRepo";
 import {
   MOOD_OPTIONS,
   CRAVINGS_OPTIONS,
@@ -43,15 +49,20 @@ export function CycleScreen() {
   const navigation = useNavigation<NavigationProp>();
   const { client } = useAuth();
   const {
-    latestPeriodStart,
+    activeCycleStartDate: latestPeriodStart,
     phase,
     cycleDay,
     cycleLength,
+    cycleLengthDisplay,
+    rollingAvg,
     daysUntilNextPeriod,
+    overdueState,
+    mode: cycleMode,
     isLoading,
     error,
     refetch,
-  } = useCycle(client?.id);
+    logPeriodStart,
+  } = useCycleContext();
 
   const { logSymptom } = useCyclePhase(client?.id);
   const [saving, setSaving] = useState(false);
@@ -66,23 +77,52 @@ export function CycleScreen() {
   const [symptomError, setSymptomError] = useState<string | null>(null);
   const [periodError, setPeriodError] = useState<string | null>(null);
 
+  const copy = useAppCopy("sv");
+  const cycleSectionTitle =
+    cycleMode === "regular"
+      ? getAppCopy(copy, "cycle_section_title_regular", "Din cykel")
+      : cycleMode === "perimenopause"
+        ? getAppCopy(copy, "cycle_section_title_perimenopause", "Peri-/menopaus")
+        : getAppCopy(copy, "cycle_section_title_no_cycle", "Utebliven mens");
+
+  const [moodOptions, setMoodOptions] = useState<SymptomOption[]>(MOOD_OPTIONS.map((o) => ({ option_id: o.id, label: o.label, value: null })));
+  const [cravingsOptions, setCravingsOptions] = useState<SymptomOption[]>(CRAVINGS_OPTIONS.map((o) => ({ option_id: o.id, label: o.label, value: null })));
+  const [bleedingOptions, setBleedingOptions] = useState<SymptomOption[]>(BLEEDING_OPTIONS.map((o) => ({ option_id: String(o.value), label: o.label, value: o.value })));
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      fetchSymptomOptions("mood"),
+      fetchSymptomOptions("cravings"),
+      fetchSymptomOptions("bleeding"),
+    ])
+      .then(([mood, cravings, bleeding]) => {
+        if (!cancelled) {
+          if (mood.length) setMoodOptions(mood);
+          if (cravings.length) setCravingsOptions(cravings);
+          if (bleeding.length) setBleedingOptions(bleeding);
+        }
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
   const handleLogPeriod = async (dateStr: string) => {
-    if (!client?.id || !dateStr) return;
+    if (!dateStr) return;
     setSaving(true);
     setPeriodError(null);
-    const { success, error: saveErr } = await savePeriodStart(client.id, dateStr);
+    const { error: saveErr } = await logPeriodStart(dateStr);
     setSaving(false);
-    if (success) {
+    if (!saveErr) {
       setCustomDate("");
       setShowCustom(false);
-      await refetch();
     } else {
-      setPeriodError(saveErr ?? "Kunde inte spara");
+      setPeriodError(saveErr);
     }
   };
 
   const handleLogPeriodToday = () => {
-    handleLogPeriod(new Date().toISOString().split("T")[0]);
+    handleLogPeriod(getLocalDateString());
   };
 
   const handleLogCustomDate = () => {
@@ -111,7 +151,7 @@ export function CycleScreen() {
   const getYesterday = () => {
     const d = new Date();
     d.setDate(d.getDate() - 1);
-    return d.toISOString().split("T")[0];
+    return getLocalDateString(d);
   };
 
   const handleLogPeriodYesterday = () => {
@@ -136,9 +176,8 @@ export function CycleScreen() {
     }
     setSavingSymptom(true);
     setSymptomError(null);
-    const today = new Date().toISOString().split("T")[0];
     const { error } = await logSymptom({
-      date: today,
+      date: getLocalDateString(),
       cramps_severity: hasCramps ? cramps : null,
       energy_level: hasEnergy ? energy : null,
       mood: symptomMood ?? null,
@@ -160,15 +199,26 @@ export function CycleScreen() {
   return (
     <Screen scroll padded>
       <YStack gap="$6">
-        <Section title="Din cykel">
+        <Section title={cycleSectionTitle}>
           {latestPeriodStart ? (
             <>
+              {overdueState !== "none" && (
+                <OverdueBanner
+                  overdueState={overdueState}
+                  onLogPeriod={handleLogPeriodToday}
+                />
+              )}
               <CycleHeroCard
                 phase={phase}
                 cycleDay={cycleDay}
-                cycleLength={cycleLength}
+                cycleLength={cycleLengthDisplay}
+                cycleLengthEstimated={rollingAvg != null}
                 daysUntilNextPeriod={daysUntilNextPeriod}
                 onPress={() => navigation.navigate("CycleInsights", {})}
+                cycleMode={cycleMode}
+                noPhaseMessage={getAppCopy(copy, "cycle_hero_no_phase", "Logga period för att se din cykel och hormonprofil")}
+                noCycleModeMessage={getAppCopy(copy, "cycle_hero_no_cycle_mode", "Träning anpassas efter dagsform och symtom")}
+                phaseLabelCaption={getAppCopy(copy, "cycle_phase_label_caption", "Din cykelfas")}
               />
               <Section title="Utforska" spacing="md">
                 <CycleCategoryStrip
@@ -319,13 +369,13 @@ export function CycleScreen() {
                         Blödning
                       </AppText>
                       <XStack gap="$2" flexWrap="wrap">
-                        {BLEEDING_OPTIONS.map((opt) => {
-                          const isSelected = symptomBleeding === opt.value;
+                        {bleedingOptions.map((opt) => {
+                          const isSelected = symptomBleeding === (opt.value ?? null);
                           return (
                             <Pressable
-                              key={opt.value}
+                              key={opt.option_id}
                               onPress={() => {
-                                setSymptomBleeding(isSelected ? null : opt.value);
+                                setSymptomBleeding(isSelected ? null : (opt.value ?? null));
                                 setSymptomError(null);
                               }}
                             >
@@ -354,13 +404,13 @@ export function CycleScreen() {
                         Humör
                       </AppText>
                       <XStack gap="$2" flexWrap="wrap">
-                        {MOOD_OPTIONS.map((opt) => {
-                          const isSelected = symptomMood === opt.id;
+                        {moodOptions.map((opt) => {
+                          const isSelected = symptomMood === opt.option_id;
                           return (
                             <Pressable
-                              key={opt.id}
+                              key={opt.option_id}
                               onPress={() => {
-                                setSymptomMood(isSelected ? null : opt.id);
+                                setSymptomMood(isSelected ? null : opt.option_id);
                                 setSymptomError(null);
                               }}
                             >
@@ -389,13 +439,13 @@ export function CycleScreen() {
                         Cravings
                       </AppText>
                       <XStack gap="$2" flexWrap="wrap">
-                        {CRAVINGS_OPTIONS.map((opt) => {
-                          const isSelected = symptomCravings === opt.id;
+                        {cravingsOptions.map((opt) => {
+                          const isSelected = symptomCravings === opt.option_id;
                           return (
                             <Pressable
-                              key={opt.id}
+                              key={opt.option_id}
                               onPress={() => {
-                                setSymptomCravings(isSelected ? null : opt.id);
+                                setSymptomCravings(isSelected ? null : opt.option_id);
                                 setSymptomError(null);
                               }}
                             >

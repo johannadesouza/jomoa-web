@@ -4,9 +4,9 @@
 
 Make sure these environment variables are set in your Vercel project settings:
 
-### Supabase
-- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous/public key
+### Supabase (Content DB for JOMOA)
+- `NEXT_PUBLIC_CONTENT_SUPABASE_URL` – Content DB URL (or legacy `NEXT_PUBLIC_SUPABASE_URL`)
+- `NEXT_PUBLIC_CONTENT_SUPABASE_ANON_KEY` – Content DB anon key (or legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
 
 ### Mailchimp
 - `MAILCHIMP_API_KEY` - Your Mailchimp API key (format: `your-api-key-us1`)

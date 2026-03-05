@@ -18,7 +18,7 @@ React Native mobile app för JOMOA - din strategiska träningscoach.
 
 ## Design System
 
-Alla komponenter följer **design-standards.md** och **engineering-standards.md**.
+Alla komponenter följer theme tokens och delade UI-principer (se nedan).
 
 ### Principer
 
@@ -110,63 +110,28 @@ $4 = 16px   $8 = 32px   $12 = 48px
 
 ```
 src/
-├── config/               # App configuration
-│   └── supabase.ts      # Supabase client
-├── lib/                  # Data layer
-│   ├── services/        # Supabase services
-│   │   ├── programService.ts
-│   │   ├── workoutService.ts
-│   │   └── workoutLogService.ts
-│   └── hooks/           # Data hooks
-│       ├── useWorkouts.ts
-│       ├── useDashboard.ts
-│       ├── usePrograms.ts
-│       └── useInsights.ts
-├── features/             # Feature modules
-│   ├── auth/            # Login, registration
-│   │   ├── LoginScreen.tsx
-│   │   ├── RegisterScreen.tsx
-│   │   └── index.ts
-│   ├── dashboard/       # Main dashboard
-│   │   ├── DashboardScreen.tsx
-│   │   └── index.ts
-│   ├── workouts/        # Training sessions
-│   │   ├── WorkoutsScreen.tsx
-│   │   ├── WorkoutSessionScreen.tsx
-│   │   └── index.ts
-│   ├── programs/        # Program selection
-│   │   ├── ProgramSelectScreen.tsx
-│   │   └── index.ts
-│   ├── insights/        # Analytics
-│   │   ├── InsightsScreen.tsx
-│   │   └── index.ts
-│   └── settings/        # Settings
-│       ├── SettingsScreen.tsx
-│       └── index.ts
-├── navigation/           # Navigation setup
-│   ├── RootNavigator.tsx
-│   └── TabNavigator.tsx
-└── shared/
-    ├── context/         # React contexts
-    │   ├── AuthContext.tsx
-    │   └── index.ts
-    ├── theme/           # Tamagui config
-    │   ├── tamagui.config.ts
-    │   └── index.ts
-    ├── types/           # TypeScript types
-    │   └── onboarding.ts
-    └── ui/              # Base UI components
-        ├── Screen.tsx
-        ├── Section.tsx
-        ├── Card.tsx
-        ├── AppText.tsx
-        ├── AppButton.tsx
-        ├── AppInput.tsx
-        ├── Badge.tsx
-        ├── Divider.tsx
-        ├── EmptyState.tsx
-        ├── ErrorState.tsx
-        └── index.ts
+├── config/               # Supabase clients (user + content)
+├── lib/
+│   ├── adaptation/      # Adaptation engine (cycle phase, readiness, perimenopause rules)
+│   ├── domain/          # Pure domain (program, workout, readinessScore, insightKeys)
+│   ├── repos/           # userRepo (assignments, workoutLog, cycle), contentRepo (programs, articles, …)
+│   ├── services/        # Business logic (cycleEngineService, insightService, readinessService, …)
+│   ├── hooks/           # useDashboard, useCycle, useTrainingAdaptation, useInsights, …
+│   ├── utils/           # cycleEngine, cycleUtils, date
+│   └── supabase/        # userClient, contentClient
+├── features/
+│   ├── auth/            # Login, Register
+│   ├── dashboard/       # DashboardScreen
+│   ├── train/           # Train tab, WorkoutSession, ProgramSelect
+│   ├── journey/         # Journey (Insikter), stats, CycleHeroCard, logga
+│   ├── learn/            # Learn, ArticleDetail, PhaseDetail
+│   ├── cycle/            # CycleScreen, OverdueBanner
+│   ├── readiness/      # ReadinessScreen, PerimenopauseSymptomCheckin
+│   ├── log/              # Measurements, AddMeasurement
+│   ├── settings/        # SettingsScreen, CycleModeSettingsSection
+│   └── onboarding/      # Welcome, PathChoice, Goals, Frequency, TrainingDays, CycleSetup, Complete
+├── navigation/           # RootNavigator, TabNavigator
+└── shared/               # context (Auth, Cycle), theme, ui (Screen, Section, Card, …)
 ```
 
 ## Setup
@@ -192,31 +157,29 @@ npm run android
 npm run web
 ```
 
-## Environment Variables
+## Environment variables
 
 ```
-EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+EXPO_PUBLIC_USER_SUPABASE_URL=...
+EXPO_PUBLIC_USER_SUPABASE_ANON_KEY=...
+EXPO_PUBLIC_CONTENT_SUPABASE_URL=...
+EXPO_PUBLIC_CONTENT_SUPABASE_ANON_KEY=...
 ```
+
+Se `.env.example` för full lista.
 
 ## Features
 
-### Implemented
-
-- ✅ Authentication (Login/Register)
-- ✅ Onboarding (Welcome, Goals, Frequency, Training days, Complete)
-- ✅ Tab Navigation (Dashboard, Workouts, Insights, Settings)
-- ✅ Dashboard with program overview, weekly stats, streak
-- ✅ Workouts list and Workout session logging (sparar till DB)
-- ✅ Program selection (modal)
-- ✅ Insights with real data (volym, pass, RPE, streak)
-- ✅ Settings with logout
-
-### Coming Soon
-
-- 📋 Cycle tracking
-- 📋 Push notifications
-- 📋 Offline support
+- Authentication (Login/Register)
+- Onboarding (PathChoice, Goals, Frequency, Training days, CycleSetup, Kön/Tema, Complete)
+- Tabs: Hem (Dashboard), Träna, Insikter (Journey), Lär dig, Inställningar
+- Dashboard: hälsning, check-in, dagens pass, cykelkort (om aktiverat), quick actions
+- Träna: programval, dagens pass, WorkoutSession med loggning
+- Insikter: volym, pass, streak, CycleHeroCard, symptomrelief, logga
+- Cycle: periodlogg, symptom, fas, OverdueBanner; inställningar (cycle mode: regular / missing_period / perimenopause)
+- Readiness: daglig check-in (sömn, stress, energi, ömhet); perimenopaus-symptom (valfritt)
+- Lär dig: artiklar, fasvis kunskap
+- Inställningar: profil, Mina program, Menscykel, tema, notifikationer (kommer snart)
 
 ## Usage Examples
 
@@ -297,6 +260,11 @@ function LoginScreen() {
 - Konstanter extraherade
 - Tydlig namngivning
 - Loading/error states hanterade
+
+## Known warnings (safe to ignore)
+
+- **Tamagui/Zeego** – “Must call import '@tamagui/native/setup-zeego'” appears because Tamagui can use native menus. This app does not use Tamagui Menu/ContextMenu. Do **not** install `zeego`: it currently conflicts with `@tamagui/native` (zeego wants `@react-native-menu/menu@1.x`, Tamagui wants `>=2.0.0`). Ignore the warning.
+- **expo-notifications in Expo Go** – Full notification support requires a development build; the warning in Expo Go is expected.
 
 ## License
 

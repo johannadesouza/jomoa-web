@@ -16,6 +16,7 @@ import {
   AppButton,
   AppIcon,
   LoadingScreen,
+  EmptyState,
 } from "../../shared/ui";
 import { TopBar } from "../../components/layout/TopBar";
 import { SegmentBar } from "../../components/layout/SegmentBar";
@@ -26,7 +27,9 @@ import { CycleHeroCard } from "../insights/CycleHeroCard";
 import { HeroInsightCard } from "../insights/HeroInsightCard";
 import { InsightCategoryStrip } from "../insights/InsightCategoryStrip";
 import { useAuth } from "../../shared/context/AuthContext";
+import { useCycleContext } from "../../shared/context/CycleContext";
 import { useCycle } from "../../lib/hooks/useCycle";
+import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
 import { useInsights } from "../../lib/hooks/useInsights";
 import { usePhasePerformance } from "../../lib/hooks/usePhasePerformance";
 import { useDailyPhaseInsight } from "../../lib/hooks/useDailyPhaseInsight";
@@ -37,7 +40,6 @@ import { getPhaseProfile } from "../../lib/services/phaseKnowledgeService";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import type { SymptomId } from "../../lib/data/symptomReliefData";
 import { AwardsSection } from "../insights/AwardsSection";
-import { GoalsSection } from "../insights/GoalsSection";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -62,6 +64,7 @@ export function JourneyScreen() {
     symptomId: null,
   });
   const { client } = useAuth();
+  const { mode: cycleMode } = useCycleContext();
   const {
     phase,
     phaseLabel,
@@ -70,6 +73,8 @@ export function JourneyScreen() {
     daysUntilNextPeriod,
     refetch: refetchCycle,
   } = useCycle(client?.id);
+  const copy = useAppCopy("sv");
+  const showCycleInUI = client?.presentation_profile !== "male";
   const { stats, isLoading } = useInsights(client?.id);
   const { comparison: phaseComparison } = usePhasePerformance(client?.id);
   const phaseInsight = useDailyPhaseInsight(client?.id);
@@ -106,18 +111,47 @@ export function JourneyScreen() {
         onSettings={() => navigation.navigate("Settings")}
       />
       <YStack gap="$4" paddingTop="$4">
-        <CycleHeroCard
-          phase={phase ?? null}
-          cycleDay={cycleDay}
-          cycleLength={cycleLength}
-          daysUntilNextPeriod={daysUntilNextPeriod ?? null}
-          onPress={() => navigation.navigate("Cycle")}
-        />
-
         <SegmentBar segments={SEGMENTS} activeId={segment} onSelect={setSegment} />
 
         {segment === "idag" && (
           <>
+            {showCycleInUI && (
+              <CycleHeroCard
+                phase={phase ?? null}
+                cycleDay={cycleDay}
+                cycleLength={cycleLength}
+                daysUntilNextPeriod={daysUntilNextPeriod ?? null}
+                onPress={() => navigation.navigate("Cycle")}
+                cycleMode={cycleMode}
+                noPhaseMessage={getAppCopy(copy, "cycle_hero_no_phase", "Logga period för att se din cykel och hormonprofil")}
+                noCycleModeMessage={getAppCopy(copy, "cycle_hero_no_cycle_mode", "Träning anpassas efter dagsform och symtom")}
+                phaseLabelCaption={getAppCopy(copy, "cycle_phase_label_caption", "Din cykelfas")}
+              />
+            )}
+
+            {!showCycleInUI && (
+              <Section title="Din träning" subtitle="Volym, pass och streak">
+                <XStack flexWrap="wrap" gap="$3">
+                  {statCards.map((s, i) => (
+                    <Card key={i} flex={1} minWidth="30%" pressable onPress={() => setSegment("historik")}>
+                      <Card.Content>
+                        <YStack alignItems="center" gap="$2">
+                          <YStack width={36} height={36} borderRadius="$full" backgroundColor="$surface3" alignItems="center" justifyContent="center">
+                            <AppIcon name={s.iconName} size={18} />
+                          </YStack>
+                          <XStack alignItems="baseline" gap="$1">
+                            <Text fontSize="$lg" fontWeight="700" color="$accent">{s.value}</Text>
+                            {s.unit ? <Text fontSize="$xs" color="$textSecondary">{s.unit}</Text> : null}
+                          </XStack>
+                          <AppText variant="caption" numberOfLines={1}>{s.label}</AppText>
+                        </YStack>
+                      </Card.Content>
+                    </Card>
+                  ))}
+                </XStack>
+              </Section>
+            )}
+
             <Section title="Dagens insikt" subtitle="Vad kan jag förvänta mig och göra?">
               <HeroInsightCard
                 phase={phase ?? null}
@@ -127,7 +161,7 @@ export function JourneyScreen() {
               />
             </Section>
 
-            <Section title="Hur mår du idag?" subtitle="Klicka för symtomlindring eller logga">
+            <Section title={getAppCopy(copy, "journey_how_are_you_title", "Hur mår du idag?")} subtitle="Klicka för symtomlindring eller logga">
               <QuickLogStrip
                 onLogOther={() => setSegment("logga")}
                 onSymptomPress={(id) => setSymptomModal({ visible: true, symptomId: id })}
@@ -161,7 +195,7 @@ export function JourneyScreen() {
             <Section title="Utforska" subtitle="Träning, kost och välmående">
               <InsightCategoryStrip
                 onSelectCategory={(id) => {
-                  if (id === "näring") (navigation.getParent() as { navigate: (n: string) => void })?.navigate("NutritionTab");
+                  if (id === "näring") (navigation.getParent() as { navigate: (n: string) => void })?.navigate("LearnTab");
                   else if (id === "fysiskt") navigation.navigate("CycleInsights");
                   else navigation.navigate("Readiness");
                 }}
@@ -173,7 +207,21 @@ export function JourneyScreen() {
         {segment === "historik" && (
           <>
             <AwardsSection clientId={client?.id} />
-            <GoalsSection clientId={client?.id} />
+            {!hasData ? (
+              <Section title="Din träningsstatistik" subtitle="Baserat på dina loggade pass">
+                <Card>
+                  <Card.Content>
+                    <EmptyState
+                      iconName="barbell-outline"
+                      title="Logga ditt första pass"
+                      description="Starta från Hem eller Träna – då fylls statistik och historik här."
+                      actionLabel="Gå till Träna"
+                      onAction={() => navigation.navigate("TrainTab")}
+                    />
+                  </Card.Content>
+                </Card>
+              </Section>
+            ) : (
             <Section title="Din träningsstatistik" subtitle="Baserat på dina loggade pass">
               <XStack flexWrap="wrap" gap="$4">
                 {statCards.map((s, i) => (
@@ -194,6 +242,7 @@ export function JourneyScreen() {
                 ))}
               </XStack>
             </Section>
+            )}
             <Section title="Träningshistorik" subtitle="Se kalendern för dina pass">
               <Card pressable onPress={() => navigation.navigate("Calendar")}>
                 <Card.Content>
@@ -224,7 +273,7 @@ export function JourneyScreen() {
 
         {segment === "logga" && (
           <>
-            <Section title="Hur mår du idag?" subtitle="Sömn, stress, energi – fyll i för rekommendationer">
+            <Section title={getAppCopy(copy, "journey_how_are_you_title", "Hur mår du idag?")} subtitle={getAppCopy(copy, "journey_how_are_you_subtitle", "Sömn, stress, energi – fyll i för rekommendationer")}>
               {readiness ? (
                 <Card>
                   <Card.Content>
@@ -243,8 +292,8 @@ export function JourneyScreen() {
                     <YStack alignItems="center" gap="$4" paddingVertical="$4">
                       <AppIcon name="heart-outline" size={48} />
                       <YStack alignItems="center" gap="$1">
-                        <AppText variant="h3">Hur mår du idag?</AppText>
-                        <AppText variant="small" muted center>Sömn, stress, energi – få rekommendationer</AppText>
+                        <AppText variant="h3">{getAppCopy(copy, "journey_how_are_you_title", "Hur mår du idag?")}</AppText>
+                        <AppText variant="small" muted center>{getAppCopy(copy, "journey_how_are_you_subtitle", "Sömn, stress, energi – fyll i för rekommendationer")}</AppText>
                       </YStack>
                       <AppButton variant="primary" onPress={() => navigation.navigate("Readiness")}>
                         Logga hur du mår

@@ -1,6 +1,11 @@
 /**
  * Cycle phase calculation and phase labels
+ *
+ * calculateCyclePhase now delegates to the proportional engine in cycleEngine.ts,
+ * giving dynamic phase boundaries that scale with actual cycle length.
  */
+
+import { getCyclePhase as getCyclePhaseEngine, dateDiffDays } from "./cycleEngine";
 
 export type CyclePhase = "menstruation" | "follicular" | "ovulation" | "luteal" | null;
 
@@ -13,14 +18,10 @@ const PHASE_LABELS: Record<Exclude<CyclePhase, null>, string> = {
 
 const DEFAULT_CYCLE_LENGTH = 28;
 
-/** Max cycle length used for phase boundaries – avoids "Follikulär överallt" from bad data */
-const MAX_CYCLE_LENGTH_FOR_PHASES = 45;
-const MIN_CYCLE_LENGTH = 21;
-
 /**
- * Calculate cycle phase from period start date and target date
- * Uses cycleLength from client settings (default 28), clamped to 21–45 days so phase
- * boundaries stay reasonable. Days beyond one cycle wrap into the next (estimated) cycle.
+ * Calculate cycle phase from period start date and target date.
+ * Uses proportional phase boundaries (see cycleEngine.ts) that scale with cycleLength.
+ * Falls back to 28-day cycle when cycleLength is unknown.
  */
 export function calculateCyclePhase(
   periodStartDate: string | null,
@@ -31,42 +32,29 @@ export function calculateCyclePhase(
     return { phase: null, cycleDay: 0 };
   }
 
-  const startDate = new Date(periodStartDate + "T12:00:00");
-  const target = new Date(targetDate);
-  target.setHours(12, 0, 0, 0);
+  const startStr = periodStartDate;
+  // Build YYYY-MM-DD for target using local date (noon = locale-safe)
+  const t = new Date(targetDate);
+  t.setHours(12, 0, 0, 0);
+  const y = t.getFullYear();
+  const mo = String(t.getMonth() + 1).padStart(2, "0");
+  const d = String(t.getDate()).padStart(2, "0");
+  const targetStr = `${y}-${mo}-${d}`;
 
-  const diffTime = target.getTime() - startDate.getTime();
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  let rawCycleDay = diffDays + 1;
+  const rawCycleDay = dateDiffDays(startStr, targetStr) + 1;
 
   if (rawCycleDay < 1) {
     return { phase: null, cycleDay: rawCycleDay };
   }
 
-  const effectiveLength = Math.max(
-    MIN_CYCLE_LENGTH,
-    Math.min(MAX_CYCLE_LENGTH_FOR_PHASES, cycleLength)
-  );
+  const phase = getCyclePhaseEngine(rawCycleDay, cycleLength);
+
+  // Wrap cycleDay for display (stays within [1, cycleLength])
+  const effectiveLength = cycleLength > 0 ? cycleLength : DEFAULT_CYCLE_LENGTH;
   const cycleDay =
     rawCycleDay > effectiveLength
       ? ((rawCycleDay - 1) % effectiveLength) + 1
       : rawCycleDay;
-
-  const scale = effectiveLength / DEFAULT_CYCLE_LENGTH;
-  const menstruationEnd = Math.floor(5 * scale);
-  const follicularEnd = Math.floor(13 * scale);
-  const ovulationEnd = Math.floor(16 * scale);
-
-  let phase: CyclePhase = null;
-  if (cycleDay >= 1 && cycleDay <= menstruationEnd) {
-    phase = "menstruation";
-  } else if (cycleDay <= follicularEnd) {
-    phase = "follicular";
-  } else if (cycleDay <= ovulationEnd) {
-    phase = "ovulation";
-  } else if (cycleDay <= effectiveLength) {
-    phase = "luteal";
-  }
 
   return { phase, cycleDay };
 }

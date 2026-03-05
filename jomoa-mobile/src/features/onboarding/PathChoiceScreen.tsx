@@ -1,11 +1,12 @@
 import React from "react";
-import { YStack, XStack, Text } from "tamagui";
+import { YStack, XStack } from "tamagui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Pressable } from "react-native";
 
 import { Screen, AppText, Card } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
+import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
 import type { OnboardingPath } from "../../shared/types/onboarding";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "PathChoice">;
@@ -37,12 +38,14 @@ const PATHS: {
 ];
 
 export function PathChoiceScreen({ navigation }: Props) {
-  const { data, updateData } = useOnboarding();
+  const { data, updateData, setCurrentStep } = useOnboarding();
+  const copy = useAppCopy("sv", data.presentationProfile);
 
   const handleSelect = (path: OnboardingPath) => {
     updateData({ onboardingPath: path });
     if (path === "cycle_only") {
       updateData({ wantsCycleTracking: true });
+      setCurrentStep(1);
       navigation.navigate("CycleSetup");
     } else if (path === "training_only") {
       updateData({ wantsCycleTracking: false });
@@ -56,9 +59,9 @@ export function PathChoiceScreen({ navigation }: Props) {
     <Screen padded>
       <YStack flex={1} gap="$6" paddingTop="$4">
         <YStack gap="$2">
-          <AppText variant="h1">Vad vill du använda JOMOA till?</AppText>
+          <AppText variant="h1">{getAppCopy(copy, "path_choice_title", "Vad vill du använda JOMOA till?")}</AppText>
           <AppText variant="body" muted>
-            Välj vad som passar dig – du kan alltid lägga till mer senare
+            {getAppCopy(copy, "path_choice_subtitle", "Välj vad som passar – du kan lägga till cykel senare om du vill.")}
           </AppText>
         </YStack>
 
@@ -85,7 +88,7 @@ export function PathChoiceScreen({ navigation }: Props) {
                         alignItems="center"
                         justifyContent="center"
                       >
-                        <Text fontSize={24}>{path.icon}</Text>
+                        <AppText variant="h2">{path.icon}</AppText>
                       </XStack>
                       <YStack flex={1}>
                         <AppText

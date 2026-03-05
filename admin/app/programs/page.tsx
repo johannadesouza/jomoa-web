@@ -1,5 +1,7 @@
 import { adminContentClient } from "@/lib/contentClient";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { ConfirmDeleteButton } from "../ConfirmDeleteButton";
 
 interface Program {
   id: string;
@@ -30,6 +32,7 @@ async function createProgram(formData: FormData) {
     is_template: true,
   });
   revalidatePath("/programs");
+  redirect("/programs?saved=1");
 }
 
 async function updateProgram(formData: FormData) {
@@ -43,6 +46,7 @@ async function updateProgram(formData: FormData) {
     target_duration_weeks: formData.get("target_duration_weeks") ? parseInt(formData.get("target_duration_weeks") as string, 10) : null,
   }).eq("id", id);
   revalidatePath("/programs");
+  redirect("/programs?saved=1");
 }
 
 async function deleteProgram(formData: FormData) {
@@ -51,6 +55,7 @@ async function deleteProgram(formData: FormData) {
   if (!id) return;
   await adminContentClient.from("training_programs").delete().eq("id", id);
   revalidatePath("/programs");
+  redirect("/programs?saved=1");
 }
 
 const GOAL_LABELS: Record<string, string> = {
@@ -63,11 +68,21 @@ const GOAL_LABELS: Record<string, string> = {
   strength: "Styrka",
 };
 
-export default async function ProgramsPage() {
+export default async function ProgramsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ saved?: string }>;
+}) {
+  const { saved } = await searchParams;
   const programs = await getPrograms();
 
   return (
     <div>
+      {saved === "1" && (
+        <p style={{ marginBottom: 16, padding: "10px 16px", background: "#E8F5E9", color: "#2E7D32", borderRadius: 8, fontSize: 14 }}>
+          Sparat!
+        </p>
+      )}
       <h1>Program ({programs.length})</h1>
 
       <details style={{ marginBottom: 32 }}>
@@ -134,7 +149,7 @@ export default async function ProgramsPage() {
                 </div>
                 <div style={{ gridColumn: "1 / -1", display: "flex", gap: 8 }}>
                   <button type="submit" style={saveBtnStyle}>Spara ändringar</button>
-                  <button formAction={deleteProgram} style={deleteBtnStyle}>Ta bort</button>
+                  <ConfirmDeleteButton action={deleteProgram} formData={{ id: p.id }} style={deleteBtnStyle} />
                 </div>
               </form>
             </div>

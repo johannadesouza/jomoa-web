@@ -9,6 +9,8 @@ const KEYS = {
   IN_PROGRESS_WORKOUT: "@jomoa/inProgressWorkout",
   REST_TIMER_STATE: "@jomoa/restTimerState",
   PREFERRED_THEME: "@jomoa/preferredTheme",
+  DAILY_CHECKIN_NOTIFICATIONS: "@jomoa/dailyCheckinNotifications",
+  READINESS_EXPLANATION_SEEN: "@jomoa/readiness_explanation_seen",
 } as const;
 
 export const storageKeys = KEYS;
@@ -27,7 +29,7 @@ export async function setItem<T>(key: string, value: T): Promise<void> {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
-    console.warn("Storage setItem failed:", e);
+    if (__DEV__) console.warn("Storage setItem failed:", e);
   }
 }
 
@@ -35,6 +37,6 @@ export async function removeItem(key: string): Promise<void> {
   try {
     await AsyncStorage.removeItem(key);
   } catch (e) {
-    console.warn("Storage removeItem failed:", e);
+    if (__DEV__) console.warn("Storage removeItem failed:", e);
   }
 }

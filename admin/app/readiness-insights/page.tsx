@@ -1,5 +1,7 @@
 import { adminContentClient } from "../../lib/contentClient";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { ConfirmDeleteButton } from "../ConfirmDeleteButton";
 
 async function getInsights() {
   const { data } = await adminContentClient
@@ -11,20 +13,27 @@ async function getInsights() {
 
 async function addInsight(formData: FormData) {
   "use server";
+  const min = Number(formData.get("readiness_min"));
+  const max = Number(formData.get("readiness_max"));
+  if (min > max) {
+    redirect("/readiness-insights?error=invalid_range");
+  }
   await adminContentClient.from("readiness_insights").insert({
-    readiness_min: Number(formData.get("readiness_min")),
-    readiness_max: Number(formData.get("readiness_max")),
+    readiness_min: min,
+    readiness_max: max,
     title: formData.get("title"),
     body: formData.get("body"),
     suggestion: formData.get("suggestion") || null,
   });
   revalidatePath("/readiness-insights");
+  redirect("/readiness-insights?saved=1");
 }
 
 async function deleteInsight(formData: FormData) {
   "use server";
   await adminContentClient.from("readiness_insights").delete().eq("id", formData.get("id"));
   revalidatePath("/readiness-insights");
+  redirect("/readiness-insights?saved=1");
 }
 
 async function updateInsight(formData: FormData) {
@@ -35,6 +44,7 @@ async function updateInsight(formData: FormData) {
     suggestion: formData.get("suggestion") || null,
   }).eq("id", formData.get("id"));
   revalidatePath("/readiness-insights");
+  redirect("/readiness-insights?saved=1");
 }
 
 function readinessColor(min: number): string {
@@ -45,11 +55,26 @@ function readinessColor(min: number): string {
   return "#2E7D32";
 }
 
-export default async function ReadinessInsightsPage() {
+export default async function ReadinessInsightsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ saved?: string; error?: string }>;
+}) {
+  const { saved, error } = await searchParams;
   const insights = await getInsights();
 
   return (
     <div>
+      {saved === "1" && (
+        <p style={{ marginBottom: 16, padding: "10px 16px", background: "#E8F5E9", color: "#2E7D32", borderRadius: 8, fontSize: 14 }}>
+          Sparat!
+        </p>
+      )}
+      {error === "invalid_range" && (
+        <p style={{ marginBottom: 16, padding: "10px 16px", background: "#FFEBEE", color: "#C62828", borderRadius: 8, fontSize: 14 }}>
+          Min poäng måste vara ≤ max poäng.
+        </p>
+      )}
       <h1 style={{ marginBottom: 8 }}>Readiness-insikter</h1>
       <p style={{ color: "#976568", marginBottom: 32 }}>
         Insikter visas på dashboarden baserat på användarens readiness-poäng (0–100).
@@ -96,7 +121,7 @@ export default async function ReadinessInsightsPage() {
                 <input name="suggestion" defaultValue={ins.suggestion ?? ""} placeholder="Konkret åtgärd (valfri)" style={inputStyle} />
                 <div style={{ display: "flex", gap: 8 }}>
                   <button type="submit" style={saveBtnStyle}>Spara</button>
-                  <button formAction={deleteInsight} style={deleteBtnStyle}>Ta bort</button>
+                  <ConfirmDeleteButton action={deleteInsight} formData={{ id: ins.id }} style={deleteBtnStyle} />
                 </div>
               </form>
             </div>

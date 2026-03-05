@@ -1,4 +1,5 @@
 import { supabase } from "../../config/supabase";
+import { getLocalDateString } from "../utils/date";
 
 export interface WorkoutStats {
   weeklyWorkouts: number;
@@ -11,6 +12,8 @@ export interface InsightStats {
   streak: number;
 }
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
 export async function fetchWeeklyStats(clientId: string): Promise<WorkoutStats> {
   const today = new Date();
   const startOfWeek = new Date(today);
@@ -22,7 +25,7 @@ export async function fetchWeeklyStats(clientId: string): Promise<WorkoutStats> 
     .select("id, date")
     .eq("client_id", clientId)
     .eq("status", "completed")
-    .gte("date", startOfWeek.toISOString().split("T")[0]);
+    .gte("date", getLocalDateString(startOfWeek));
 
   const weeklyWorkouts = weeklyData?.length ?? 0;
 
@@ -36,20 +39,20 @@ export async function fetchWeeklyStats(clientId: string): Promise<WorkoutStats> 
 
   let streak = 0;
   if (allWorkouts && allWorkouts.length > 0) {
-    const todayStr = today.toISOString().split("T")[0];
-    const yesterdayStr = new Date(today.getTime() - 86400000).toISOString().split("T")[0];
+    const todayStr = getLocalDateString();
+    const yesterdayStr = getLocalDateString(new Date(today.getTime() - MS_PER_DAY));
     const workoutDates = new Set(allWorkouts.map((w) => w.date));
 
     if (workoutDates.has(todayStr) || workoutDates.has(yesterdayStr)) {
       let checkDate = workoutDates.has(todayStr)
         ? today
-        : new Date(today.getTime() - 86400000);
+        : new Date(today.getTime() - MS_PER_DAY);
 
       for (let i = 0; i < 30; i++) {
-        const dateStr = checkDate.toISOString().split("T")[0];
+        const dateStr = getLocalDateString(checkDate);
         if (workoutDates.has(dateStr)) {
           streak++;
-          checkDate = new Date(checkDate.getTime() - 86400000);
+          checkDate = new Date(checkDate.getTime() - MS_PER_DAY);
         } else {
           break;
         }
@@ -62,9 +65,7 @@ export async function fetchWeeklyStats(clientId: string): Promise<WorkoutStats> 
 
 export async function fetchInsightStats(clientId: string): Promise<InsightStats> {
   const today = new Date();
-  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-    .toISOString()
-    .split("T")[0];
+  const startOfMonth = getLocalDateString(new Date(today.getFullYear(), today.getMonth(), 1));
 
   const { data: monthlySessions } = await supabase
     .from("workout_sessions_log")
@@ -114,7 +115,7 @@ export async function fetchTodayCompletedSessionTemplate(
   clientId: string,
   sessionTemplateId: string
 ): Promise<{ id: string } | null> {
-  const today = new Date().toISOString().split("T")[0];
+  const today = getLocalDateString();
   const { data } = await supabase
     .from("workout_sessions_log")
     .select("id")
@@ -137,7 +138,7 @@ export async function createWorkoutLogWithSets(
   setLogs: SetLogInput[],
   options?: { isStandalone?: boolean; exerciseChallenges?: ExerciseChallengeInput[] }
 ): Promise<{ workoutLogId?: string; error: Error | null }> {
-  const today = new Date().toISOString().split("T")[0];
+  const today = getLocalDateString();
   const isStandalone = options?.isStandalone ?? false;
   const programSessionId = isStandalone ? null : sessionId;
   const sessionTemplateId = isStandalone ? sessionId : null;
@@ -167,6 +168,10 @@ export async function createWorkoutLogWithSets(
     return { error: insertError ?? new Error("Failed to create workout log") };
   }
 
+  // Helper: roll back the parent log row so the user can retry cleanly
+  const rollback = () =>
+    supabase.from("workout_sessions_log").delete().eq("id", sessionLog.id);
+
   if (setLogs.length > 0) {
     const setLogRows = setLogs.map((s) => ({
       workout_session_log_id: sessionLog.id,
@@ -178,7 +183,8 @@ export async function createWorkoutLogWithSets(
 
     const { error: setError } = await supabase.from("set_logs").insert(setLogRows);
     if (setError) {
-      return { error: setError, workoutLogId: sessionLog.id };
+      await rollback();
+      return { error: setError };
     }
   }
 
@@ -193,7 +199,8 @@ export async function createWorkoutLogWithSets(
       .from("exercise_challenge_log")
       .insert(challengeRows);
     if (challengeError) {
-      return { error: challengeError, workoutLogId: sessionLog.id };
+      await rollback();
+      return { error: challengeError };
     }
   }
 
@@ -212,7 +219,7 @@ export async function createWorkoutLog(
     };
   }
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = getLocalDateString();
   const { data: sessionLog, error: insertError } = await supabase
     .from("workout_sessions_log")
     .insert({
@@ -285,8 +292,7 @@ export async function fetchTodayCompletedSession(
   clientId: string,
   programSessionId: string
 ): Promise<{ id: string } | null> {
-  const today = new Date().toISOString().split("T")[0];
-  return fetchCompletedSessionForDate(clientId, programSessionId, today);
+  return fetchCompletedSessionForDate(clientId, programSessionId, getLocalDateString());
 }
 
 export interface RecentLoad {
@@ -298,8 +304,8 @@ export async function fetchRecentLoad(clientId: string): Promise<RecentLoad> {
   const end = new Date();
   const start = new Date();
   start.setDate(start.getDate() - 6);
-  const startStr = start.toISOString().split("T")[0];
-  const endStr = end.toISOString().split("T")[0];
+  const startStr = getLocalDateString(start);
+  const endStr = getLocalDateString(end);
 
   const { data } = await supabase
     .from("workout_sessions_log")

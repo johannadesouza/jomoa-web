@@ -4,7 +4,9 @@ Schema som jomoa-mobile förväntar sig. Använd för att sätta upp en ny Supab
 
 **Förutsättning:** Supabase Auth är aktiverat. Tabellen `auth.users` finns.
 
-**Migrations:** Finns i `supabase/migrations/` – kör `001_jomoa_training_schema.sql` och `002_jomoa_rls.sql`.
+**Migrations:** User DB: `jomoa-mobile/supabase/migrations/` (001, 002, …) och `supabase/user/migrations/` (t.ex. 003_cycle_engine.sql). Content: `supabase/content/migrations/`.
+
+**Verifiering User-DB:** Tabellen `daily_insight_log` krävs av `insightService` (dagens insikt på Hem). Om den saknas får du PGRST205/fel vid sparande. Definition finns i `jomoa-mobile/supabase/migrations/001_jomoa_training_schema.sql` – kör den migrationen (eller motsvarande) mot User-DB så att tabellen skapas.
 
 ---
 
@@ -19,7 +21,11 @@ Kopplar auth.users till klient-profil.
 | profile_id | uuid, FK → auth.users.id | |
 | status | text | |
 | onboarding_stage | text, nullable | t.ex. "completed" |
+| presentation_profile | text | male / female / neutral – för anpassat innehåll |
+| presentation_theme | text | bold / soft / neutral |
 | created_at | timestamptz | |
+
+(Fler kolumner kan finnas från tidigare migrations; se `supabase/migrations/` och `supabase/user/migrations/`.)
 
 ### training_programs
 Programmallar.
@@ -120,7 +126,7 @@ Dagliga insikter.
 | tags | jsonb (array) |
 
 ### cycle_events
-Cykelhändelser (t.ex. period_start).
+Legacy cykelhändelser (t.ex. period_start). Används fortfarande för periodloggning; cycle engine använder även denna data vid behov.
 
 | Kolumn | Typ |
 |--------|-----|
@@ -130,7 +136,15 @@ Cykelhändelser (t.ex. period_start).
 | source | text |
 
 ### cycle_phases, cycle_symptoms
-Cykelfaser och symptom (valfritt).
+Cykelfaser och symptom (valfritt; innehåll kan ligga i Content DB).
+
+### Cycle engine (User DB)
+
+Tabellerna finns i `supabase/user/migrations/003_cycle_engine.sql`:
+
+- **cycles** – aktiva och avslutade cyklar (start_date, end_date, length_days, status).
+- **cycle_stats** – rolling average/stddev, last_cycle_length_days, last_period_start_date.
+- **user_cycle_settings** – per klient: mode (regular | missing_period | perimenopause), missing_period_threshold_days, overdue_soft_days, overdue_hard_days.
 
 ---
 

@@ -28,7 +28,22 @@ function ActionButton({
   );
 }
 
-function IconWrapper({ icon, IconContainer }: { icon: React.ReactNode; IconContainer: React.ComponentType<{ children: React.ReactNode }> }) {
+function IconWrapper({
+  icon,
+  iconName,
+  IconContainer,
+}: {
+  icon?: React.ReactNode;
+  iconName?: AppIconName;
+  IconContainer: React.ComponentType<{ children: React.ReactNode }>;
+}) {
+  if (iconName && !icon) {
+    return (
+      <IconContainer>
+        <AppIcon name={iconName} size={48} color="$colorSecondary" />
+      </IconContainer>
+    );
+  }
   if (!icon) return null;
   // I RN måste strängar (t.ex. emoji) wrappas i Text
   const content = typeof icon === "string" ? <AppText variant="h1">{icon}</AppText> : icon;

@@ -7,6 +7,7 @@ import { Screen, AppText, AppButton, Card } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
 import { OnboardingStepDots } from "./OnboardingStepDots";
+import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, "Frequency">;
 
@@ -19,6 +20,7 @@ const FREQUENCIES = [
 
 export function FrequencyScreen({ navigation }: Props) {
   const { data, updateData, setCurrentStep } = useOnboarding();
+  const copy = useAppCopy("sv", data.presentationProfile);
 
   const handleSelectFrequency = (frequency: number) => {
     if (data.trainingFrequency === frequency) {
@@ -44,9 +46,9 @@ export function FrequencyScreen({ navigation }: Props) {
       <YStack flex={1} justifyContent="space-between">
         <YStack gap="$6" paddingTop="$4">
           <YStack gap="$2">
-            <AppText variant="h1">Hur ofta vill du träna?</AppText>
+            <AppText variant="h1">{getAppCopy(copy, "frequency_title", "Hur ofta vill du träna?")}</AppText>
             <AppText variant="body" muted>
-              Vi anpassar ditt program efter din tid
+              {getAppCopy(copy, "frequency_subtitle", "Vi anpassar programmet efter din tid")}
             </AppText>
           </YStack>
 

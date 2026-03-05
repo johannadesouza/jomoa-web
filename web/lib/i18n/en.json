@@ -1,146 +1,266 @@
 {
   "hero": {
-    "h1": "Your strength. Your cycle. Your life.",
-    "subheadline": "You train seriously. The app keeps your plan clear, even when life moves.",
-    "body": "One place for strength, cycle, and life phases — without extreme rules or guilt.",
-    "cta": "Join waitlist",
-    "ctaSubtext": "Get updates and an invitation when we open the beta."
+    "h1": "Training with structure over time",
+    "subheadline": "Log sessions, do a short check-in and get clear decisions: push, hold or adjust.",
+    "body": "",
+    "cta": "Download the app",
+    "ctaB2C": "Download the app",
+    "ctaB2B": "For companies",
+    "ctaSubtext": ""
+  },
+  "weekDemo": {
+    "title": "A week with JOMOA",
+    "chooseDayLabel": "Pick a day",
+    "appSuggestsLabel": "App suggests:",
+    "badgeLabel": "Today's decision",
+    "defaultLine": "The default is to keep the plan. Adjustments when needed.",
+    "days": [
+      {
+        "day": "Mon",
+        "entry": "Session + check-in. App suggests: Hold."
+      },
+      {
+        "day": "Wed",
+        "entry": "Poor sleep. Check-in. App suggests: Adjust – lighter session."
+      },
+      {
+        "day": "Fri",
+        "entry": "Feeling good. App suggests: Push load."
+      }
+    ],
+    "increase": "Push",
+    "hold": "Hold",
+    "adjust": "Adjust"
+  },
+  "screenshotTour": {
+    "title": "What the app looks like",
+    "labels": [
+      "Calendar",
+      "Check-in",
+      "Workout",
+      "Decision",
+      "Insights",
+      "Cycle"
+    ]
+  },
+  "segment": {
+    "b2c": "For individuals",
+    "b2b": "For companies"
+  },
+  "chapterHeadings": {
+    "how": "How JOMOA works",
+    "forYou": "For you",
+    "choose": "Choose your path"
+  },
+  "whyJomoa": {
+    "heading": "Why JOMOA",
+    "problem": "Linear apps don't fit real life. Same plan every week, regardless of sleep, stress, or life events.",
+    "solution": "A structured plan that adapts to how you feel – sleep, stress and, if you want, your cycle. JOMOA helps you adjust your training – not restart."
+  },
+  "howItWorks": {
+    "heading": "How it works",
+    "step1": {
+      "title": "Choose your plan",
+      "description": "Pick a program that matches your goals. Clear sessions, sets and reps.",
+      "screenshotAlt": "App screen: program selection"
+    },
+    "step2": {
+      "title": "Log sessions and check-in",
+      "description": "Save sets, reps, weights and times for each session. Plus a short daily check-in: sleep, energy, stress, soreness. The app builds on real data.",
+      "screenshotAlt": "App screen: check-in"
+    },
+    "step3": {
+      "title": "Progression and regression",
+      "description": "Get automatic tips on when to increase load and when to take it easy – based on your log and your circumstances. Push, Hold, or Adjust.",
+      "screenshotAlt": "App screen: daily recommendation"
+    }
+  },
+  "pauseQuote": {
+    "sentence": "The default is to keep the plan. Adjustments only when needed.",
+    "cta": "Download the app"
+  },
+  "readiness": {
+    "heading": "Adjust based on how you feel",
+    "oneLiner": "The app adapts to sleep, stress and, if you want, your cycle.",
+    "intro": "The app is built on how you feel today – sleep, stress, recovery and, if you want, your cycle. Instead of running the same plan every week you get a clear suggestion: increase load, hold, or take it easier today.",
+    "default": "The default is to keep the plan. Adjustments only when needed.",
+    "vsLinear": "Unlike linear apps that expect the same performance every week, JOMOA adapts the recommendation to how you actually feel – and, if you use cycle support, to your phase."
+  },
+  "womenHealth": {
+    "heading": "Cycle and life phases",
+    "intro": "Cycle, perimenopause and pregnancy affect how you feel and how training lands. JOMOA helps you adjust – not start over.",
+    "items": [
+      {
+        "title": "Cycle and phase",
+        "description": "See how phase affects you and get suggestions that adapt."
+      },
+      {
+        "title": "Perimenopause and menopause",
+        "description": "How sleep, stress and training connect – adjust based on how you feel."
+      },
+      {
+        "title": "Pregnancy (coming)",
+        "description": "Support to adapt sessions by week and how you feel is coming in the app."
+      },
+      {
+        "title": "Missing period and recovery",
+        "description": "When your body needs a different focus – the app follows."
+      }
+    ]
+  },
+  "examples": {
+    "heading": "What it can look like",
+    "items": [
+      "Period: the app can suggest lighter load or shorter sessions when that fits you.",
+      "Menopause: see how sleep, stress and training connect – and adjust based on how you feel.",
+      "Pregnancy: support to adapt sessions by week and how you feel is coming in the app."
+    ]
+  },
+  "calendar": {
+    "heading": "Calendar and life",
+    "body": "See training and everyday life in one view – so you see when sleep, stress or cycle affect you, and can adjust. Move sessions, protect progression."
+  },
+  "optionalBody": {
+    "heading": "A support for understanding your body",
+    "intro": "For many women this is the core:",
+    "items": [
+      "Cycle and phase",
+      "Perimenopause and menopause",
+      "Pregnant or trying to conceive",
+      "Missing period"
+    ],
+    "footer": "Fully optional. The app works fully without – many use just plan, logging and adjustments."
+  },
+  "whoIsItFor": {
+    "heading": "For you – regardless of life stage",
+    "asWoman": "As a woman: a support to understand how your body affects training – through your cycle, menopause and (coming) pregnancy support. Adjust instead of starting over.",
+    "asMan": "As a man: a simple pep talk for consistency. Log when you've slept worse or feel off – get clear decisions (Push, Hold, Adjust) so you keep going."
+  },
+  "b2cBlock": {
+    "heading": "For individuals",
+    "plans": "Monthly · Quarterly · Half-year · Yearly",
+    "cta": "Download the app",
+    "ctaSubtext": "Available on App Store and Google Play."
+  },
+  "b2bBlock": {
+    "heading": "For companies",
+    "bullets": [
+      "Annual license, seat-based",
+      "Employees get full app access",
+      "Aggregated metrics only – no individual data"
+    ],
+    "cta": "Contact us"
+  },
+  "faq": {
+    "heading": "FAQ",
+    "q1": "Is it a period app?",
+    "a1": "You get insights about hormones and phases beyond training. At its core, JOMOA is a training system that adapts to how you feel – with optional cycle support if you want to understand more.",
+    "q2": "Does it work for men?",
+    "a2": "Yes. Without the cycle module you get the same clear plan and adjustments based on sleep, stress and performance – for everyone.",
+    "q3": "Can companies see individual data?",
+    "a3": "No. The company only gets aggregated metrics (e.g. usage). No individual health data.",
+    "q4": "Do I get tips when sleep, travel or illness affects me?",
+    "a4": "Yes. With the daily check-in (sleep, stress, energy) the app has what it needs to recommend. When sleep is poor, after travel or illness we recommend logging it in the check-in and following the app’s suggestion – push, hold or adjust – so you can adapt instead of feeling you’ve failed."
   },
   "problem": {
-    "heading": "You train seriously. Your app doesn't see you.",
-    "body1": "Most apps expect the same performance every week. They don't account for how your cycle, life phases, and daily reality actually affect strength and recovery.",
-    "body2": "You want structure that understands your body, not a one-size-fits-all plan.",
+    "heading": "Why JOMOA",
+    "body1": "Linear apps don't fit real life.",
+    "body2": "A structured plan that adjusts to how you feel – not restart.",
     "body3": ""
   },
   "variation": {
-    "heading": "Your strength goes in waves.",
-    "subheading": "This is how the body works.",
-    "items": [
-      "Some weeks you feel sharp and strong",
-      "Other weeks everything feels heavy",
-      "Life phases change how training lands in the body",
-      "Missing period or constant fatigue is a signal, not a failure"
-    ],
-    "footer": "JOMOA helps you name what you feel, instead of blaming yourself."
+    "heading": "",
+    "subheading": "",
+    "items": [],
+    "footer": ""
   },
   "phases": {
-    "heading": "One app for all your phases.",
-    "subheading": "From first cycle to menopause.",
-    "body1": "You should not need one app for strength, one for your period, and one for life phases.",
-    "body2": "JOMOA keeps it in one place, so you can see the full picture over time.",
-    "examplesHeading": "Key life stages and situations:",
-    "items": [
-      {
-        "title": "menstrual cycle — how strength and symptoms shift over the month",
-        "icon": "calendar"
-      },
-      {
-        "title": "missing period or low energy availability",
-        "icon": "activity"
-      },
-      {
-        "title": "building a solid strength base before pregnancy",
-        "icon": "shield"
-      },
-      {
-        "title": "returning to lifting and running postpartum",
-        "icon": "baby"
-      },
-      {
-        "title": "training through perimenopause and menopause",
-        "icon": "waves"
-      }
-    ],
-    "footer1": "You see how your body responds in each phase.",
-    "footer2": "Your training adapts instead of starting from zero every time."
+    "heading": "",
+    "subheading": "",
+    "body1": "",
+    "body2": "",
+    "examplesHeading": "",
+    "items": [],
+    "footer1": "",
+    "footer2": ""
   },
   "data": {
-    "heading": "Data that helps you make clear choices.",
-    "body": "The app connects your strength training with:",
-    "patterns": [
-      "session data (sets, reps, load, RPE)",
-      "cycle phase and symptoms",
-      "sleep and recovery",
-      "stress and workload",
-      "lifestyle factors"
-    ],
-    "insight": "You see simple, neutral information: when to go heavier, when to stay steady, and how lifestyle factors affect you over time.",
-    "client": "\"I can train hard, go out to dinner, and still know exactly what my body needs next.\"",
-    "coach": "Health does not mean restriction. It means awareness. The app gives you clear information. You choose how to live."
+    "heading": "",
+    "body": "",
+    "patterns": [],
+    "insight": "",
+    "client": "",
+    "coach": ""
   },
   "features": {
-    "heading": "In the app, you get:",
+    "heading": "In the app you get",
     "items": [
       {
-        "title": "Structured strength programs",
-        "description": "Choose from progressive programs with clear sets, reps, and suggested loads. Get recommendations based on your goals.",
+        "title": "Structured programs",
+        "description": "Progressive programs with clear sessions, sets and reps. Matches your goals.",
         "icon": "calendar"
       },
       {
-        "title": "Integrated cycle tracking",
-        "description": "Log your cycle in the app. See predicted ovulation, expected period, and when something looks off.",
-        "icon": "calendar"
-      },
-      {
-        "title": "Adaptive adjustments",
-        "description": "The app adapts your plan based on readiness, cycle phase, age, and how life factors — travel, late nights, social plans — affect you.",
-        "icon": "activity"
-      },
-      {
-        "title": "Life-stage specific logic",
-        "description": "Gentle pathways for missing period, pregnancy prep, postpartum, or peri/menopause.",
-        "icon": "heart"
-      },
-      {
-        "title": "Simple logging",
-        "description": "Track training, cycle, sleep, and stress in seconds.",
+        "title": "Logging that saves everything",
+        "description": "Save sets, reps, weights and times. The basis for progression and regression tips.",
         "icon": "brain"
       },
       {
-        "title": "Clear, neutral insights",
-        "description": "See how lifestyle factors affect you over time. The app shows you the data — you make the decisions.",
+        "title": "Progression and regression",
+        "description": "Automatic tips on when to increase or take it easy – based on your log and sleep, stress, optionally cycle.",
+        "icon": "activity"
+      },
+      {
+        "title": "Calendar for training and life",
+        "description": "See when sleep, stress or cycle affect you. Move sessions, protect progression.",
+        "icon": "calendar"
+      },
+      {
+        "title": "Cycle for those who want it",
+        "description": "Support through cycle and menopause; pregnancy support coming. Optional – the app works fully without.",
+        "icon": "heart"
+      },
+      {
+        "title": "Insights over time",
+        "description": "See how sleep, stress and training connect. You decide.",
         "icon": "trending-up"
       }
     ]
   },
   "forEveryone": {
     "heading": "Is JOMOA for you?",
-    "body": "The app is built for women who:",
+    "body": "For you if you:",
     "clients": [
-      "care about strength, performance or body goals",
-      "want structure without hiring a personal coach",
-      "want one place for strength, cycle and life phases"
+      "want training that adapts – not the same plan every week",
+      "want to understand how cycle, menopause or pregnancy affect you – or just how you feel today",
+      "want to save reps and weights and get clear decisions: push, hold or adjust"
     ],
-    "footer": "The tone is neutral, evidence-based, and practical — no hype, no judgement, no \"feminine energy\" language."
+    "footer": "Calm, clear and structured. With support for women’s bodies when you want it."
   },
   "steps": {
-    "heading": "How the app works.",
-    "intro": "A calm, structured way to keep progressing — even when life is not linear.",
+    "heading": "How it works",
+    "intro": "A calm, structured way to protect progression.",
     "items": [
       {
-        "title": "Set your baseline",
-        "description": "Enter your training history, current level, goals, age, and life stage."
+        "title": "Choose your plan",
+        "description": "Structured program that matches goals and frequency."
       },
       {
-        "title": "Choose your program",
-        "description": "Select a strength program that fits you, with recommendations based on your goals."
+        "title": "Log sessions + check-in",
+        "description": "Training and short daily check-in."
       },
       {
-        "title": "Train, log, adjust",
-        "description": "Log training, cycle, energy, sleep, and stress. The app adapts your plan based on readiness, cycle phase, age, and how life factors — travel, late nights, social plans — affect you."
-      },
-      {
-        "title": "See the patterns",
-        "description": "See when to push, when to hold, and how your body responds over time."
+        "title": "Clear decision",
+        "description": "Push, Hold, or Adjust – so you know what applies today."
       }
     ]
   },
   "ctaFooter": {
-    "h1": "Train smart. Rest when you need. Live fully.",
-    "h2": "Join the waitlist",
-    "cta": "Join waitlist",
-    "subtext": "For women who want serious strength, clear structure, and space for real life.",
-    "trust": "We only email when there is something relevant — no spam, no pressure."
+    "h1": "Continuity in training. Adjust when life demands it.",
+    "h2": "Download the app",
+    "cta": "Download the app",
+    "subtext": "For anyone who wants clear structure – regardless of life stage.",
+    "trust": ""
   },
   "waitlist": {
     "heading": "Join the waitlist",
@@ -163,10 +283,13 @@
     "privacy": "Your privacy matters. We only use your email to notify you about JOMOA and the beta launch."
   },
   "footer": {
-    "research": "Based on research in exercise physiology, women's health, and behavior change.",
+    "research": "Training that adapts to how you feel and, optionally, your cycle. Evidence-based.",
     "copyright": "JOMOA. All rights reserved.",
     "privacy": "Your privacy matters. We'll only use your email to notify you about the beta launch.",
     "links": {
+      "individuals": "For individuals",
+      "companies": "For companies",
+      "waitlist": "Waitlist",
       "privacy": "Privacy Policy",
       "contact": "Contact"
     },
@@ -409,5 +532,5 @@
       "title": "What is JOMOA?",
       "description": "JOMOA is a strength training app for women that combines female physiology, behavior, and cyclical health to create smart, sustainable progress."
     }
-}
+  }
 }

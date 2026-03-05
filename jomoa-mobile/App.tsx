@@ -5,16 +5,31 @@ import {
   Cormorant_600SemiBold,
 } from "@expo-google-fonts/cormorant";
 import { ActivityIndicator, View } from "react-native";
+import { initSentry, wrapWithSentry } from "./src/lib/sentry";
+
+const SENTRY_DSN = process.env.EXPO_PUBLIC_SENTRY_DSN ?? "";
+initSentry(SENTRY_DSN);
 import { TamaguiProvider, Theme } from "tamagui";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
+import { useEffect } from "react";
 import tamaguiConfig from "./tamagui.config";
 import { RootNavigator } from "./src/navigation/RootNavigator";
+import { ErrorBoundary } from "./src/shared/ui/ErrorBoundary";
 import { AuthProvider } from "./src/shared/context/AuthContext";
+import { AppNowProvider } from "./src/shared/context/AppNowContext";
+import { FeatureFlagsProvider } from "./src/shared/context/FeatureFlagsContext";
+import { ScenarioProvider } from "./src/shared/context/ScenarioContext";
 import { AssignmentProvider } from "./src/shared/context/AssignmentContext";
 import { CycleProvider } from "./src/shared/context/CycleContext";
 import { ThemeProvider, useTheme } from "./src/shared/context/ThemeContext";
 import { getThemeColors } from "./src/shared/theme/colors";
+import { useAuth } from "./src/shared/context/AuthContext";
+import {
+  requestNotificationPermissions,
+  scheduleDailyCheckin,
+  isDailyCheckinScheduled,
+} from "./src/lib/services/notificationService";
 
 function LoadingScreen() {
   const { theme } = useTheme();
@@ -33,27 +48,59 @@ function LoadingScreen() {
   );
 }
 
+function NotificationSetup() {
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    async function setup() {
+      const granted = await requestNotificationPermissions();
+      if (!granted) return;
+
+      // Schemalägg bara om ingen notis redan finns — undviker reset vid varje öppning
+      const alreadyScheduled = await isDailyCheckinScheduled();
+      if (!alreadyScheduled) {
+        await scheduleDailyCheckin(7, 30);
+      }
+    }
+
+    setup();
+  }, [isAuthenticated]);
+
+  return null;
+}
+
 function AppContent() {
   const { theme } = useTheme();
   return (
-    <Theme name={theme}>
-      <SafeAreaProvider>
-        <AuthProvider>
-          <AssignmentProvider>
-          <CycleProvider>
-          <NavigationContainer>
-            <StatusBar style={theme === "dark" ? "light" : "dark"} />
-            <RootNavigator />
-          </NavigationContainer>
-          </CycleProvider>
-          </AssignmentProvider>
-        </AuthProvider>
-      </SafeAreaProvider>
-    </Theme>
+    <ErrorBoundary>
+      <Theme name={theme}>
+        <SafeAreaProvider>
+          <FeatureFlagsProvider>
+          <AuthProvider>
+            <AppNowProvider>
+            <ScenarioProvider>
+            <NotificationSetup />
+            <AssignmentProvider>
+            <CycleProvider>
+            <NavigationContainer>
+              <StatusBar style={theme === "dark" ? "light" : "dark"} />
+              <RootNavigator />
+            </NavigationContainer>
+            </CycleProvider>
+            </AssignmentProvider>
+            </ScenarioProvider>
+            </AppNowProvider>
+          </AuthProvider>
+          </FeatureFlagsProvider>
+        </SafeAreaProvider>
+      </Theme>
+    </ErrorBoundary>
   );
 }
 
-export default function App() {
+function App() {
   const [fontsLoaded] = useFonts({
     Cormorant_400Regular,
     Cormorant_600SemiBold,
@@ -71,3 +118,5 @@ export default function App() {
     </ThemeProvider>
   );
 }
+
+export default wrapWithSentry(App);

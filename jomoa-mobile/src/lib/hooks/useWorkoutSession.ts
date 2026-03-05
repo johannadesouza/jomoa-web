@@ -303,8 +303,6 @@ export function useWorkoutSession(
         { isStandalone, exerciseChallenges: exerciseChallengesInput }
       );
 
-      setIsSaving(false);
-
       if (!error) {
         try {
           await clearInProgressWorkout();
@@ -315,6 +313,7 @@ export function useWorkoutSession(
         }
       }
 
+      setIsSaving(false);
       return { error };
     },
     [clientId, session, logs, isStandalone]

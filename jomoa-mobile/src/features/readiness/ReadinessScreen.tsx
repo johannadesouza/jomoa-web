@@ -12,10 +12,12 @@ import {
   LoadingScreen,
 } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
+import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
 import { useReadiness } from "../../lib/hooks/useReadiness";
-import { useCycle } from "../../lib/hooks/useCycle";
+import { useCycleContext } from "../../shared/context/CycleContext";
 import { saveReadiness } from "../../lib/services/readinessService";
 import { getLocalDateString } from "../../lib/utils/date";
+import { PerimenopauseSymptomCheckin } from "./PerimenopauseSymptomCheckin";
 
 function clamp(value: string, min: number, max: number): number | null {
   const n = parseFloat(value);
@@ -26,8 +28,9 @@ function clamp(value: string, min: number, max: number): number | null {
 export function ReadinessScreen() {
   const navigation = useNavigation();
   const { client } = useAuth();
+  const copy = useAppCopy("sv");
   const { readiness, isLoading, refetch } = useReadiness(client?.id);
-  const { phaseLabel } = useCycle(client?.id);
+  const { phaseLabel, mode } = useCycleContext();
 
   const [sleepHours, setSleepHours] = useState("");
   const [sleepQuality, setSleepQuality] = useState("");
@@ -74,7 +77,9 @@ export function ReadinessScreen() {
   return (
     <Screen scroll padded>
       <YStack gap="$6">
-        <Section title="Hur mår du idag?">
+        {mode === "perimenopause" && <PerimenopauseSymptomCheckin />}
+
+        <Section title={getAppCopy(copy, "readiness_section_title", "Hur mår du idag?")}>
           <YStack gap="$2">
             {phaseLabel && phaseLabel !== "Okänd" && (
               <AppText variant="small" color="$accent">

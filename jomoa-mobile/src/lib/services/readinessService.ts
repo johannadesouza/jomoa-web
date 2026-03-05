@@ -5,6 +5,8 @@
 
 import { supabase } from "../../config/supabase";
 import { getLocalDateString } from "../utils/date";
+import { calculateReadinessScore, type ReadinessScoreWeights } from "../domain/readinessScore";
+import { getCachedFlags } from "./appConfigService";
 
 export interface ReadinessData {
   client_id: string;
@@ -30,35 +32,29 @@ export interface ReadinessRecord {
   updated_at: string;
 }
 
-function calculateReadinessScore(data: {
-  sleep_quality?: number | null;
-  energy_level?: number | null;
-  stress_level?: number | null;
-  soreness?: number | null;
-}): number | null {
-  const factors: number[] = [];
-  if (data.sleep_quality != null) {
-    factors.push((data.sleep_quality / 10) * 25);
+function getReadinessWeightsFromConfig(): ReadinessScoreWeights | null {
+  const flags = getCachedFlags();
+  if (!flags) return null;
+  const raw = (flags as Record<string, unknown>)["readiness_weights"];
+  if (raw == null) return null;
+  if (typeof raw === "object" && !Array.isArray(raw)) return raw as ReadinessScoreWeights;
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw) as ReadinessScoreWeights;
+      return parsed && typeof parsed === "object" ? parsed : null;
+    } catch {
+      return null;
+    }
   }
-  if (data.energy_level != null) {
-    factors.push((data.energy_level / 10) * 30);
-  }
-  if (data.stress_level != null) {
-    factors.push(((10 - data.stress_level) / 10) * 20);
-  }
-  if (data.soreness != null) {
-    factors.push(((10 - data.soreness) / 10) * 25);
-  }
-  if (factors.length === 0) return null;
-  const score = factors.reduce((a, b) => a + b, 0) / factors.length;
-  return Math.round(Math.max(0, Math.min(100, score)));
+  return null;
 }
 
 export async function saveReadiness(
   data: ReadinessData
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const readinessScore = calculateReadinessScore(data);
+    const weights = getReadinessWeightsFromConfig();
+    const readinessScore = calculateReadinessScore(data, weights);
 
     const { data: existing } = await supabase
       .from("daily_readiness")

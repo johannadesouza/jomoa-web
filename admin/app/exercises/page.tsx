@@ -1,5 +1,7 @@
 import { adminContentClient } from "@/lib/contentClient";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { ConfirmDeleteButton } from "../ConfirmDeleteButton";
 
 interface Exercise {
   id: string;
@@ -28,6 +30,7 @@ async function createExercise(formData: FormData) {
     default_video_url: (formData.get("default_video_url") as string)?.trim() || null,
   });
   revalidatePath("/exercises");
+  redirect("/exercises?saved=1");
 }
 
 async function updateExercise(formData: FormData) {
@@ -41,6 +44,7 @@ async function updateExercise(formData: FormData) {
     default_video_url: (formData.get("default_video_url") as string)?.trim() || null,
   }).eq("id", id);
   revalidatePath("/exercises");
+  redirect("/exercises?saved=1");
 }
 
 async function deleteExercise(formData: FormData) {
@@ -49,13 +53,24 @@ async function deleteExercise(formData: FormData) {
   if (!id) return;
   await adminContentClient.from("exercises").delete().eq("id", id);
   revalidatePath("/exercises");
+  redirect("/exercises?saved=1");
 }
 
-export default async function ExercisesPage() {
+export default async function ExercisesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ saved?: string }>;
+}) {
+  const { saved } = await searchParams;
   const exercises = await getExercises();
 
   return (
     <div>
+      {saved === "1" && (
+        <p style={{ marginBottom: 16, padding: "10px 16px", background: "#E8F5E9", color: "#2E7D32", borderRadius: 8, fontSize: 14 }}>
+          Sparat!
+        </p>
+      )}
       <h1>Övningar ({exercises.length})</h1>
 
       <details style={{ marginBottom: 32 }}>
@@ -111,7 +126,7 @@ export default async function ExercisesPage() {
                 </div>
                 <div style={{ gridColumn: "1 / -1", display: "flex", gap: 8 }}>
                   <button type="submit" style={saveBtnStyle}>Spara ändringar</button>
-                  <button formAction={deleteExercise} style={deleteBtnStyle}>Ta bort</button>
+                  <ConfirmDeleteButton action={deleteExercise} formData={{ id: ex.id }} style={deleteBtnStyle} />
                 </div>
               </form>
             </div>

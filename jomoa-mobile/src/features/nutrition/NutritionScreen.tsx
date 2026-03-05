@@ -35,7 +35,9 @@ export function NutritionScreen() {
             <EmptyState
               iconName="nutrition-outline"
               title="Kost kommer snart"
-              description="Här får du tips om näring anpassat efter din cykelfas och dina mål."
+              description="Här får du tips om näring anpassat efter din cykelfas och dina mål. Läs mer under Lär dig tills dess."
+              actionLabel="Läs om kost och cykel"
+              onAction={() => navigation.navigate("LearnTab")}
             />
           </Card.Content>
         </Card>

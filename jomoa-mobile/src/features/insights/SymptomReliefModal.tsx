@@ -1,13 +1,14 @@
 /**
  * SymptomReliefModal – Specifika symtomlindringstips (Trötthet, Uppblåsthet, etc.)
  */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, ScrollView, Pressable } from "react-native";
 import { YStack, XStack } from "tamagui";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { AppText, AppButton } from "../../shared/ui";
 import { SYMPTOM_RELIEF, type SymptomId } from "../../lib/data/symptomReliefData";
+import { fetchSymptomReliefBySymptom, type SymptomReliefEntry } from "../../lib/repos/contentRepo";
 import { useTheme } from "../../shared/context/ThemeContext";
 import { getThemeColors } from "../../shared/theme/colors";
 
@@ -26,7 +27,25 @@ export function SymptomReliefModal({
 }: SymptomReliefModalProps) {
   const { theme } = useTheme();
   const colors = getThemeColors(theme);
-  const content = symptomId ? SYMPTOM_RELIEF[symptomId] : null;
+  const [content, setContent] = useState<{ headline: string; tips: string[] } | null>(null);
+
+  useEffect(() => {
+    if (!visible || !symptomId) {
+      setContent(null);
+      return;
+    }
+    const fallback = SYMPTOM_RELIEF[symptomId];
+    fetchSymptomReliefBySymptom(symptomId)
+      .then((entry: SymptomReliefEntry | null) => {
+        if (entry) setContent({ headline: entry.headline, tips: entry.tips });
+        else if (fallback) setContent({ headline: fallback.headline, tips: fallback.tips });
+        else setContent(null);
+      })
+      .catch(() => {
+        if (fallback) setContent({ headline: fallback.headline, tips: fallback.tips });
+        else setContent(null);
+      });
+  }, [visible, symptomId]);
 
   if (!content) return null;
 

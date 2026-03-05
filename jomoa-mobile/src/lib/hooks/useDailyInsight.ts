@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useAppNow } from "../../shared/context/AppNowContext";
 import { useCycle } from "./useCycle";
 import { useReadiness } from "./useReadiness";
 import {
@@ -29,11 +30,20 @@ function readinessToTier(
   return null;
 }
 
-export function useDailyInsight(clientId: string | undefined) {
+export interface UseDailyInsightOptions {
+  defaultInsightTitle?: string;
+}
+
+export function useDailyInsight(
+  clientId: string | undefined,
+  options?: UseDailyInsightOptions
+) {
+  const appNow = useAppNow();
   const { phase, cycleDay } = useCycle(clientId);
   const { readiness } = useReadiness(clientId);
   const [insight, setInsight] = useState<DailyInsight | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const defaultTitle = options?.defaultInsightTitle;
 
   const inputRef = useRef({
     phase: phase ?? null,
@@ -58,24 +68,29 @@ export function useDailyInsight(clientId: string | undefined) {
     try {
       const { phase: p, cycleDay: cd, readinessTier: tier, energyLevel: energy } = inputRef.current;
       const hasSymptoms = await getTodayHasSymptoms(clientId);
-      const { data, error } = await getOrCreateTodayInsight(clientId, {
-        phase: p,
-        cycleDay: cd,
-        readinessTier: tier,
-        energyLevel: energy,
-        hasSymptoms,
-      });
+      const today = appNow.todayString();
+      const { data, error } = await getOrCreateTodayInsight(
+        clientId,
+        {
+          phase: p,
+          cycleDay: cd,
+          readinessTier: tier,
+          energyLevel: energy,
+          hasSymptoms,
+        },
+        { date: today, defaultTitle: defaultTitle ?? undefined }
+      );
       if (!error && data) {
         setInsight(data);
       } else {
-        const fallback = await getTodayInsight(clientId);
+        const fallback = await getTodayInsight(clientId, today);
         if (fallback.data) setInsight(fallback.data);
         else setInsight(null);
       }
     } finally {
       setIsLoading(false);
     }
-  }, [clientId]);
+  }, [clientId, appNow, defaultTitle]);
 
   useEffect(() => {
     if (!clientId) return;

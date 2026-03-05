@@ -42,6 +42,7 @@ export type { AppIconName } from "./AppIcon";
 export { LoadingScreen } from "./LoadingScreen";
 export { EmptyState } from "./EmptyState";
 export { ErrorState } from "./ErrorState";
+export { ErrorBoundary } from "./ErrorBoundary";
 
 // Types
 export type { ScreenProps } from "./Screen";

@@ -1,5 +1,7 @@
 import { adminContentClient } from "@/lib/contentClient";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { ConfirmDeleteButton } from "../ConfirmDeleteButton";
 
 interface Article {
   id: string;
@@ -38,6 +40,7 @@ async function createArticle(formData: FormData) {
     status: "draft",
   });
   revalidatePath("/articles");
+  redirect("/articles?saved=1");
 }
 
 async function updateArticle(formData: FormData) {
@@ -53,6 +56,7 @@ async function updateArticle(formData: FormData) {
     locale: (formData.get("locale") as string) || "sv",
   }).eq("id", id);
   revalidatePath("/articles");
+  redirect("/articles?saved=1");
 }
 
 async function publishArticle(formData: FormData) {
@@ -63,6 +67,7 @@ async function publishArticle(formData: FormData) {
     .update({ status: "published", published_at: new Date().toISOString() })
     .eq("id", id);
   revalidatePath("/articles");
+  redirect("/articles?saved=1");
 }
 
 async function unpublishArticle(formData: FormData) {
@@ -73,6 +78,7 @@ async function unpublishArticle(formData: FormData) {
     .update({ status: "draft", published_at: null })
     .eq("id", id);
   revalidatePath("/articles");
+  redirect("/articles?saved=1");
 }
 
 async function archiveArticle(formData: FormData) {
@@ -81,6 +87,7 @@ async function archiveArticle(formData: FormData) {
   if (!id) return;
   await adminContentClient.from("articles").update({ status: "archived" }).eq("id", id);
   revalidatePath("/articles");
+  redirect("/articles?saved=1");
 }
 
 async function deleteArticle(formData: FormData) {
@@ -89,6 +96,7 @@ async function deleteArticle(formData: FormData) {
   if (!id) return;
   await adminContentClient.from("articles").delete().eq("id", id);
   revalidatePath("/articles");
+  redirect("/articles?saved=1");
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -186,10 +194,7 @@ export default async function ArticlesPage() {
                     <button type="submit" style={{ ...deleteBtnStyle, color: "#9E9E9E", borderColor: "#9E9E9E" }}>Arkivera</button>
                   </form>
                 )}
-                <form action={deleteArticle}>
-                  <input type="hidden" name="id" value={a.id} />
-                  <button type="submit" style={deleteBtnStyle}>Ta bort</button>
-                </form>
+                <ConfirmDeleteButton action={deleteArticle} formData={{ id: a.id }} style={deleteBtnStyle} />
               </div>
 
               {/* Redigera-formulär */}

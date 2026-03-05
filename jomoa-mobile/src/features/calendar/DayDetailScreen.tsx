@@ -282,8 +282,22 @@ function DayDetailCykelView({
 
 export function DayDetailScreen({ navigation, route }: Props) {
   const { client } = useAuth();
-  const { date, mode } = route.params;
+  const date = route.params?.date;
+  const mode = route.params?.mode;
   const effectiveMode = mode ?? "träning";
+
+  if (!date) {
+    return (
+      <Screen padded centered>
+        <AppText variant="body" muted center>
+          Ogiltig dag – gå tillbaka och välj en dag i kalendern.
+        </AppText>
+        <AppButton variant="secondary" onPress={() => navigation.goBack()}>
+          Tillbaka
+        </AppButton>
+      </Screen>
+    );
+  }
   const [programSessions, setProgramSessions] = useState<ProgramSessionData[]>([]);
   const [standaloneSessions, setStandaloneSessions] = useState<Array<{ id: string; name: string; focus: string | null }>>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);

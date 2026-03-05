@@ -106,6 +106,8 @@ export function ProgramListScreen({ navigation }: Props) {
                   iconName="list-outline"
                   title="Inga program"
                   description="Det finns inga tillgängliga program just nu."
+                  actionLabel="Tillbaka"
+                  onAction={() => navigation.goBack()}
                 />
               </Card.Content>
             </Card>

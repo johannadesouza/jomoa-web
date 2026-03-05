@@ -10,7 +10,9 @@ import type { RuleEffect } from "./rules";
 export function computeAdaptation(
   context: AdaptationContext
 ): AdaptationResult {
-  const effects = evaluateAllRules(context);
+  // Default mode to 'regular' if not provided (backward compatibility)
+  const ctx: AdaptationContext = { mode: "regular", ...context };
+  const effects = evaluateAllRules(ctx);
 
   let volumeModifier = 1.0;
   let suggestDeload = false;
@@ -31,7 +33,7 @@ export function computeAdaptation(
   volumeModifier = Math.max(0.5, Math.min(1.2, volumeModifier));
 
   // Apply strategy preference: if user often rejects, make suggestions more conservative
-  const pref = context.strategyPreference;
+  const pref = ctx.strategyPreference;
   if (pref && pref.decisionCount >= 5 && volumeModifier !== 1) {
     const dampen =
       pref.acceptanceRate < 0.4 ? 0.6 : pref.acceptanceRate > 0.7 ? 1.0 : 0.85;

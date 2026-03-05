@@ -22,7 +22,7 @@ function LogoWithFallback() {
   // Try to load logo.png first, then logo.svg, then fallback to text
   if (imageError) {
     return (
-      <span className="font-the-seasons text-lg sm:text-xl font-semibold text-plum">
+      <span className="font-inter text-lg sm:text-xl font-bold text-[#462324]">
         JOMOA
       </span>
     );
@@ -76,13 +76,17 @@ export default function Header({ locale }: HeaderProps) {
       about: "Om JOMOA",
       features: "Funktioner",
       knowledgeHub: "Knowledge Hub",
-      waitlist: "Väntelista",
+      forIndividuals: "Privatpersoner",
+      forCompanies: "För företag",
+      downloadApp: "Ladda ner appen",
     },
     en: {
       about: "About JOMOA",
       features: "Features",
       knowledgeHub: "Knowledge Hub",
-      waitlist: "Waitlist",
+      forIndividuals: "For individuals",
+      forCompanies: "For companies",
+      downloadApp: "Download the app",
     },
   };
 
@@ -109,7 +113,7 @@ export default function Header({ locale }: HeaderProps) {
             <LogoWithFallback />
         </Link>
 
-          {/* Desktop Navigation - Center */}
+          {/* Desktop Navigation - Center: Om, Funktioner, För företag */}
           <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
             <Link 
               href={`/${locale}#value`}
@@ -126,11 +130,11 @@ export default function Header({ locale }: HeaderProps) {
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
             </Link>
             <Link 
-              href={`/${locale}/knowledge-hub`}
-            className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
-          >
-              {labels.knowledgeHub}
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
+              href={`/${locale}#b2b`}
+              className="text-sm font-league-spartan font-normal text-plum hover:text-terracotta transition-colors relative group"
+            >
+              {labels.forCompanies}
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-plum group-hover:w-full transition-all duration-200" />
             </Link>
         </nav>
 
@@ -141,12 +145,12 @@ export default function Header({ locale }: HeaderProps) {
             asChild
             className={cn(
                 "rounded-full h-9 px-4 xl:px-6 text-xs xl:text-sm font-league-spartan font-medium",
-              "bg-terracotta hover:bg-[#C85A3A] text-white",
+              "bg-[#D96D46] hover:bg-[#C45D36] text-white",
               "transition-all duration-150 ease-out hover:scale-[1.03]"
             )}
           >
               <Link href={`/${locale}#waitlist`}>
-                {labels.waitlist}
+                {labels.downloadApp}
               </Link>
             </Button>
           </div>
@@ -197,23 +201,23 @@ export default function Header({ locale }: HeaderProps) {
               {labels.features}
             </Link>
             <Link
-              href={`/${locale}/knowledge-hub`}
+              href={`/${locale}#b2b`}
               onClick={() => setMobileMenuOpen(false)}
               className="text-lg font-league-spartan font-normal text-plum hover:text-terracotta transition-colors py-2 border-b border-pink-light/30"
             >
-              {labels.knowledgeHub}
+              {labels.forCompanies}
             </Link>
             <div className="pt-4">
               <Button
                 asChild
                 className={cn(
                   "rounded-full w-full h-12 text-base font-league-spartan font-semibold",
-                  "bg-terracotta hover:bg-[#C85A3A] text-white",
+                  "bg-[#D96D46] hover:bg-[#C45D36] text-white",
                   "transition-all duration-150 ease-out"
                 )}
             >
                 <Link href={`/${locale}#waitlist`} onClick={() => setMobileMenuOpen(false)}>
-                  {labels.waitlist}
+                  {labels.downloadApp}
                 </Link>
           </Button>
             </div>

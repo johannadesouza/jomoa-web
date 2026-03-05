@@ -1,19 +1,20 @@
 # JOMOA
 
-**Din strategiska träningscoach** - En digital coachingplattform för aktiva kvinnor som vill nå konkreta träningsmål.
+**Kontinuitetsfokuserad träning för alla** – Plan + readiness + små justeringar som skyddar progressionen.
 
-JOMOA kombinerar strukturerad träning, menscykel och livsstilsfaktorer i ett intelligent system som hjälper användaren att **justera istället för att avbryta**.
+JOMOA är ett träningssystem (inte en mensapp): strukturerade program, readiness-baserad vägledning (Push / Behåll / Justera) och valfri biologi-modul (cykel, perimenopaus m.m.). För privatpersoner (B2C) och företag (B2B). **Justera istället för att avbryta.**
 
-## 🏗️ Monorepo-struktur
+## Monorepo-struktur
 
 ```
 jomoa.coach/
-├── jomoa-mobile/   # Mobile app (React Native/Expo) - Huvudprodukt
-├── web/            # Landing page & marketing site
-└── README.md       # Du är här
+├── jomoa-mobile/   # Mobile app (React Native/Expo) – huvudprodukt
+├── web/            # Landing page & waitlist
+├── docs/           # Arkitektur, produkt, beslut, arkiv
+└── supabase/       # User DB + Content DB migrations
 ```
 
-## 📱 Appar
+## Appar
 
 ### jomoa-mobile (Huvudprodukt)
 
@@ -33,9 +34,9 @@ npm start
 
 **Se `jomoa-mobile/README.md` för fullständig dokumentation.**
 
-### web (Landing Page)
+### web (Landing)
 
-Marketing och waitlist-sida.
+Landningssida med segment För privatpersoner (B2C) och För företag (B2B); väntelista, demo/kontakt.
 
 ```bash
 cd web
@@ -43,7 +44,7 @@ npm install
 npm run dev
 ```
 
-## 🎨 Design System
+## Design system
 
 Alla appar följer JOMOA Design Standards:
 
@@ -73,18 +74,18 @@ Alla appar delar samma Supabase-backend:
 | jomoa-mobile | `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY` |
 | web | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
 
-## 🧩 Moduler
+## Moduler
 
 | Modul | Beskrivning |
 |-------|-------------|
 | **Training** | Strukturerade program, loggning, progression |
-| **Cycle** | Menslogg, fasdetektering, fas-overlay |
+| **Cycle** | Cykelspårning (valfritt), fasdetektering, cycle engine (cycles, user_cycle_settings) |
 | **Readiness** | Daglig check-in (energi, sömn, stress) |
 | **Adjustment Engine** | Intelligent träningsjustering |
 | **Insights** | Progress-grafer, mönsteranalys |
 | **Education** | Tips kopplade till användardata |
 
-## 🚀 Kom igång
+## Kom igång
 
 1. **Klona repot**
    ```bash
@@ -93,9 +94,9 @@ Alla appar delar samma Supabase-backend:
    ```
 
 2. **Sätt upp Supabase**
-   - Skapa ett Supabase-projekt
-   - Kör migrations i `web/supabase/migrations/` (landing/waitlist)
-   - Lägg till schema för jomoa-mobile enligt projektets dokumentation
+   - User DB: migrations i `jomoa-mobile/supabase/migrations/` och `supabase/user/migrations/`
+   - Content DB: migrations i `supabase/content/migrations/`
+   - Web/waitlist: egna tabeller enligt web-projektet
 
 3. **Starta mobilappen**
    ```bash
@@ -105,13 +106,15 @@ Alla appar delar samma Supabase-backend:
    # Tryck 'i' för iOS simulator
    ```
 
-## 📚 Dokumentation
+## Dokumentation
 
 | Fil | Beskrivning |
 |-----|-------------|
 | `jomoa-mobile/README.md` | Mobile app, design system, setup |
+| `docs/ARCHITECTURE.md` | Systemarkitektur, dataflöden |
+| `docs/PRODUCT_OVERVIEW.md` | Produkt, användarflöden |
+| `docs/DECISIONS.md` | Viktiga tekniska beslut |
 | `jomoa-mobile/docs/E2E_VERIFICATION.md` | Manuell E2E-testchecklista |
-| `BRANDING_GUIDE_V1.md` | Varumärke, färger, typografi |
 
 ## 📄 Licens
 

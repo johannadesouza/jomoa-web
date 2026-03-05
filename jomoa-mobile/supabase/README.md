@@ -1,27 +1,28 @@
-# JOMOA Mobile – Supabase
+# JOMOA Mobile – Supabase (User DB)
 
 ## Migrations
 
-Kör migrations i ordning (se `MIGRATION_ORDER.txt`):
+User DB-schema körs mot samma Supabase-projekt som mobilappen använder för persondata.
+
+- **I denna mapp:** `migrations/001_jomoa_training_schema.sql`, `002_jomoa_rls.sql`, och senare numrerade filer – kör i filordning.
+- **Cycle engine:** Tabellerna `cycles`, `cycle_stats`, `user_cycle_settings` skapas via `supabase/user/migrations/003_cycle_engine.sql` (i monorepots `supabase/user/`).
 
 ```bash
-# Med Supabase CLI (från projektroten)
+# Med Supabase CLI (mot User DB-projektet)
 supabase db push
 
-# Eller manuellt i Supabase Dashboard SQL Editor
-# 1. Kör 001_jomoa_training_schema.sql
-# 2. Kör 002_jomoa_rls.sql
+# Eller kör SQL-filerna manuellt i Supabase Dashboard i nummerordning.
 ```
 
 ## Förutsättningar
 
-- Supabase-projekt med Auth aktiverat
-- `auth.users` finns
+- Supabase-projekt med Auth aktiverat; `auth.users` finns.
 
 ## Seed
 
-Tabellerna `training_programs`, `program_blocks`, `program_weeks`, `program_sessions`, `session_exercises` och `exercises` måste fyllas med template-program och övningar. Detta görs vanligtvis via ett separat seed-script eller Supabase Dashboard.
+- `seed.sql` i denna mapp – exempeldata för cykel, readiness, pass.
+- Program och övningar kommer från **Content DB**; User DB innehåller endast persondata och loggar.
 
 ## Schema
 
-Se [docs/SCHEMA_REFERENCE.md](../docs/SCHEMA_REFERENCE.md) för fullständig dokumentation.
+Se [docs/SCHEMA_REFERENCE.md](../docs/SCHEMA_REFERENCE.md) för tabellreferens.

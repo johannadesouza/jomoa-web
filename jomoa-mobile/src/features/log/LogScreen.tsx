@@ -31,12 +31,6 @@ const SECONDARY_ACTIONS = [
     desc: "Mensstart, kramper, energi",
     route: "Cycle" as const,
   },
-  {
-    iconName: "body-outline" as const,
-    label: "Mätningar",
-    desc: "Vikt och kroppsmått",
-    route: "Measurements" as const,
-  },
 ] as const;
 
 export function LogScreen() {
@@ -113,7 +107,7 @@ export function LogScreen() {
             )}
           </Section>
 
-          <Section title="Mer att logga" subtitle="Cykel och mätningar">
+          <Section title="Mer att logga" subtitle="Cykel och symtom">
             <XStack flexWrap="wrap" gap="$3">
               {SECONDARY_ACTIONS.map((action) => (
                 <Card

@@ -43,6 +43,8 @@ interface QuickActionsSectionProps {
   onLogSymptom: () => void;
   onOpenRestTimer: () => void;
   onOpenCalendar: () => void;
+  /** False för män – döljer "Logga symptom" (cykel/symtom). */
+  showSymptomLog?: boolean;
 }
 
 export function QuickActionsSection({
@@ -50,14 +52,20 @@ export function QuickActionsSection({
   onLogSymptom,
   onOpenRestTimer,
   onOpenCalendar,
+  showSymptomLog = true,
 }: QuickActionsSectionProps) {
+  const actions = [
+    <QuickAction key="checkin" iconName="heart-outline" label="Check-in" onPress={onLogEnergie} iconBg="$surface3" />,
+    ...(showSymptomLog
+      ? [<QuickAction key="symptom" iconName="leaf-outline" label="Logga symptom" onPress={onLogSymptom} iconBg="$surface3" />]
+      : []),
+    <QuickAction key="timer" iconName="timer-outline" label="Vilotimer" onPress={onOpenRestTimer} iconBg="$accent" />,
+    <QuickAction key="calendar" iconName="calendar-outline" label="Kalender" onPress={onOpenCalendar} iconBg="$surface3" />,
+  ];
   return (
     <Section title="Snabbåtgärder" subtitle="Logga och planera">
       <XStack gap="$3">
-        <QuickAction iconName="heart-outline" label="Logga energi" onPress={onLogEnergie} iconBg="$surface3" />
-        <QuickAction iconName="leaf-outline" label="Logga symptom" onPress={onLogSymptom} iconBg="$surface3" />
-        <QuickAction iconName="timer-outline" label="Vilotimer" onPress={onOpenRestTimer} iconBg="$accent" />
-        <QuickAction iconName="calendar-outline" label="Kalender" onPress={onOpenCalendar} iconBg="$surface3" />
+        {actions}
       </XStack>
     </Section>
   );

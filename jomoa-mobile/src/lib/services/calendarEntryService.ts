@@ -50,7 +50,7 @@ export async function upsertEntry(input: UpsertCalendarEntryInput): Promise<Cale
     .select("id")
     .eq("client_id", input.client_id)
     .eq("date", input.date)
-    .single();
+    .maybeSingle();
 
   const payload = {
     client_id: input.client_id,
@@ -67,26 +67,26 @@ export async function upsertEntry(input: UpsertCalendarEntryInput): Promise<Cale
       .update(payload)
       .eq("id", existing.id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Error updating calendar entry:", error);
       return null;
     }
-    return data as CalendarEntry;
+    return (data as CalendarEntry) ?? null;
   }
 
   const { data, error } = await supabase
     .from("client_calendar_entries")
     .insert(payload)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error("Error inserting calendar entry:", error);
     return null;
   }
-  return data as CalendarEntry;
+  return (data as CalendarEntry) ?? null;
 }
 
 export async function deleteEntry(clientId: string, date: string): Promise<boolean> {

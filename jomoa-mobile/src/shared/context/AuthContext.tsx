@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "../../config/supabase";
 
-import type { TrainingGoal, DayOfWeek } from "../types/onboarding";
+import type { TrainingGoal, DayOfWeek, PresentationProfile, PresentationTheme } from "../types/onboarding";
 
 export interface Client {
   id: string;
@@ -17,6 +17,8 @@ export interface Client {
   irregular_cycle?: boolean | null;
   no_period?: boolean | null;
   peri_menopause?: boolean | null;
+  presentation_profile?: PresentationProfile | null;
+  presentation_theme?: PresentationTheme | null;
 }
 
 interface AuthContextType {
@@ -44,13 +46,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .from("clients")
       .select("*")
       .eq("profile_id", userId)
-      .single();
+      .maybeSingle();
 
     if (error) {
-      console.warn("No client found for user:", userId);
-      return null;
+      // Re-throw so callers can distinguish a DB failure from "no client row yet"
+      throw error;
     }
-    return data as Client;
+    return (data as Client) ?? null;
   };
 
   const refreshClient = async () => {
@@ -67,8 +69,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          const clientData = await fetchClient(session.user.id).catch(() => null);
-          setClient(clientData ?? null);
+          try {
+            const clientData = await fetchClient(session.user.id);
+            setClient(clientData ?? null);
+          } catch {
+            // DB error: keep client null but do NOT redirect to onboarding —
+            // RootNavigator handles session+null client as a loading/error state.
+            setClient(null);
+            if (__DEV__) console.error("[AuthContext] fetchClient failed during getSession");
+          }
         } else {
           setClient(null);
         }
@@ -83,8 +92,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       try {
         if (session?.user) {
-          const clientData = await fetchClient(session.user.id).catch(() => null);
-          setClient(clientData ?? null);
+          try {
+            const clientData = await fetchClient(session.user.id);
+            setClient(clientData ?? null);
+          } catch {
+            // DB error on token refresh: keep existing client to avoid navigation flash
+            if (__DEV__) console.error("[AuthContext] fetchClient failed on auth state change");
+          }
         } else {
           setClient(null);
         }

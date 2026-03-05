@@ -36,8 +36,21 @@ const DAY_NAMES: Record<number, string> = {
 
 export function ProgramDetailScreen({ navigation, route }: Props) {
   const nav = useNavigation<NavigationProp>();
-  const { programId } = route.params;
+  const programId = route.params?.programId;
   const { client, refreshClient } = useAuth();
+
+  if (!programId) {
+    return (
+      <Screen padded centered>
+        <AppText variant="body" muted center>
+          Programmet kunde inte laddas. Gå tillbaka och försök igen.
+        </AppText>
+        <AppButton variant="secondary" onPress={() => navigation.goBack()}>
+          Tillbaka
+        </AppButton>
+      </Screen>
+    );
+  }
   const { programs, activeAssignment, switchProgram, isSwitching } =
     useActiveProgram(client?.id);
   const [structure, setStructure] = React.useState<ProgramWithStructure | null>(null);
