@@ -7,7 +7,7 @@ import { Pressable } from "react-native";
 import { YStack, XStack } from "tamagui";
 import { AppText, Card, Section } from "../../shared/ui";
 import { useAuth } from "../../shared/context/AuthContext";
-import { supabase } from "../../config/supabase";
+import { updateClient } from "../../lib/repos/userRepo/clients";
 import type { PresentationProfile, PresentationTheme } from "../../shared/types/onboarding";
 
 const PROFILES: { value: PresentationProfile; label: string }[] = [
@@ -33,10 +33,7 @@ export function PresentationSettingsSection() {
   const handleSelectProfile = async (newProfile: PresentationProfile) => {
     if (!client?.id || newProfile === profile) return;
     setSavingProfile(true);
-    const { error } = await supabase
-      .from("clients")
-      .update({ presentation_profile: newProfile })
-      .eq("id", client.id);
+    const { error } = await updateClient(client.id, { presentation_profile: newProfile });
     if (!error) await refreshClient();
     setSavingProfile(false);
   };
@@ -44,10 +41,7 @@ export function PresentationSettingsSection() {
   const handleSelectTheme = async (newTheme: PresentationTheme) => {
     if (!client?.id || newTheme === theme) return;
     setSavingTheme(true);
-    const { error } = await supabase
-      .from("clients")
-      .update({ presentation_theme: newTheme })
-      .eq("id", client.id);
+    const { error } = await updateClient(client.id, { presentation_theme: newTheme });
     if (!error) await refreshClient();
     setSavingTheme(false);
   };

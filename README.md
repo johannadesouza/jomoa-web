@@ -1,8 +1,10 @@
 # JOMOA
 
-**Kontinuitetsfokuserad träning för alla** – Plan + readiness + små justeringar som skyddar progressionen.
+**Kontinuitetsfokuserad träning för alla** – plan, readiness och små justeringar som skyddar progressionen.
 
 JOMOA är ett träningssystem (inte en mensapp): strukturerade program, readiness-baserad vägledning (Push / Behåll / Justera) och valfri biologi-modul (cykel, perimenopaus m.m.). För privatpersoner (B2C) och företag (B2B). **Justera istället för att avbryta.**
+
+---
 
 ## Monorepo-struktur
 
@@ -36,13 +38,16 @@ npm start
 
 ### web (Landing)
 
-Landningssida med segment För privatpersoner (B2C) och För företag (B2B); väntelista, demo/kontakt.
+Landningssida med segment För privatpersoner (B2C) och För företag (B2B), väntelista och kontakt.
 
 ```bash
 cd web
 npm install
+cp .env.example .env.local   # Fyll i Content DB-variabler
 npm run dev
 ```
+
+**Se `web/README.md` för env och deploy.**
 
 ## Design system
 
@@ -58,21 +63,19 @@ Alla appar följer JOMOA Design Standards:
 
 Se `jomoa-mobile/README.md` för design tokens och komponenter.
 
-## 🗄️ Backend (Supabase)
+## Backend (Supabase)
 
-Alla appar delar samma Supabase-backend:
+Två Supabase-projekt används:
 
-- **PostgreSQL** - Databas
-- **Auth** - Autentisering
-- **Storage** - Filer
-- **Realtime** - Live-uppdateringar
+- **User DB** – persondata, auth, clients, readiness, workouts, cycle engine. Migrations: `jomoa-mobile/supabase/migrations/`, `supabase/user/migrations/`.
+- **Content DB** – publikt innehåll (program, övningar, app_copy, artiklar). Migrations: `supabase/content/migrations/`.
 
-### Environment Variables
+### Miljövariabler
 
 | App | Variabler |
 |-----|-----------|
-| jomoa-mobile | `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY` |
-| web | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
+| jomoa-mobile | `EXPO_PUBLIC_USER_SUPABASE_URL`, `EXPO_PUBLIC_USER_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_CONTENT_SUPABASE_URL`, `EXPO_PUBLIC_CONTENT_SUPABASE_ANON_KEY` |
+| web | `NEXT_PUBLIC_CONTENT_SUPABASE_URL`, `NEXT_PUBLIC_CONTENT_SUPABASE_ANON_KEY` (se `web/.env.example`) |
 
 ## Moduler
 
@@ -110,12 +113,18 @@ Alla appar delar samma Supabase-backend:
 
 | Fil | Beskrivning |
 |-----|-------------|
+| `CONTRIBUTING.md` | Så bidrar du – tester, PR, arkitektur |
+| `docs/AGILE_PRACTICES.md` | Agila rutiner, DoD, CI, backlog |
 | `jomoa-mobile/README.md` | Mobile app, design system, setup |
+| `web/README.md` | Landningssida, env, deploy |
 | `docs/ARCHITECTURE.md` | Systemarkitektur, dataflöden |
 | `docs/PRODUCT_OVERVIEW.md` | Produkt, användarflöden |
 | `docs/DECISIONS.md` | Viktiga tekniska beslut |
+| `docs/DOCS_INVENTORY_AND_PLAN.md` | Doc-inventering och städplan |
 | `jomoa-mobile/docs/E2E_VERIFICATION.md` | Manuell E2E-testchecklista |
 
-## 📄 Licens
+---
+
+## Licens
 
 Privat - Alla rättigheter förbehållna

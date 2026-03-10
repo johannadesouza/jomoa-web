@@ -1,10 +1,23 @@
 # Documentation cleanup – summary
 
+## Kommenteringsregelverk (kod)
+
+- **Fil-nivå:** Kort blockkommentar överst som beskriver syfte och var filen används.
+- **Offentlig API:** JSDoc med `@param` / `@returns` för exporterade funktioner och hooks när det inte är uppenbart.
+- **Komplex logik:** Inline-kommentar för "varför", inte "vad".
+- **Svenska** för kommentarer i jomoa-mobile; engelska eller svenska i delad lib enligt projekt.
+- Undvik TODO/FIXME kvar i produktion – flytta till docs/DOCS_INVENTORY_AND_PLAN eller DATABASE_BACKLOG.
+
 ## Updated documentation file tree
 
 ```
 README.md
+CONTRIBUTING.md                  # Bidra – tester, PR, arkitektur
+.github/
+├── workflows/ci.yml             # CI: mobile test, web build
+└── PULL_REQUEST_TEMPLATE.md    # PR-checklista
 docs/
+├── AGILE_PRACTICES.md           # Agila rutiner, DoD, CI, backlog
 ├── ARCHITECTURE.md
 ├── PRODUCT_OVERVIEW.md
 ├── DECISIONS.md

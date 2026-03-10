@@ -1,29 +1,42 @@
 # Documentation inventory and cleanup plan
 
-## 1. Inventory
+## 1. Inventory (aktuell lista)
 
 | File | Summary | Status |
 |------|---------|--------|
-| `/README.md` | Repo root: product tagline, monorepo layout, backend, env, doc links | UPDATE |
-| `jomoa-mobile/README.md` | Mobile app: QA, tech stack, design system, project structure, features, env | UPDATE |
-| `jomoa-mobile/docs/DATA_FLOW.md` | Source of truth for calendar, workouts, readiness, insights, cycle | UPDATE |
-| `jomoa-mobile/docs/SCHEMA_REFERENCE.md` | Supabase tables for mobile; migration order | UPDATE |
-| `jomoa-mobile/docs/FINSLIPNING_PLAN.md` | Planning: copy layer, settings, dashboard/insights, man/no-cycle | ARCHIVE |
-| `jomoa-mobile/docs/MODULAR_DOMAIN_ARCHITECTURE.md` | Proposal: domains, cycleService, adaptation | ARCHIVE |
-| `jomoa-mobile/docs/QA_SEED_GUIDE.md` | Seed scenarios, seed.sql, readiness table name | UPDATE |
-| `jomoa-mobile/docs/E2E_VERIFICATION.md` | Manual E2E checklist; onboarding, dashboard, readiness | UPDATE |
-| `jomoa-mobile/docs/TESTFLIGHT_READINESS.md` | Point-in-time TestFlight blockers/build checklist | KEEP |
-| `jomoa-mobile/docs/TESTFLIGHT_UX_REVIEW.md` | Point-in-time UX review, LogScreen orphan | ARCHIVE |
-| `jomoa-mobile/docs/AGILITY_AUDIT.md` | Agility score, bottlenecks, refactor suggestions | ARCHIVE |
-| `docs/content-db-migration.md` | Content DB separation (GDPR), FAS 1–3; feature flag | ARCHIVE |
-| `jomoa-mobile/supabase/README.md` | Migrations, MIGRATION_ORDER.txt, schema link | UPDATE |
-| `web/README.md` | Generic Next.js getting started | UPDATE |
-| `web/docs/README.md` | Font files (The Seasons, League Spartan) | KEEP |
-| `web/docs/ENVIRONMENT_VARIABLES.md` | Vercel env (Supabase, Mailchimp) | UPDATE |
-| `web/docs/BRAND_COLORS.md` | (if exists) | – |
-| `web/docs/TROUBLESHOOTING_WAITLIST.md` | (if exists) | – |
-| `web/docs/MAILCHIMP_SETUP.md` | (if exists) | – |
-| `web/docs/LOGO_AND_FAVICON_SETUP.md` | (if exists) | – |
+| `README.md` | Repo root: product, monorepo, env, doc links | KEEP |
+| `CONTRIBUTING.md` | Bidra – tester, PR, arkitektur | KEEP |
+| `docs/AGILE_PRACTICES.md` | Agila rutiner, DoD, CI, backlog | KEEP |
+| `docs/ARCHITECTURE.md` | Högnivå arkitektur | KEEP |
+| `docs/PRODUCT_OVERVIEW.md` | Produktöversikt | KEEP |
+| `docs/DECISIONS.md` | Beslutslogg | KEEP |
+| `docs/DOCS_INVENTORY_AND_PLAN.md` | Denna fil – doc-lista + plan | KEEP |
+| `docs/DOCUMENTATION_SUMMARY.md` | Kort sammanfattning av doc-struktur | KEEP |
+| `docs/RELEASE_CTA_AND_ENV.md` | Release/CTA och miljö | KEEP |
+| `docs/archive/AGILITY_AUDIT.md` | Punkt-in-time agility | ARCHIVED |
+| `docs/archive/FINSLIPNING_PLAN.md` | Plan copy/settings/man | ARCHIVED |
+| `docs/archive/MODULAR_DOMAIN_ARCHITECTURE.md` | Förslag domäner | ARCHIVED |
+| `docs/archive/TESTFLIGHT_UX_REVIEW.md` | Punkt-in-time UX | ARCHIVED |
+| `docs/archive/content-db-migration.md` | Content DB historik | ARCHIVED |
+| `jomoa-mobile/README.md` | Mobile: tech stack, structure, features, env | UPDATE |
+| `jomoa-mobile/docs/DATA_FLOW.md` | Calendar, workouts, readiness, cycle | UPDATE |
+| `jomoa-mobile/docs/SCHEMA_REFERENCE.md` | Tabeller, migrationssökvägar | UPDATE |
+| `jomoa-mobile/docs/QA_SEED_GUIDE.md` | Seed-scenarier, daily_readiness | UPDATE |
+| `jomoa-mobile/docs/E2E_VERIFICATION.md` | Manuell E2E-checklista | UPDATE |
+| `jomoa-mobile/docs/TESTFLIGHT_READINESS.md` | TestFlight/build | KEEP |
+| `jomoa-mobile/docs/FLOW_MAN_KVINNA.md` | Flöde man/kvinna, onboarding | KEEP |
+| `jomoa-mobile/docs/PLACEHOLDER_FEATURES.md` | Placeholder-features (Kost m.m.) | KEEP |
+| `jomoa-mobile/docs/DECISIONS_ADJUSTMENT_HISTORY.md` | strategy_decisions vs adjustment_history | KEEP |
+| `jomoa-mobile/docs/DATABASE_BACKLOG.md` | Databas-backlog | KEEP |
+| `jomoa-mobile/supabase/README.md` | Migrations, schema-länk | UPDATE |
+| `web/README.md` | Web: landing, waitlist, Next.js | UPDATE |
+| `web/docs/README.md` | Fontfiler | KEEP |
+| `web/docs/ENVIRONMENT_VARIABLES.md` | Vercel/env (Content DB, Mailchimp) | KEEP |
+| `web/docs/BRAND_COLORS.md` | Varumärkesfärger | KEEP |
+| `web/docs/MAILCHIMP_SETUP.md` | Mailchimp-inställning | KEEP |
+| `web/docs/TROUBLESHOOTING_WAITLIST.md` | Felsök waitlist | KEEP |
+| `web/docs/LOGO_AND_FAVICON_SETUP.md` | Logo och favicon | KEEP |
+| `web/docs/LANDING_PAGE_REDESIGN.md` | Landningssida redesign | KEEP |
 
 ## 2. Code vs doc alignment (mismatches)
 

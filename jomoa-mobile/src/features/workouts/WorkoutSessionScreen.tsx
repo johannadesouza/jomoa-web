@@ -21,6 +21,8 @@ import { useTrainingAdaptation } from "../../lib/hooks/useTrainingAdaptation";
 import { useTheme } from "../../shared/context/ThemeContext";
 import { getThemeColors } from "../../shared/theme/colors";
 import type { SetLogEntry } from "../../lib/domain/workout";
+import { WorkoutRestTimer } from "./WorkoutRestTimer";
+import { WorkoutChallengeChips } from "./WorkoutChallengeChips";
 
 type Props = NativeStackScreenProps<RootStackParamList, "WorkoutSession">;
 
@@ -83,110 +85,6 @@ function SetInputRow({ setNumber, repsPlanned, log, onUpdate }: SetInputRowProps
         onBlur={handleBlur}
       />
     </XStack>
-  );
-}
-
-interface RestTimerProps {
-  secondsRemaining: number;
-  isRunning: boolean;
-  defaultSeconds: number;
-  onStart: (seconds: number) => void;
-  onPause: () => void;
-  onSkipRest: () => void;
-}
-
-const CHALLENGE_LABELS: Record<ExerciseChallengeLevel, string> = {
-  easy: "Lätt",
-  ok: "Lagom",
-  hard: "Hårt",
-};
-
-function ChallengeChips({
-  selected,
-  onSelect,
-}: {
-  selected: ExerciseChallengeLevel | null;
-  onSelect: (level: ExerciseChallengeLevel | null) => void;
-}) {
-  const { theme } = useTheme();
-  const colors = getThemeColors(theme);
-  return (
-    <YStack gap="$2">
-      <AppText variant="caption" muted>
-        Hur utmanande var övningen?
-      </AppText>
-      <XStack gap="$2" flexWrap="wrap">
-        {(["easy", "ok", "hard"] as const).map((level) => {
-          const isSelected = selected === level;
-          return (
-            <Pressable
-              key={level}
-              onPress={() => onSelect(selected === level ? null : level)}
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 20,
-                backgroundColor: isSelected ? colors.accent : colors.surface3,
-                borderWidth: 1,
-                borderColor: isSelected ? colors.accent : "transparent",
-              }}
-            >
-              <AppText
-                variant="small"
-                fontWeight="500"
-                style={{ color: isSelected ? "#fff" : colors.textPrimary }}
-              >
-                {CHALLENGE_LABELS[level]}
-              </AppText>
-            </Pressable>
-          );
-        })}
-      </XStack>
-    </YStack>
-  );
-}
-
-function RestTimer({
-  secondsRemaining,
-  isRunning,
-  defaultSeconds,
-  onStart,
-  onPause,
-  onSkipRest,
-}: RestTimerProps) {
-  const mins = Math.floor(secondsRemaining / 60);
-  const secs = secondsRemaining % 60;
-  const display = `${mins}:${secs.toString().padStart(2, "0")}`;
-
-  return (
-    <Card backgroundColor="$surface3">
-      <Card.Content padding="$6">
-        <YStack gap="$4">
-          <AppText variant="h3">Vila</AppText>
-          <AppText variant="h1" color="$accent">
-            {display}
-          </AppText>
-          <XStack gap="$3" flexWrap="wrap">
-            {!isRunning ? (
-              <AppButton
-                variant="primary"
-                size="md"
-                onPress={() => onStart(defaultSeconds)}
-              >
-                Starta vila
-              </AppButton>
-            ) : (
-              <AppButton variant="ghost" size="md" onPress={onPause}>
-                Pausa
-              </AppButton>
-            )}
-            <AppButton variant="secondary" size="md" onPress={onSkipRest}>
-              Hoppa över
-            </AppButton>
-          </XStack>
-        </YStack>
-      </Card.Content>
-    </Card>
   );
 }
 
@@ -375,7 +273,7 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
             </AppButton>
           </XStack>
           <YStack flex={1} justifyContent="center">
-            <RestTimer
+            <WorkoutRestTimer
               secondsRemaining={restTimer.secondsRemaining}
               isRunning={restTimer.isRunning}
               defaultSeconds={restSeconds}
@@ -559,7 +457,7 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
                     {isLastExercise ? "Avsluta övning" : "Nästa övning"}
                   </AppButton>
                 </XStack>
-                <ChallengeChips selected={selectedChallenge} onSelect={setSelectedChallenge} />
+                <WorkoutChallengeChips selected={selectedChallenge} onSelect={setSelectedChallenge} />
               </>
             )}
           </YStack>
@@ -590,7 +488,7 @@ export function WorkoutSessionScreen({ navigation, route }: Props) {
               />
               ))}
             </YStack>
-            <ChallengeChips selected={selectedChallenge} onSelect={setSelectedChallenge} />
+            <WorkoutChallengeChips selected={selectedChallenge} onSelect={setSelectedChallenge} />
             <AppButton
               variant="primary"
               size="lg"

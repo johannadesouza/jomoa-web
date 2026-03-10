@@ -10,9 +10,8 @@ import {
   Card,
   Section,
   Badge,
-  LoadingScreen,
+  DataScreen,
   EmptyState,
-  ErrorState,
 } from "../../shared/ui";
 import { RootStackParamList } from "../../navigation/RootNavigator";
 import { useAuth } from "../../shared/context/AuthContext";
@@ -73,23 +72,15 @@ export function ProgramListScreen({ navigation }: Props) {
     );
   };
 
-  if (isLoading) return <LoadingScreen message="Laddar program..." />;
-
-  if (error) {
-    return (
-      <Screen padded centered>
-        <ErrorState
-          title="Kunde inte ladda program"
-          description={error}
-          retryLabel="Försök igen"
-          onRetry={refetch}
-        />
-      </Screen>
-    );
-  }
-
   return (
-    <Screen scroll padded>
+    <DataScreen
+      loading={isLoading}
+      error={error ?? null}
+      loadingMessage="Laddar program..."
+      errorTitle="Kunde inte ladda program"
+      onRetry={refetch}
+    >
+      <Screen scroll padded>
       <YStack gap="$6">
         <YStack gap="$2">
           <AppText variant="h1">Mina program</AppText>
@@ -182,5 +173,6 @@ export function ProgramListScreen({ navigation }: Props) {
         </Section>
       </YStack>
     </Screen>
+    </DataScreen>
   );
 }

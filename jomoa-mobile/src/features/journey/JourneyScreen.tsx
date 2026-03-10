@@ -130,7 +130,7 @@ export function JourneyScreen() {
             )}
 
             {!showCycleInUI && (
-              <Section title="Din träning" subtitle="Volym, pass och streak">
+              <Section title={getAppCopy(copy, "journey_section_training_title", "Din träning")} subtitle={getAppCopy(copy, "journey_section_training_subtitle", "Volym, pass och streak")}>
                 <XStack flexWrap="wrap" gap="$3">
                   {statCards.map((s, i) => (
                     <Card key={i} flex={1} minWidth="30%" pressable onPress={() => setSegment("historik")}>
@@ -152,7 +152,7 @@ export function JourneyScreen() {
               </Section>
             )}
 
-            <Section title="Dagens insikt" subtitle="Vad kan jag förvänta mig och göra?">
+            <Section title={getAppCopy(copy, "journey_section_dagens_insikt_title", "Dagens insikt")} subtitle={getAppCopy(copy, "journey_section_dagens_insikt_subtitle", "Vad kan jag förvänta mig och göra?")}>
               <HeroInsightCard
                 phase={phase ?? null}
                 insight={insight}
@@ -161,7 +161,7 @@ export function JourneyScreen() {
               />
             </Section>
 
-            <Section title={getAppCopy(copy, "journey_how_are_you_title", "Hur mår du idag?")} subtitle="Klicka för symtomlindring eller logga">
+            <Section title={getAppCopy(copy, "journey_how_are_you_title", "Hur mår du idag?")} subtitle={getAppCopy(copy, "journey_section_how_are_you_subtitle", "Klicka för symtomlindring eller logga")}>
               <QuickLogStrip
                 onLogOther={() => setSegment("logga")}
                 onSymptomPress={(id) => setSymptomModal({ visible: true, symptomId: id })}
@@ -176,11 +176,11 @@ export function JourneyScreen() {
             />
 
             <Section
-              title="Symtomlindring"
+              title={getAppCopy(copy, "journey_section_symtomlindring_title", "Symtomlindring")}
               subtitle={
                 readiness
-                  ? "Rekommendationer baserat på hur du mår"
-                  : "Logga hur du mår för att låsa upp tips"
+                  ? getAppCopy(copy, "journey_section_symtomlindring_subtitle_ready", "Rekommendationer baserat på hur du mår")
+                  : getAppCopy(copy, "journey_section_symtomlindring_subtitle_not_ready", "Logga hur du mår för att låsa upp tips")
               }
             >
               <SymptomReliefCards
@@ -192,7 +192,7 @@ export function JourneyScreen() {
               />
             </Section>
 
-            <Section title="Utforska" subtitle="Träning, kost och välmående">
+            <Section title={getAppCopy(copy, "journey_section_utforska_title", "Utforska")} subtitle={getAppCopy(copy, "journey_section_utforska_subtitle", "Träning, kost och välmående")}>
               <InsightCategoryStrip
                 onSelectCategory={(id) => {
                   if (id === "näring") (navigation.getParent() as { navigate: (n: string) => void })?.navigate("LearnTab");
@@ -208,13 +208,13 @@ export function JourneyScreen() {
           <>
             <AwardsSection clientId={client?.id} />
             {!hasData ? (
-              <Section title="Din träningsstatistik" subtitle="Baserat på dina loggade pass">
+              <Section title={getAppCopy(copy, "journey_section_statistik_title", "Din träningsstatistik")} subtitle={getAppCopy(copy, "journey_section_statistik_subtitle", "Baserat på dina loggade pass")}>
                 <Card>
                   <Card.Content>
                     <EmptyState
                       iconName="barbell-outline"
-                      title="Logga ditt första pass"
-                      description="Starta från Hem eller Träna – då fylls statistik och historik här."
+                      title={getAppCopy(copy, "journey_empty_first_workout_title", "Logga ditt första pass")}
+                      description={getAppCopy(copy, "journey_empty_first_workout_description", "Starta från Hem eller Träna – då fylls statistik och historik här.")}
                       actionLabel="Gå till Träna"
                       onAction={() => navigation.navigate("TrainTab")}
                     />
@@ -222,7 +222,7 @@ export function JourneyScreen() {
                 </Card>
               </Section>
             ) : (
-            <Section title="Din träningsstatistik" subtitle="Baserat på dina loggade pass">
+            <Section title={getAppCopy(copy, "journey_section_statistik_title", "Din träningsstatistik")} subtitle={getAppCopy(copy, "journey_section_statistik_subtitle", "Baserat på dina loggade pass")}>
               <XStack flexWrap="wrap" gap="$4">
                 {statCards.map((s, i) => (
                   <Card key={i} flex={1} minWidth="45%">
@@ -243,13 +243,13 @@ export function JourneyScreen() {
               </XStack>
             </Section>
             )}
-            <Section title="Träningshistorik" subtitle="Se kalendern för dina pass">
+            <Section title={getAppCopy(copy, "journey_section_training_history_title", "Träningshistorik")} subtitle={getAppCopy(copy, "journey_section_training_history_subtitle", "Se kalendern för dina pass")}>
               <Card pressable onPress={() => navigation.navigate("Calendar")}>
                 <Card.Content>
                   <YStack alignItems="center" paddingVertical="$4" gap="$3">
                     <AppIcon name="calendar-outline" size={40} />
                     <AppText variant="body" muted center>
-                      {hasData ? "Se dina loggade pass i kalendern." : "Logga pass under Träna – historiken visas i kalendern."}
+                      {hasData ? getAppCopy(copy, "journey_empty_calendar_description_has_data", "Se dina loggade pass i kalendern.") : getAppCopy(copy, "journey_empty_calendar_description", "Logga pass under Träna – historiken visas i kalendern.")}
                     </AppText>
                     <AppText variant="caption" color="$accent">Öppna Kalender →</AppText>
                   </YStack>
@@ -303,7 +303,7 @@ export function JourneyScreen() {
                 </Card>
               )}
             </Section>
-            <Section title="Mer att logga" subtitle="Cykel och mätningar">
+            <Section title={getAppCopy(copy, "journey_section_mer_att_logga_title", "Mer att logga")} subtitle={getAppCopy(copy, "journey_section_mer_att_logga_subtitle", "Cykel och mätningar")}>
               <XStack flexWrap="wrap" gap="$3">
                 {SECONDARY_ACTIONS.map((action) => (
                   <Card key={action.label} flex={1} minWidth="45%" pressable onPress={() => navigation.navigate(action.route)}>

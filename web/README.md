@@ -1,36 +1,40 @@
-JOMOA landing page and waitlist – Next.js.
+# JOMOA Web – landningssida och väntelista
 
-## Getting started
+Next.js-app för [jomoa.coach](https://jomoa.coach): landningssida (B2C/B2B), väntelista och kontakt.
 
-Run the development server:
+**Monorepo:** Denna mapp är en del av [jomoa.coach](../) (root).
+
+---
+
+## Tech Stack
+
+- **Next.js** – App Router, React
+- **Content DB** (Supabase) – publikt innehåll
+- **Mailchimp** (valfritt) – väntelista
+
+## Kom igång
 
 ```bash
+npm install
+cp .env.example .env.local
+# Fyll i NEXT_PUBLIC_CONTENT_SUPABASE_URL och NEXT_PUBLIC_CONTENT_SUPABASE_ANON_KEY
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Öppna [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Miljövariabler
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variabel | Krävs | Beskrivning |
+|----------|-------|-------------|
+| `NEXT_PUBLIC_CONTENT_SUPABASE_URL` | Ja | Content DB – projekt-URL |
+| `NEXT_PUBLIC_CONTENT_SUPABASE_ANON_KEY` | Ja | Content DB – anon-nyckel |
+| `MAILCHIMP_*` | Nej | Väntelista (se `docs/ENVIRONMENT_VARIABLES.md`) |
 
-## Learn More
+Full lista: `.env.example`.
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy (Vercel)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Koppla repot till Vercel.
+2. Sätt samma env-variabler som i `.env.example`.
+3. Deploy – Vercel använder `build` från `package.json`.

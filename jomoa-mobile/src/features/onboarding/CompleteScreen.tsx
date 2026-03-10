@@ -10,7 +10,7 @@ import { OnboardingStepDots } from "./OnboardingStepDots";
 import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
 import { useAuth } from "../../shared/context/AuthContext";
 import { useCycleContext } from "../../shared/context/CycleContext";
-import { supabase } from "../../config/supabase";
+import { updateClient } from "../../lib/repos/userRepo/clients";
 import { savePeriodStart } from "../../lib/services/cycleService";
 import { updateCycleMode } from "../../lib/services/cycleEngineService";
 import { createGoal } from "../../lib/services/goalsService";
@@ -58,10 +58,7 @@ export function CompleteScreen({ navigation }: Props) {
         clientUpdate.peri_menopause = null;
       }
 
-      const { error } = await supabase
-        .from("clients")
-        .update(clientUpdate)
-        .eq("id", client.id);
+      const { error } = await updateClient(client.id, clientUpdate);
 
       if (error) throw error;
 

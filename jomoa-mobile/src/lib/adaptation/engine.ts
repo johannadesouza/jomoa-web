@@ -1,12 +1,17 @@
 /**
- * Adaptation Engine
- * Evaluates rules and merges modifiers into AdaptationResult
+ * Adaptation Engine – utvärderar regler och slår ihop volymmodifierare till ett resultat.
+ * Används av MorningRoutineModal, AdaptationInsightCard och WorkoutSession för Öka/Behåll/Justera.
  */
 
 import { evaluateAllRules } from "./rules";
 import type { AdaptationContext, AdaptationResult } from "./types";
 import type { RuleEffect } from "./rules";
 
+/**
+ * Beräknar adaptation (volymmodifierare, deload/recovery-förslag) utifrån readiness, cykelfas och belastning.
+ * @param context – readiness, cyclePhase, trainingLoad, strategyPreference m.m.
+ * @returns AdaptationResult med volumeModifier (0.5–1.2), suggestDeload, suggestRecovery, appliedRules
+ */
 export function computeAdaptation(
   context: AdaptationContext
 ): AdaptationResult {

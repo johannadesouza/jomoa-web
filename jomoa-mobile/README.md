@@ -1,6 +1,10 @@
 # JOMOA Mobile App
 
-React Native mobile app för JOMOA - din strategiska träningscoach.
+React Native-app (Expo) för JOMOA – huvudprodukten i monorepon. Träningsprogram, readiness, cykel och insikter.
+
+**Monorepo:** Denna mapp är en del av [jomoa.coach](../) (root). Backend: User DB + Content DB (Supabase).
+
+---
 
 ## QA & Testing
 
@@ -10,11 +14,11 @@ React Native mobile app för JOMOA - din strategiska träningscoach.
 
 ## Tech Stack
 
-- **Expo** - React Native framework
-- **Tamagui** - Design system & styling
-- **React Navigation** - Navigation
-- **Supabase** - Backend (delat med web app)
-- **TypeScript** - Type safety
+- **Expo** – React Native
+- **Tamagui** – Design system och styling
+- **React Navigation** – Navigation
+- **Supabase** – User DB (persondata, auth, träning, cykel) + Content DB (program, övningar, app_copy, artiklar). Se `.env.example`.
+- **TypeScript** – Typning
 
 ## Design System
 
@@ -137,36 +141,24 @@ src/
 ## Setup
 
 ```bash
-# Install dependencies
 npm install
-
-# Create .env file
 cp .env.example .env
-# Add your Supabase credentials
+# Fyll i User DB + Content DB (fyra variabler, se nedan)
 
-# Start development
 npm start
-
-# Run on iOS
-npm run ios
-
-# Run on Android
-npm run android
-
-# Run on web
-npm run web
+# Tryck 'i' för iOS, 'a' för Android, 'w' för web
 ```
 
-## Environment variables
+## Miljövariabler
 
-```
-EXPO_PUBLIC_USER_SUPABASE_URL=...
-EXPO_PUBLIC_USER_SUPABASE_ANON_KEY=...
-EXPO_PUBLIC_CONTENT_SUPABASE_URL=...
-EXPO_PUBLIC_CONTENT_SUPABASE_ANON_KEY=...
-```
+| Variabel | Beskrivning |
+|----------|-------------|
+| `EXPO_PUBLIC_USER_SUPABASE_URL` | User DB – projekt-URL |
+| `EXPO_PUBLIC_USER_SUPABASE_ANON_KEY` | User DB – anon-nyckel |
+| `EXPO_PUBLIC_CONTENT_SUPABASE_URL` | Content DB – projekt-URL |
+| `EXPO_PUBLIC_CONTENT_SUPABASE_ANON_KEY` | Content DB – anon-nyckel |
 
-Se `.env.example` för full lista.
+Full lista och valfria variabler: `.env.example`.
 
 ## Features
 

@@ -14,7 +14,7 @@ import {
   Card,
   AppText,
   AppIcon,
-  LoadingScreen,
+  DataScreen,
 } from "../../shared/ui";
 import { TopBar } from "../../components/layout/TopBar";
 import { SegmentBar } from "../../components/layout/SegmentBar";
@@ -72,8 +72,6 @@ export function InsightsScreen() {
     }, [refetchCycle, refetchInsight, refetchReadiness, refetchReadinessHistory])
   );
 
-  if (isLoading) return <LoadingScreen message="Laddar insikter..." />;
-
   const statCards = [
     {
       label: "Total volym",
@@ -99,7 +97,8 @@ export function InsightsScreen() {
   const handleSettings = () => navigation.navigate("Settings");
 
   return (
-    <Screen scroll padded>
+    <DataScreen loading={isLoading} loadingMessage="Laddar insikter...">
+      <Screen scroll padded>
       <TopBar
         title="Insikter"
         subtitle="Baserat på det du loggat"
@@ -421,5 +420,6 @@ export function InsightsScreen() {
         )}
       </YStack>
     </Screen>
+    </DataScreen>
   );
 }

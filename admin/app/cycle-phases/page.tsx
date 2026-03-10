@@ -1,4 +1,4 @@
-import { adminContentClient } from "../../lib/contentClient";
+import { adminContentClient } from "@/lib/contentClient";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 

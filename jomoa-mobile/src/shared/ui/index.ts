@@ -42,6 +42,7 @@ export type { AppIconName } from "./AppIcon";
 export { LoadingScreen } from "./LoadingScreen";
 export { EmptyState } from "./EmptyState";
 export { ErrorState } from "./ErrorState";
+export { DataScreen } from "./DataScreen";
 export { ErrorBoundary } from "./ErrorBoundary";
 
 // Types
@@ -55,4 +56,5 @@ export type { AppInputProps } from "./AppInput";
 export type { LoadingScreenProps } from "./LoadingScreen";
 export type { EmptyStateProps } from "./EmptyState";
 export type { ErrorStateProps } from "./ErrorState";
+export type { DataScreenProps } from "./DataScreen";
 export type { DividerProps } from "./Divider";

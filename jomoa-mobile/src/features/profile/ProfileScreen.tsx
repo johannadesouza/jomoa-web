@@ -17,7 +17,7 @@ import {
 } from "../../shared/ui";
 
 import { useAuth } from "../../shared/context/AuthContext";
-import { supabase } from "../../config/supabase";
+import { updateClient } from "../../lib/repos/userRepo/clients";
 import { getPrimaryGoalLabel, getTrainingDaysLabel } from "../../lib/utils/profileLabels";
 import { GoalsSection } from "../insights/GoalsSection";
 import { RootStackParamList } from "../../navigation/RootNavigator";
@@ -99,14 +99,11 @@ export function ProfileScreen() {
     if (!client?.id) return;
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from("clients")
-        .update({
-          primary_goal: selectedGoal,
-          training_frequency: selectedFrequency,
-          training_days: selectedDays,
-        })
-        .eq("id", client.id);
+      const { error } = await updateClient(client.id, {
+        primary_goal: selectedGoal,
+        training_frequency: selectedFrequency,
+        training_days: selectedDays,
+      });
 
       if (error) throw error;
       await refreshClient();

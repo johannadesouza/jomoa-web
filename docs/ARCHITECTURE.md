@@ -2,8 +2,9 @@
 
 ## High-level
 
-- **jomoa-mobile:** React Native (Expo) app; två Supabase-klienter: User DB (persondata) och Content DB (program, artiklar, copy, insiktsmallar).
-- **web:** Next.js landing/waitlist; använder Content DB (och egna tabeller för waitlist).
+- **jomoa-mobile:** React Native (Expo) app; `src/features/` per flöde (dashboard, train, journey, learn, cycle, readiness, settings, onboarding), `src/lib/` för domain, services, repos, hooks. Två Supabase-klienter: User DB (persondata) och Content DB (program, artiklar, copy, insiktsmallar).
+- **web:** Next.js landing/waitlist; `app/` för routing, `components/` (flat med t.ex. `landing/`, `ui/`). Använder Content DB (och egna tabeller för waitlist).
+- **admin:** Next.js admin; `app/` med sidor, delade komponenter (AdminNav, ConfirmDeleteButton). Content DB endast.
 - **supabase/user** och **supabase/content:** Migrationer för User DB respektive Content DB.
 
 ## Data layers (jomoa-mobile)
@@ -17,6 +18,12 @@
 | **adaptation** | Träningsjustering: engine + rules (cycle phase, readiness, perimenopause, recent load, weekly progression). Input: cycle phase, readiness, perimenopause symptoms, load; output: volumeModifier, suggestDeload, suggestRecovery, reason. |
 | **utils** | cycleEngine (pure: fas, overdue, datum), cycleUtils, date. |
 | **hooks** | useDashboard, useCycle, useTrainingAdaptation, useInsights, useReadiness, useCalendarMonth, etc. |
+
+## Features → services / repos
+
+- **Riktlinje:** Feature-skärmar (screens i `features/`) anropar helst **services** eller **hooks** som i sin tur använder repos. Ingen direkt Supabase i UI – använd `userRepo`/`contentRepo` eller en service.
+- **Enkla läs:** Att anropa contentRepo (t.ex. artiklar, program) direkt från en skärm är acceptabelt för enkla listor/detaljer. När det finns affärslogik, aggregering eller flera källor ska det ligga i en service eller hook.
+- **Skriv:** Alla uppdateringar (clients, readiness, pass, etc.) ska gå via repo eller service, inte via Supabase-klient i komponenten.
 
 ## Cycle engine
 

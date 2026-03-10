@@ -21,6 +21,11 @@ import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
 import { getThemeColors } from "../../shared/theme/colors";
 import type { AdaptationResult } from "../../lib/adaptation/types";
 import type { CyclePhase } from "../../lib/utils/cycleUtils";
+import {
+  RULE_LABELS,
+  getAdaptationHeadline,
+  getVolumeLabel,
+} from "../../lib/adaptation/adaptationLabels";
 
 interface AdaptationInsightCardProps {
   adaptation: AdaptationResult;
@@ -28,72 +33,6 @@ interface AdaptationInsightCardProps {
   decision: boolean | null;
   onAccept: () => void;
   onDecline: () => void;
-}
-
-// ─── Textmappning: ruleId → kort mänsklig etikett ────────────────────────────
-// Kopplar till faktiska ruleId-strängar definierade i varje rule-fil.
-
-const RULE_LABELS: Record<string, string> = {
-  menstruation_deload:         "Mensfas med låg energi",
-  menstruation_volume:         "Mensfas – skonsam dag",
-  luteal_volume:               "Lutealfas med låg energi",
-  follicular_overload:         "Follikulär fas + bra dagsform",
-  ovulation_overload:          "Ägglossning + toppform",
-  ovulation_intensity:         "Ägglossning – hög kapacitet",
-  high_stress_recovery:        "Hög stress + låg energi",
-  poor_sleep_volume:           "Dålig sömn + låg energi",
-  poor_sleep:                  "Dålig sömn",
-  high_soreness:               "Ömhet + låg energi",
-  soreness:                    "Hög muskelömhet",
-  high_load_recovery:          "Hög veckobelastning",
-  moderate_load_recovery:      "Ökad veckobelastning",
-  peri_hot_flash_energy_crash: "Värmevallningar + energikrasch",
-  peri_single_symptom:         "Symtom idag",
-  peri_sleep_disruption:       "Sömnproblem",
-  peri_joint_stiffness:        "Ledvärk",
-};
-
-// ─── Rubrikgenerering ─────────────────────────────────────────────────────────
-
-function getHeadline(adaptation: AdaptationResult): string {
-  const { volumeModifier, suggestDeload, suggestRecovery, appliedRules } = adaptation;
-  const topRule = appliedRules[0] ?? "";
-
-  if (suggestRecovery || (suggestDeload && volumeModifier <= 0.7)) {
-    return "Kroppen behöver återhämtning idag";
-  }
-
-  if (volumeModifier >= 1.1) {
-    if (topRule.includes("follicular") || topRule.includes("ovulation")) {
-      return "Du är i toppskick – passa på";
-    }
-    return "Bra dag att pusha lite extra";
-  }
-
-  if (volumeModifier >= 1.0) {
-    return "Du är i bra form idag";
-  }
-
-  if (volumeModifier >= 0.9) {
-    if (topRule.includes("menstruation")) return "Lite lugnare idag – det är klokt";
-    if (topRule.includes("sleep"))        return "Sömnen påverkar – spara lite kraft";
-    if (topRule.includes("luteal"))       return "Kroppen jobbar hårdare nu";
-    if (topRule.includes("peri"))         return "Lyssna på kroppen idag";
-    return "Lite lugnare tempo idag";
-  }
-
-  if (topRule.includes("stress"))   return "Hög stress – träningen anpassas";
-  if (topRule.includes("soreness")) return "Musklerna behöver mer tid";
-  return "Kroppen är i återhämtningsläge";
-}
-
-// ─── Volymetikett ─────────────────────────────────────────────────────────────
-
-function getVolumeLabel(modifier: number): { text: string; isPositive: boolean } {
-  if (modifier === 1.0) return { text: "Normal volym", isPositive: true };
-  const pct = Math.round(Math.abs(modifier - 1) * 100);
-  if (modifier > 1.0) return { text: `+${pct}% volym idag`, isPositive: true };
-  return { text: `${pct}% lättare idag`, isPositive: false };
 }
 
 // ─── Komponent ────────────────────────────────────────────────────────────────
@@ -120,7 +59,7 @@ export function AdaptationInsightCard({
     return null;
   }
 
-  const headline = getHeadline(adaptation);
+  const headline = getAdaptationHeadline(adaptation);
   const { text: volumeLabel, isPositive } = getVolumeLabel(volumeModifier);
 
   const driverLabels = appliedRules
