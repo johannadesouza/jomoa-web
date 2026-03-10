@@ -68,7 +68,6 @@ export default function DecisionCards({
               scale: isActive ? 1.02 : 1,
               boxShadow: isActive ? "0 4px 14px rgba(217, 109, 70, 0.2)" : "0 1px 3px rgba(0,0,0,0.06)",
             }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
             whileHover={{ scale: isActive ? 1.03 : 1.02, x: 4 }}
             className={cn(
               "rounded-lg border px-4 py-3 font-inter font-semibold cursor-default",
