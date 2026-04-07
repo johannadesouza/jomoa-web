@@ -1,8 +1,8 @@
 # JOMOA
 
-**Kontinuitetsfokuserad träning för alla** – plan, readiness och små justeringar som skyddar progressionen.
+**Kontinuitetsfokuserad träning** – plan, readiness och små justeringar som skyddar progressionen.
 
-JOMOA är ett träningssystem (inte en mensapp): strukturerade program, readiness-baserad vägledning (Push / Behåll / Justera) och valfri biologi-modul (cykel, perimenopaus m.m.). För privatpersoner (B2C) och företag (B2B). **Justera istället för att avbryta.**
+Det här repot är ett **engineer-first** projekt som fokuserar på **`jomoa-mobile`** (Expo/React Native) och dess backend-modell (Supabase User DB + Content DB).
 
 ---
 
@@ -15,45 +15,36 @@ jomoa.coach/
 └── supabase/       # User DB + Content DB migrations
 ```
 
-## Appar
-
-### jomoa-mobile (Huvudprodukt)
-
-React Native app byggd med Expo och Tamagui.
+## Quickstart (lokalt)
 
 ```bash
 cd jomoa-mobile
 npm install
+cp .env.example .env
 npm start
 ```
 
-**Tech Stack:**
-- Expo (React Native)
-- Tamagui (Design System)
-- React Navigation
-- Supabase (Backend)
+Öppna via Expo:
+- iOS: tryck `i`
+- Android: tryck `a`
+- Web: tryck `w` (eller `npm run web`)
 
-**Se `jomoa-mobile/README.md` för fullständig dokumentation.**
+Mer detaljer: `jomoa-mobile/README.md`.
 
-**Portfolio demo (web):** se `jomoa-mobile/docs/DEMO_MODE.md` för hur du kör en publik “klicka runt”-demo utan login.
+## Portfolio demo (Expo Web, publik)
 
-## Design system
+- **Demo mode (no-login):** `jomoa-mobile/docs/DEMO_MODE.md`
+- **Deploy till Vercel:** `jomoa-mobile/docs/VERCEL_WEB_DEMO.md`
 
-Alla appar följer JOMOA Design Standards:
+## Arkitektur och data
 
-| Token | Värde |
-|-------|-------|
-| **Background** | Deep Plum Black `#141012` |
-| **Cards** | Warm Charcoal `#1E1A1C` |
-| **Accent** | Warm Terracotta `#D96D46` |
-| **Text** | Soft Light `#EDE8E6` |
-| **Muted** | Muted Warm `#8A7F7A` |
-
-Se `jomoa-mobile/README.md` för design tokens och komponenter.
+- **Arkitektur (lager, engines):** `docs/ARCHITECTURE.md`
+- **Dataflöden (source of truth):** `jomoa-mobile/docs/DATA_FLOW.md`
+- **Schema-referens:** `jomoa-mobile/docs/SCHEMA_REFERENCE.md`
 
 ## Backend (Supabase)
 
-Två Supabase-projekt används:
+Två Supabase-projekt används (se `docs/DECISIONS.md`):
 
 - **User DB** – persondata, auth, clients, readiness, workouts, cycle engine. Migrations: `jomoa-mobile/supabase/migrations/`, `supabase/user/migrations/`.
 - **Content DB** – publikt innehåll (program, övningar, app_copy, artiklar). Migrations: `supabase/content/migrations/`.
@@ -64,49 +55,13 @@ Två Supabase-projekt används:
 |-----|-----------|
 | jomoa-mobile | `EXPO_PUBLIC_USER_SUPABASE_URL`, `EXPO_PUBLIC_USER_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_CONTENT_SUPABASE_URL`, `EXPO_PUBLIC_CONTENT_SUPABASE_ANON_KEY` |
 
-## Moduler
-
-| Modul | Beskrivning |
-|-------|-------------|
-| **Training** | Strukturerade program, loggning, progression |
-| **Cycle** | Cykelspårning (valfritt), fasdetektering, cycle engine (cycles, user_cycle_settings) |
-| **Readiness** | Daglig check-in (energi, sömn, stress) |
-| **Adjustment Engine** | Intelligent träningsjustering |
-| **Insights** | Progress-grafer, mönsteranalys |
-| **Education** | Tips kopplade till användardata |
-
-## Kom igång
-
-1. **Klona repot**
-   ```bash
-   git clone <repository-url>
-   cd jomoa.coach
-   ```
-
-2. **Sätt upp Supabase**
-   - User DB: migrations i `jomoa-mobile/supabase/migrations/` och `supabase/user/migrations/`
-   - Content DB: migrations i `supabase/content/migrations/`
-
-3. **Starta mobilappen**
-   ```bash
-   cd jomoa-mobile
-   npm install
-   npm start
-   # Tryck 'i' för iOS simulator
-   ```
-
 ## Dokumentation
 
-| Fil | Beskrivning |
-|-----|-------------|
-| `CONTRIBUTING.md` | Så bidrar du – tester, PR, arkitektur |
-| `docs/AGILE_PRACTICES.md` | Agila rutiner, DoD, CI, backlog |
-| `jomoa-mobile/README.md` | Mobile app, design system, setup |
-| `docs/ARCHITECTURE.md` | Systemarkitektur, dataflöden |
-| `docs/PRODUCT_OVERVIEW.md` | Produkt, användarflöden |
-| `docs/DECISIONS.md` | Viktiga tekniska beslut |
-| `docs/DOCS_INVENTORY_AND_PLAN.md` | Doc-inventering och städplan |
-| `jomoa-mobile/docs/E2E_VERIFICATION.md` | Manuell E2E-testchecklista |
+- **Bidra:** `CONTRIBUTING.md`
+- **Agilt/DoD:** `docs/AGILE_PRACTICES.md`
+- **Produktöversikt (teknisk):** `docs/PRODUCT_OVERVIEW.md`
+- **Beslut:** `docs/DECISIONS.md`
+- **E2E-checklista:** `jomoa-mobile/docs/E2E_VERIFICATION.md`
 
 ---
 

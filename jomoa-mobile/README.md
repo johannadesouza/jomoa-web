@@ -1,16 +1,30 @@
 # JOMOA Mobile App
 
-React Native-app (Expo) för JOMOA – huvudprodukten i monorepon. Träningsprogram, readiness, cykel och insikter.
+React Native-app (Expo) för JOMOA. Träningsplanering, readiness, cykel och insikter.
 
-**Monorepo:** Denna mapp är en del av [jomoa.coach](../) (root). Backend: User DB + Content DB (Supabase).
+Repo root: [jomoa.coach](../). Backend: **User DB + Content DB** (Supabase).
 
 ---
+
+## Quickstart
+
+```bash
+npm install
+cp .env.example .env
+npm start
+```
+
+Web (lokalt):
+
+```bash
+npm run web
+```
 
 ## QA & Testing
 
 - **Seed data:** `supabase/seed.sql` – exempel för cykel, readiness, pass
-- **Manual QA:** Se `docs/QA_SEED_GUIDE.md` och `docs/E2E_VERIFICATION.md`
-- **Cycle data:** All cykeldata flödar via `CycleContext` – en enda källa
+- **Manual QA:** `docs/QA_SEED_GUIDE.md`, `docs/E2E_VERIFICATION.md`
+- **Source of truth (cycle):** `CycleContext` + cycle engine (se `docs/DATA_FLOW.md`)
 
 ## Tech Stack
 
@@ -19,6 +33,11 @@ React Native-app (Expo) för JOMOA – huvudprodukten i monorepon. Träningsprog
 - **React Navigation** – Navigation
 - **Supabase** – User DB (persondata, auth, träning, cykel) + Content DB (program, övningar, app_copy, artiklar). Se `.env.example`.
 - **TypeScript** – Typning
+
+## Portfolio demo (Expo Web)
+
+- **Demo mode (no-login):** `docs/DEMO_MODE.md`
+- **Deploy till Vercel:** `docs/VERCEL_WEB_DEMO.md`
 
 ## Design System
 
@@ -140,21 +159,7 @@ src/
 
 ## Setup
 
-```bash
-npm install
-cp .env.example .env
-# Fyll i User DB + Content DB (fyra variabler, se nedan)
-
-npm start
-# Tryck 'i' för iOS, 'a' för Android, 'w' för web
-```
-
-## Portfolio Demo (Expo Web)
-
-Vill du visa upp appen klickbart i en portfolio? Använd **Demo Mode** (ingen login) och kör som web.
-
-- Guide: `docs/DEMO_MODE.md`
-- Start web: `npm run web`
+Se **Quickstart** ovan.
 
 ## Miljövariabler
 

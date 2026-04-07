@@ -10,11 +10,9 @@ Ett **kontinuitetsfokuserat träningssystem** – inte motivationsfluff. Struktu
 - **Huvudprodukt:** jomoa-mobile (React Native/Expo).
 - **Erbjudanden:** B2C (privatpersoner: månad/kvartal/halvår/år) och B2B (företag: årlig platsbaserad licens, anställda får premiumåtkomst).
 
-## Web (landing)
+## Extern yta (landing / info)
 
-- **Positioning:** Kontinuitetsfokuserad träning för alla; biologi valfritt. Segment: "För privatpersoner" (B2C) och "För företag" (B2B) med dedikerade block och CTA.
-- **CTAs:** B2C → väntelista / beta; B2B → boka demo / kontakt.
-- **FAQ:** Är det en mensapp? (Nej.) Funkar för män? (Ja.) Kan företag se individdata? (Nej, endast aggregerade mått.)
+Landing/waitlist ingår inte längre i detta repo. Denna fil fokuserar på produkt- och appflöden i `jomoa-mobile`.
 
 ## Core flows (app)
 

@@ -34,6 +34,8 @@ npm run web
 
 För en publik demo rekommenderas att du deployar en web-build och länkar från portfolion.
 
+- Vercel-guide: `docs/VERCEL_WEB_DEMO.md`
+
 ## Säkerhet / data
 
 - `EXPO_PUBLIC_*`-variabler blir publika i en web-build.
