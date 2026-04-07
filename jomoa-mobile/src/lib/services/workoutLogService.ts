@@ -1,5 +1,8 @@
 import { supabase } from "../../config/supabase";
 import { getLocalDateString } from "../utils/date";
+import { isDemoMode } from "../demo/demoMode";
+import { getDemoWorkoutStats } from "../demo/demoData";
+import { getRuntimeDemoPersona } from "../demo/demoMode";
 
 export interface WorkoutStats {
   weeklyWorkouts: number;
@@ -15,6 +18,9 @@ export interface InsightStats {
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 export async function fetchWeeklyStats(clientId: string): Promise<WorkoutStats> {
+  if (isDemoMode()) {
+    return getDemoWorkoutStats(getRuntimeDemoPersona());
+  }
   const today = new Date();
   const startOfWeek = new Date(today);
   startOfWeek.setDate(today.getDate() - today.getDay() + 1);

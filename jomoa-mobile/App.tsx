@@ -25,6 +25,7 @@ import { CycleProvider } from "./src/shared/context/CycleContext";
 import { ThemeProvider, useTheme } from "./src/shared/context/ThemeContext";
 import { getThemeColors } from "./src/shared/theme/colors";
 import { useAuth } from "./src/shared/context/AuthContext";
+import { DemoPersonaProvider } from "./src/shared/context/DemoPersonaContext";
 import {
   requestNotificationPermissions,
   scheduleDailyCheckin,
@@ -78,21 +79,23 @@ function AppContent() {
       <Theme name={theme}>
         <SafeAreaProvider>
           <FeatureFlagsProvider>
-          <AuthProvider>
-            <AppNowProvider>
-            <ScenarioProvider>
-            <NotificationSetup />
-            <AssignmentProvider>
-            <CycleProvider>
-            <NavigationContainer>
-              <StatusBar style={theme === "dark" ? "light" : "dark"} />
-              <RootNavigator />
-            </NavigationContainer>
-            </CycleProvider>
-            </AssignmentProvider>
-            </ScenarioProvider>
-            </AppNowProvider>
-          </AuthProvider>
+            <DemoPersonaProvider>
+              <AuthProvider>
+                <AppNowProvider>
+                  <ScenarioProvider>
+                    <NotificationSetup />
+                    <AssignmentProvider>
+                      <CycleProvider>
+                        <NavigationContainer>
+                          <StatusBar style={theme === "dark" ? "light" : "dark"} />
+                          <RootNavigator />
+                        </NavigationContainer>
+                      </CycleProvider>
+                    </AssignmentProvider>
+                  </ScenarioProvider>
+                </AppNowProvider>
+              </AuthProvider>
+            </DemoPersonaProvider>
           </FeatureFlagsProvider>
         </SafeAreaProvider>
       </Theme>

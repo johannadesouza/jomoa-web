@@ -3,7 +3,8 @@ import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "../../config/supabase";
 
 import type { TrainingGoal, DayOfWeek, PresentationProfile, PresentationTheme, OnboardingPath } from "../types/onboarding";
-import { getDemoPersona, isDemoMode } from "../../lib/demo/demoMode";
+import { isDemoMode } from "../../lib/demo/demoMode";
+import { useDemoPersona } from "./DemoPersonaContext";
 
 export interface Client {
   id: string;
@@ -42,14 +43,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [client, setClient] = useState<Client | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const demo = useDemoPersona();
 
   // Portfolio/web demo: bypass Supabase auth + seed a stable client persona.
   // This makes it possible to deploy a public demo without requiring visitors
   // to create accounts or touch production data.
   useEffect(() => {
     if (!isDemoMode()) return;
-
-    const persona = getDemoPersona();
+    if (!demo.isReady) return;
+    const persona = demo.persona;
     const demoUserId = `demo_${persona}`;
     const now = new Date().toISOString();
 
@@ -91,7 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     setIsLoading(false);
-  }, []);
+  }, [demo.persona, demo.isReady]);
 
   const fetchClient = async (userId: string) => {
     const { data, error } = await supabase

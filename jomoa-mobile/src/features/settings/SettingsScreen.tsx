@@ -27,6 +27,8 @@ import {
 } from "../../lib/services/notificationService";
 import { getItem, setItem, storageKeys } from "../../lib/store/storage";
 import { useThemeColors } from "../../shared/theme/useThemeColors";
+import { isDemoMode } from "../../lib/demo/demoMode";
+import { useDemoPersona } from "../../shared/context/DemoPersonaContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -42,6 +44,7 @@ export function SettingsScreen() {
   const { user, client, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
   const colors = useThemeColors();
+  const demo = useDemoPersona();
   const showCycleInUI = client?.presentation_profile !== "male";
   const isCycleOnly = client?.onboarding_path === "cycle_only";
 
@@ -194,6 +197,46 @@ export function SettingsScreen() {
         <PresentationSettingsSection />
 
         {showCycleInUI && <CycleModeSettingsSection />}
+
+        {isDemoMode() && demo.isReady && (
+          <Section title="Demo">
+            <Card>
+              <Card.Content>
+                <YStack gap="$3">
+                  <AppText variant="small" muted>
+                    Byt persona för att se hur appen anpassar innehåll och navigation.
+                  </AppText>
+                  <YStack gap="$2">
+                    <AppButton
+                      variant={demo.persona === "strength_3x" ? "primary" : "secondary"}
+                      size="sm"
+                      fullWidth
+                      onPress={() => demo.setPersona("strength_3x")}
+                    >
+                      Strength 3x/vecka
+                    </AppButton>
+                    <AppButton
+                      variant={demo.persona === "cycle_only" ? "primary" : "secondary"}
+                      size="sm"
+                      fullWidth
+                      onPress={() => demo.setPersona("cycle_only")}
+                    >
+                      Cycle-only
+                    </AppButton>
+                    <AppButton
+                      variant={demo.persona === "perimenopause" ? "primary" : "secondary"}
+                      size="sm"
+                      fullWidth
+                      onPress={() => demo.setPersona("perimenopause")}
+                    >
+                      Perimenopause
+                    </AppButton>
+                  </YStack>
+                </YStack>
+              </Card.Content>
+            </Card>
+          </Section>
+        )}
 
         {devItems.length > 0 && (
           <Section title="Utvecklare">

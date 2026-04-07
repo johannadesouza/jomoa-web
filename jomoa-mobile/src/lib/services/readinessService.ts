@@ -7,6 +7,8 @@ import { supabase } from "../../config/supabase";
 import { getLocalDateString } from "../utils/date";
 import { calculateReadinessScore, type ReadinessScoreWeights } from "../domain/readinessScore";
 import { getCachedFlags } from "./appConfigService";
+import { isDemoMode, getRuntimeDemoPersona } from "../demo/demoMode";
+import { getDemoReadiness } from "../demo/demoData";
 
 export interface ReadinessData {
   client_id: string;
@@ -52,6 +54,9 @@ function getReadinessWeightsFromConfig(): ReadinessScoreWeights | null {
 export async function saveReadiness(
   data: ReadinessData
 ): Promise<{ success: boolean; error?: string }> {
+  if (isDemoMode()) {
+    return { success: false, error: "Demo: Readiness är read-only" };
+  }
   try {
     const weights = getReadinessWeightsFromConfig();
     const readinessScore = calculateReadinessScore(data, weights);
@@ -109,6 +114,10 @@ export async function getReadinessForDate(
   clientId: string,
   date: string
 ): Promise<{ data: ReadinessRecord | null; error: string | null }> {
+  if (isDemoMode()) {
+    const persona = getRuntimeDemoPersona();
+    return { data: getDemoReadiness(persona, date), error: null };
+  }
   try {
     const { data, error } = await supabase
       .from("daily_readiness")
@@ -134,6 +143,18 @@ export async function getReadinessHistory(
   startDate: string,
   endDate: string
 ): Promise<ReadinessRecord[]> {
+  if (isDemoMode()) {
+    const persona = getRuntimeDemoPersona();
+    const start = new Date(startDate + "T12:00:00");
+    const end = new Date(endDate + "T12:00:00");
+    const out: ReadinessRecord[] = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const date = d.toISOString().slice(0, 10);
+      const r = getDemoReadiness(persona, date);
+      if (r) out.push(r);
+    }
+    return out;
+  }
   try {
     const { data, error } = await supabase
       .from("daily_readiness")

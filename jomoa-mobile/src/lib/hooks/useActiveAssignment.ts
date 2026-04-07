@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { fetchActiveAssignment } from "../services/programService";
 import type { ProgramAssignmentData } from "../services/programService";
+import { isDemoMode } from "../demo/demoMode";
+import { getDemoAssignment } from "../demo/demoData";
+import { useDemoPersona } from "../../shared/context/DemoPersonaContext";
 
 const LOAD_TIMEOUT_MS = 10_000;
 
@@ -16,8 +19,14 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 export function useActiveAssignment(clientId: string | undefined) {
   const [assignment, setAssignment] = useState<ProgramAssignmentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const demo = useDemoPersona();
 
   const load = useCallback(async () => {
+    if (isDemoMode() && demo.isReady) {
+      setAssignment(getDemoAssignment(demo.persona));
+      setIsLoading(false);
+      return;
+    }
     if (!clientId) {
       setAssignment(null);
       setIsLoading(false);
@@ -35,7 +44,7 @@ export function useActiveAssignment(clientId: string | undefined) {
     } finally {
       setIsLoading(false);
     }
-  }, [clientId]);
+  }, [clientId, demo.persona, demo.isReady]);
 
   useEffect(() => {
     load();

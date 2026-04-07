@@ -42,6 +42,9 @@ import {
 import { useAuth } from "./AuthContext";
 import { useAppNow } from "./AppNowContext";
 import { useScenario } from "./ScenarioContext";
+import { isDemoMode } from "../../lib/demo/demoMode";
+import { useDemoPersona } from "./DemoPersonaContext";
+import { getDemoCycle } from "../../lib/demo/demoData";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -84,6 +87,7 @@ export function CycleProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const appNow = useAppNow();
   const scenario = useScenario();
+  const demo = useDemoPersona();
 
   const [activeCycle, setActiveCycle] = useState<CycleRecord | null>(null);
   const [stats, setStats] = useState<CycleStats | null>(null);
@@ -98,6 +102,38 @@ export function CycleProvider({ children }: { children: React.ReactNode }) {
 
   const load = useCallback(async () => {
     if (!clientId) {
+      setIsLoading(false);
+      return;
+    }
+    if (isDemoMode() && demo.isReady) {
+      const today = appNow.todayString();
+      const d = getDemoCycle(demo.persona, today);
+      if (!d) {
+        setActiveCycle(null);
+        setStats(null);
+        setSettings(null);
+        setIsLoading(false);
+        return;
+      }
+      setActiveCycle({ id: `demo_cycle_${demo.persona}`, client_id: clientId, start_date: d.startDate, end_date: null } as CycleRecord);
+      setStats({
+        id: `demo_cycle_stats_${demo.persona}`,
+        client_id: clientId,
+        rolling_avg_days: d.cycleLength,
+        rolling_std_dev_days: 2,
+        updated_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+      } as CycleStats);
+      setSettings({
+        id: `demo_cycle_settings_${demo.persona}`,
+        client_id: clientId,
+        mode: d.mode,
+        overdue_soft_days: 3,
+        overdue_hard_days: 7,
+        missing_period_threshold_days: 60,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      } as UserCycleSettings);
       setIsLoading(false);
       return;
     }
@@ -127,7 +163,7 @@ export function CycleProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
       loadingRef.current = false;
     }
-  }, [clientId, appNow]);
+  }, [clientId, appNow, demo.persona, demo.isReady]);
 
   useEffect(() => {
     load();
