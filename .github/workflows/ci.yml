@@ -28,27 +28,3 @@ jobs:
       - name: Test (jomoa-mobile)
         run: npm run test
         working-directory: jomoa-mobile
-
-  web-build:
-    name: web (build)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: web/package-lock.json
-
-      - name: Install (web)
-        run: npm ci
-        working-directory: web
-
-      - name: Build (web)
-        run: npm run build
-        working-directory: web
-        env:
-          NEXT_PUBLIC_CONTENT_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_CONTENT_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          NEXT_PUBLIC_CONTENT_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_CONTENT_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}

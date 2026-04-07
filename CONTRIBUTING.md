@@ -8,12 +8,8 @@ Tack för att du vill bidra. Här är några riktlinjer så att ändringar blir 
    ```bash
    cd jomoa-mobile && npm run test
    ```
-2. **Kör build (web)**  
-   ```bash
-   cd web && npm run build
-   ```
-3. **Lint**  
-   Kör `npm run lint` i de projekt där det finns (t.ex. web, admin).
+2. **Lint**  
+   Kör `npm run lint` i de projekt där det finns (t.ex. admin).
 
 Om något faller, åtgärda det eller beskriv i PR:en varför det är acceptabelt (t.ex. temporär skip).
 

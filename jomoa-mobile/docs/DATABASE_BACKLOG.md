@@ -38,7 +38,7 @@ Lista över User-DB-tabeller som används av jomoa-mobile vs kandidater till bor
 | client_journal_entries | Ta bort eller behåll för framtida journal |
 | client_tags, client_tag_links | Ta bort eller behåll för admin/coach |
 | onboarding_tasks, profile_onboarding_task_status | Ta bort om ni inte använder dem (appen har eget onboarding) |
-| waitlist_emails | Behåll – används av web |
+| waitlist_emails | Ta bort om den inte används av mobil/admin. (Tidigare använd av web.) |
 
 ## client_settings
 

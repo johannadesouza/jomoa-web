@@ -14,7 +14,7 @@
 README.md
 CONTRIBUTING.md                  # Bidra – tester, PR, arkitektur
 .github/
-├── workflows/ci.yml             # CI: mobile test, web build
+├── workflows/ci.yml             # CI: mobile test
 └── PULL_REQUEST_TEMPLATE.md    # PR-checklista
 docs/
 ├── AGILE_PRACTICES.md           # Agila rutiner, DoD, CI, backlog
@@ -37,19 +37,10 @@ jomoa-mobile/
 │   ├── SCHEMA_REFERENCE.md
 │   ├── QA_SEED_GUIDE.md
 │   ├── E2E_VERIFICATION.md
+│   ├── DEMO_MODE.md
 │   └── TESTFLIGHT_READINESS.md
 └── supabase/
     └── README.md
-
-web/
-├── README.md
-└── docs/
-    ├── README.md
-    ├── ENVIRONMENT_VARIABLES.md
-    ├── BRAND_COLORS.md
-    ├── MAILCHIMP_SETUP.md
-    ├── LOGO_AND_FAVICON_SETUP.md
-    └── TROUBLESHOOTING_WAITLIST.md
 ```
 
 ## Deleted files
@@ -77,8 +68,6 @@ web/
 | **jomoa-mobile/docs/QA_SEED_GUIDE.md** | readiness_check_ins → daily_readiness. |
 | **jomoa-mobile/docs/E2E_VERIFICATION.md** | Env USER/CONTENT; migrationspaths; onboarding-steg (PathChoice, Kön/Tema, CycleSetup). |
 | **jomoa-mobile/supabase/README.md** | Tog bort MIGRATION_ORDER.txt; beskrivning av migrations + cycle engine i user migrations; seed + Content DB. |
-| **web/README.md** | Kort JOMOA-intro (landing/waitlist). |
-| **web/docs/ENVIRONMENT_VARIABLES.md** | Supabase som Content DB; namnen NEXT_PUBLIC_CONTENT_* (med legacy-alias). |
 
 ## New files (Tier C)
 
@@ -96,13 +85,3 @@ web/
 - **Migrations:** Tydliga sökvägar: jomoa-mobile/supabase/migrations/, supabase/user/migrations/, supabase/content/migrations/.
 - **Ingen referens till** BRANDING_GUIDE_V1, design-standards.md eller engineering-standards.md (filer finns inte).
 
----
-
-## Landing page update (continuity-first, B2C/B2B)
-
-- **Positioning:** Primärt budskap = kontinuitetsfokuserad träning (plan + readiness + små justeringar). Sekundärt = biologi (cykel, perimenopaus, utebliven mens, preventivmedel) som valfri modul. Inkluderande (kvinnor + män); ingen "mensapp"-framing.
-- **Hero:** Ny rubrik och underrubrik; segment "För privatpersoner" | "För företag"; två CTAs (väntelista, Prata med oss för företag).
-- **Sektioner:** Varför JOMOA → Så funkar det (3 steg) → Readiness – begripligt → Kalender & planering → Biologi som modul (valbart) → I appen får du → Är JOMOA för dig? + Så funkar det → **B2C-block** (För privatpersoner, abonnemang, CTA väntelista) → **B2B-block** (För företag, årlig platsbaserad, GDPR, CTA Boka demo/Kontakt) → **FAQ** (mensapp? män? företagsdata?) → Final CTA → Väntelista → Footer.
-- **Copy:** sv.json + en.json uppdaterade; lugnt, premium, inga medicinska påståenden.
-- **SEO:** layout.tsx title/description och Open Graph/Twitter uppdaterade till kontinuitet + alla + valfri biologi.
-- **Docs:** PRODUCT_OVERVIEW.md och README.md uppdaterade med ny modell (kontinuitet först, B2C+B2B, biologi valfritt).

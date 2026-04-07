@@ -6,12 +6,11 @@ JOMOA är ett träningssystem (inte en mensapp): strukturerade program, readines
 
 ---
 
-## Monorepo-struktur
+## Repo-struktur
 
 ```
 jomoa.coach/
 ├── jomoa-mobile/   # Mobile app (React Native/Expo) – huvudprodukt
-├── web/            # Landing page & waitlist
 ├── docs/           # Arkitektur, produkt, beslut, arkiv
 └── supabase/       # User DB + Content DB migrations
 ```
@@ -37,19 +36,6 @@ npm start
 **Se `jomoa-mobile/README.md` för fullständig dokumentation.**
 
 **Portfolio demo (web):** se `jomoa-mobile/docs/DEMO_MODE.md` för hur du kör en publik “klicka runt”-demo utan login.
-
-### web (Landing)
-
-Landningssida med segment För privatpersoner (B2C) och För företag (B2B), väntelista och kontakt.
-
-```bash
-cd web
-npm install
-cp .env.example .env.local   # Fyll i Content DB-variabler
-npm run dev
-```
-
-**Se `web/README.md` för env och deploy.**
 
 ## Design system
 
@@ -77,7 +63,6 @@ Två Supabase-projekt används:
 | App | Variabler |
 |-----|-----------|
 | jomoa-mobile | `EXPO_PUBLIC_USER_SUPABASE_URL`, `EXPO_PUBLIC_USER_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_CONTENT_SUPABASE_URL`, `EXPO_PUBLIC_CONTENT_SUPABASE_ANON_KEY` |
-| web | `NEXT_PUBLIC_CONTENT_SUPABASE_URL`, `NEXT_PUBLIC_CONTENT_SUPABASE_ANON_KEY` (se `web/.env.example`) |
 
 ## Moduler
 
@@ -101,7 +86,6 @@ Två Supabase-projekt används:
 2. **Sätt upp Supabase**
    - User DB: migrations i `jomoa-mobile/supabase/migrations/` och `supabase/user/migrations/`
    - Content DB: migrations i `supabase/content/migrations/`
-   - Web/waitlist: egna tabeller enligt web-projektet
 
 3. **Starta mobilappen**
    ```bash
@@ -118,7 +102,6 @@ Två Supabase-projekt används:
 | `CONTRIBUTING.md` | Så bidrar du – tester, PR, arkitektur |
 | `docs/AGILE_PRACTICES.md` | Agila rutiner, DoD, CI, backlog |
 | `jomoa-mobile/README.md` | Mobile app, design system, setup |
-| `web/README.md` | Landningssida, env, deploy |
 | `docs/ARCHITECTURE.md` | Systemarkitektur, dataflöden |
 | `docs/PRODUCT_OVERVIEW.md` | Produkt, användarflöden |
 | `docs/DECISIONS.md` | Viktiga tekniska beslut |

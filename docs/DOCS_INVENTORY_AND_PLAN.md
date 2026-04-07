@@ -29,14 +29,6 @@
 | `jomoa-mobile/docs/DECISIONS_ADJUSTMENT_HISTORY.md` | strategy_decisions vs adjustment_history | KEEP |
 | `jomoa-mobile/docs/DATABASE_BACKLOG.md` | Databas-backlog | KEEP |
 | `jomoa-mobile/supabase/README.md` | Migrations, schema-länk | UPDATE |
-| `web/README.md` | Web: landing, waitlist, Next.js | UPDATE |
-| `web/docs/README.md` | Fontfiler | KEEP |
-| `web/docs/ENVIRONMENT_VARIABLES.md` | Vercel/env (Content DB, Mailchimp) | KEEP |
-| `web/docs/BRAND_COLORS.md` | Varumärkesfärger | KEEP |
-| `web/docs/MAILCHIMP_SETUP.md` | Mailchimp-inställning | KEEP |
-| `web/docs/TROUBLESHOOTING_WAITLIST.md` | Felsök waitlist | KEEP |
-| `web/docs/LOGO_AND_FAVICON_SETUP.md` | Logo och favicon | KEEP |
-| `web/docs/LANDING_PAGE_REDESIGN.md` | Landningssida redesign | KEEP |
 
 ## 2. Code vs doc alignment (mismatches)
 
@@ -62,8 +54,7 @@ Move to `docs/archive/`: `FINSLIPNING_PLAN.md`, `MODULAR_DOMAIN_ARCHITECTURE.md`
 - **QA_SEED_GUIDE:** Replace "readiness_check_ins" with "daily_readiness".
 - **E2E_VERIFICATION:** Env vars USER/CONTENT; migrations path jomoa-mobile/supabase (and user/content if needed); optional: mention onboarding steps (PathChoice, CycleSetup, Kön/Tema).
 - **jomoa-mobile/supabase/README:** Remove MIGRATION_ORDER.txt reference; list migration locations (migrations/, user migrations if applicable); link SCHEMA_REFERENCE.
-- **web/README:** Short JOMOA-specific intro (waitlist/landing); keep Next.js commands.
-- **web/docs/ENVIRONMENT_VARIABLES:** If web uses Content DB only, say so; keep Mailchimp.
+  
 
 **Tier C (Consolidate)**  
 Create: `/docs/ARCHITECTURE.md`, `/docs/PRODUCT_OVERVIEW.md`, `/docs/DECISIONS.md`. Pull from archived docs and current code: terminology (presentation_profile, training_engine/adaptation, readiness_engine, cycle mode, bio_mode if used).

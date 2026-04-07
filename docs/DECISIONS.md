@@ -25,4 +25,3 @@ Korta noteringar om viktiga tekniska beslut. Ingen historik – bara nuvarande l
 
 - **User DB:** `jomoa-mobile/supabase/migrations/` (grundschema, RLS, mätningar, daganteckningar, etc.) och `supabase/user/migrations/` (cycle engine).
 - **Content DB:** `supabase/content/migrations/`.
-- Web har egna tabeller (t.ex. waitlist) enligt web-projektet.

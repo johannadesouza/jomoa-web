@@ -3,7 +3,6 @@
 ## High-level
 
 - **jomoa-mobile:** React Native (Expo) app; `src/features/` per flöde (dashboard, train, journey, learn, cycle, readiness, settings, onboarding), `src/lib/` för domain, services, repos, hooks. Två Supabase-klienter: User DB (persondata) och Content DB (program, artiklar, copy, insiktsmallar).
-- **web:** Next.js landing/waitlist; `app/` för routing, `components/` (flat med t.ex. `landing/`, `ui/`). Använder Content DB (och egna tabeller för waitlist).
 - **admin:** Next.js admin; `app/` med sidor, delade komponenter (AdminNav, ConfirmDeleteButton). Content DB endast.
 - **supabase/user** och **supabase/content:** Migrationer för User DB respektive Content DB.
 
