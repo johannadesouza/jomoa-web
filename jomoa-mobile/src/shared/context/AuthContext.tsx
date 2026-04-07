@@ -49,9 +49,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // This makes it possible to deploy a public demo without requiring visitors
   // to create accounts or touch production data.
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H1',location:'AuthContext.tsx:demoEffect',message:'AuthProvider demo effect tick',data:{isDemoMode:isDemoMode(),demoIsReady:demo.isReady,demoPersona:demo.persona},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     if (!isDemoMode()) return;
     if (!demo.isReady) return;
     const persona = demo.persona;

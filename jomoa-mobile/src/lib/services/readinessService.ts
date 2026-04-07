@@ -114,14 +114,8 @@ export async function getReadinessForDate(
   clientId: string,
   date: string
 ): Promise<{ data: ReadinessRecord | null; error: string | null }> {
-  // #region agent log
-  fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H3',location:'readinessService.ts:getReadinessForDate',message:'getReadinessForDate enter',data:{isDemoMode:isDemoMode(),clientIdPresent:!!clientId,date},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   if (isDemoMode()) {
     const persona = getRuntimeDemoPersona();
-    // #region agent log
-    fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H3',location:'readinessService.ts:demoReturn',message:'getReadinessForDate demo return',data:{persona},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     return { data: getDemoReadiness(persona, date), error: null };
   }
   try {

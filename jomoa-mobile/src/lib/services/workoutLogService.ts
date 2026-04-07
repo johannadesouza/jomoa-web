@@ -18,9 +18,6 @@ export interface InsightStats {
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 export async function fetchWeeklyStats(clientId: string): Promise<WorkoutStats> {
-  // #region agent log
-  fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H4',location:'workoutLogService.ts:fetchWeeklyStats',message:'fetchWeeklyStats enter',data:{isDemoMode:isDemoMode(),clientIdPresent:!!clientId,runtimePersona:isDemoMode()?getRuntimeDemoPersona():null},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   if (isDemoMode()) {
     return getDemoWorkoutStats(getRuntimeDemoPersona());
   }
