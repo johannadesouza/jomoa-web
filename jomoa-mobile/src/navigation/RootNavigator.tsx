@@ -56,6 +56,10 @@ export function RootNavigator() {
   const themeColors = useThemeColors();
   const { isAuthenticated, isLoading, client } = useAuth();
 
+  // #region agent log
+  fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H1',location:'RootNavigator.tsx:render',message:'RootNavigator state',data:{isLoading,isAuthenticated,clientStage:client?.onboarding_stage??null,clientPath:client?.onboarding_path??null,clientPresent:!!client},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+
   // client === null: either new user with no clients row (→ onboarding) OR
   // DB error on fetchClient (AuthContext logs the error but keeps client=null).
   // Both cases correctly route to Onboarding; new users complete it and get a

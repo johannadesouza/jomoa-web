@@ -1,10 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { fetchInsightStats } from "../services/workoutLogService";
 import { InsightStats } from "../services/workoutLogService";
+import { useDemoPersona } from "../../shared/context/DemoPersonaContext";
 
 export function useInsights(clientId: string | undefined) {
   const [stats, setStats] = useState<InsightStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const demo = useDemoPersona();
 
   const load = useCallback(async () => {
     if (!clientId) return;
@@ -26,7 +28,7 @@ export function useInsights(clientId: string | undefined) {
     } else {
       setIsLoading(false);
     }
-  }, [clientId, load]);
+  }, [clientId, load, demo.epoch]);
 
   return { stats, isLoading, refetch: load };
 }

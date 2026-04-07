@@ -32,6 +32,9 @@ export {
 export { AppButton } from "./AppButton";
 export { AppInput } from "./AppInput";
 
+// Demo
+export { DemoPersonaOverlay } from "./DemoPersonaOverlay";
+
 // Content cards
 export { InsightCard } from "./InsightCard";
 export { LockIcon } from "./LockIcon";

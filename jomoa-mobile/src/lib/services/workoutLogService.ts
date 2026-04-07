@@ -70,6 +70,14 @@ export async function fetchWeeklyStats(clientId: string): Promise<WorkoutStats> 
 }
 
 export async function fetchInsightStats(clientId: string): Promise<InsightStats> {
+  if (isDemoMode()) {
+    const weekly = await fetchWeeklyStats(clientId);
+    return {
+      totalVolume: 18600,
+      sessionsThisMonth: Math.max(weekly.weeklyWorkouts, 1),
+      streak: weekly.streak,
+    };
+  }
   const today = new Date();
   const startOfMonth = getLocalDateString(new Date(today.getFullYear(), today.getMonth(), 1));
 

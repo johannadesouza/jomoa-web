@@ -9,6 +9,7 @@ import { supabase } from "../../config/supabase";
 import { getLocalDateString } from "../utils/date";
 import { getInsightTemplateKey } from "../domain/insightKeys";
 import { fetchInsightTemplate } from "../repos/contentRepo/insightTemplates";
+import { isDemoMode } from "../demo/demoMode";
 
 export interface DailyInsight {
   id: string;
@@ -124,6 +125,39 @@ export async function getOrCreateTodayInsight(
   options?: { date?: string; defaultTitle?: string }
 ): Promise<{ data: DailyInsight | null; error: string | null }> {
   const date = options?.date ?? getLocalDateString();
+  // #region agent log
+  fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H3',location:'insightService.ts:getOrCreateTodayInsight',message:'enter',data:{clientIdPresent:!!clientId,date,phase:input.phase,readinessTier:input.readinessTier,hasSymptoms:input.hasSymptoms},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+  if (isDemoMode()) {
+    const templateKey = getInsightTemplateKey(input);
+    let insight: Omit<DailyInsight, "id" | "client_id" | "date">;
+    try {
+      const template = await fetchInsightTemplate(templateKey);
+      if (template) {
+        insight = {
+          phase: input.phase,
+          insight_title: template.title,
+          insight_body: template.body,
+          actions: template.actions ?? [],
+          tags: computeTags(input),
+        };
+      } else {
+        insight = generateInsight(input);
+      }
+    } catch {
+      insight = generateInsight(input);
+    }
+
+    return {
+      data: {
+        id: `demo_insight_${date}`,
+        client_id: clientId,
+        date,
+        ...insight,
+      },
+      error: null,
+    };
+  }
   try {
     const { data: existing } = await supabase
       .from("daily_insight_log")
@@ -133,6 +167,9 @@ export async function getOrCreateTodayInsight(
       .maybeSingle();
 
     if (existing) {
+      // #region agent log
+      fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H3',location:'insightService.ts:existing',message:'existing insight found',data:{hasExisting:true},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
       return { data: existing as DailyInsight, error: null };
     }
 
@@ -181,11 +218,17 @@ export async function getOrCreateTodayInsight(
       .maybeSingle();
 
     if (error) throw error;
+    // #region agent log
+    fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H3',location:'insightService.ts:inserted',message:'inserted insight',data:{insertedPresent:!!inserted},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     return { data: inserted as DailyInsight | null, error: null };
   } catch (err) {
     const e = err as { code?: string; message?: string };
     const isTableMissing = e?.code === "PGRST205" || (e?.message && String(e.message).includes("daily_insight_log"));
     const message = e?.message ? String(e.message) : "getOrCreateTodayInsight failed";
+    // #region agent log
+    fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H3',location:'insightService.ts:catch',message:'error',data:{code:e?.code??null,isTableMissing,hasMessage:!!e?.message},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     if (!isTableMissing && __DEV__) {
       console.warn("[insightService] getOrCreateTodayInsight:", e?.code ?? message, err);
     }

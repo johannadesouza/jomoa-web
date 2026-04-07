@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { Pressable } from "react-native";
 import { YStack, XStack, Text } from "tamagui";
@@ -46,6 +46,7 @@ export function DashboardScreen() {
   const navigation = useNavigation<NavigationProp>();
   const { user, client } = useAuth();
   const [selectedDate, setSelectedDate] = useState(() => getLocalDateString());
+  const prevRefetchRef = useRef<{ refetch?: unknown } | null>(null);
 
   const {
     assignment,
@@ -93,6 +94,18 @@ export function DashboardScreen() {
     refetchCycle,
     refetchInsight,
   });
+
+  // #region agent log
+  {
+    const prev = prevRefetchRef.current;
+    const changed = { refetch: prev ? prev.refetch !== refetch : null };
+    prevRefetchRef.current = { refetch };
+    if (changed.refetch) {
+      fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H9',location:'DashboardScreen.tsx:render',message:'refetch identity changed',data:{clientIdPresent:!!client?.id,changed},timestamp:Date.now()})}).catch(()=>{});
+    }
+  }
+  // #endregion
+
   useFocusEffect(React.useCallback(() => refetch(), [refetch]));
 
   const phaseInsight = useDailyPhaseInsight(client?.id);

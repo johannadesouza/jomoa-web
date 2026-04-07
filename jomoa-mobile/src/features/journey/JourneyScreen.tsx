@@ -2,7 +2,7 @@
  * JourneyScreen – Insikter först, logga som segment
  * Journey: Hur mår du idag?, Symtomlindring, Min prognos, Vad kan jag göra?
  */
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { YStack, XStack, Text } from "tamagui";
 import { useNavigation } from "@react-navigation/native";
@@ -59,6 +59,12 @@ const SECONDARY_ACTIONS = [
 export function JourneyScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [segment, setSegment] = useState<JourneySegment>("idag");
+  const prevRefetchRef = useRef<{
+    refetchCycle?: unknown;
+    refetchInsight?: unknown;
+    refetchReadiness?: unknown;
+    refetchReadinessHistory?: unknown;
+  } | null>(null);
   const [symptomModal, setSymptomModal] = useState<{ visible: boolean; symptomId: SymptomId | null }>({
     visible: false,
     symptomId: null,
@@ -83,8 +89,27 @@ export function JourneyScreen() {
   const { readiness, refetch: refetchReadiness } = useReadiness(client?.id);
   const { refetch: refetchReadinessHistory } = useReadinessHistory(client?.id, 7);
 
+  // #region agent log
+  {
+    const prev = prevRefetchRef.current;
+    const changed = {
+      refetchCycle: prev ? prev.refetchCycle !== refetchCycle : null,
+      refetchInsight: prev ? prev.refetchInsight !== refetchInsight : null,
+      refetchReadiness: prev ? prev.refetchReadiness !== refetchReadiness : null,
+      refetchReadinessHistory: prev ? prev.refetchReadinessHistory !== refetchReadinessHistory : null,
+    };
+    prevRefetchRef.current = { refetchCycle, refetchInsight, refetchReadiness, refetchReadinessHistory };
+    if (changed.refetchCycle || changed.refetchInsight || changed.refetchReadiness || changed.refetchReadinessHistory) {
+      fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H8',location:'JourneyScreen.tsx:render',message:'refetch identity changed',data:{clientIdPresent:!!client?.id,changed},timestamp:Date.now()})}).catch(()=>{});
+    }
+  }
+  // #endregion
+
   useFocusEffect(
     React.useCallback(() => {
+      // #region agent log
+      fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H8',location:'JourneyScreen.tsx:useFocusEffect',message:'focus effect runs',data:{clientIdPresent:!!client?.id},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
       refetchCycle();
       refetchInsight();
       refetchReadiness();

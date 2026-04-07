@@ -101,6 +101,9 @@ export function CycleProvider({ children }: { children: React.ReactNode }) {
   const clientId = user?.id;
 
   const load = useCallback(async () => {
+    // #region agent log
+    fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H7',location:'CycleContext.tsx:load',message:'enter load()',data:{clientIdPresent:!!clientId,isDemoMode:isDemoMode(),demoIsReady:demo.isReady,persona:demo.persona,today:appNow.todayString(),phaseOverride:scenario.phaseOverride??null},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     if (!clientId) {
       setIsLoading(false);
       return;
@@ -163,9 +166,12 @@ export function CycleProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
       loadingRef.current = false;
     }
-  }, [clientId, appNow, demo.persona, demo.isReady]);
+  }, [clientId, appNow, demo.persona, demo.isReady, demo.epoch]);
 
   useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H7',location:'CycleContext.tsx:useEffect',message:'effect triggers load()',data:{clientIdPresent:!!clientId,isDemoMode:isDemoMode(),demoIsReady:demo.isReady,persona:demo.persona},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     load();
   }, [load]);
 

@@ -4,6 +4,7 @@
  */
 
 import { supabase } from "../../config/supabase";
+import { isDemoMode } from "../demo/demoMode";
 
 export interface CycleSymptom {
   id?: string;
@@ -87,7 +88,19 @@ export async function getTodayHasSymptoms(
   clientId: string
 ): Promise<boolean> {
   const today = new Date().toISOString().split("T")[0];
+  // #region agent log
+  fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H4',location:'cycleSymptomService.ts:getTodayHasSymptoms',message:'enter',data:{clientIdPresent:!!clientId,today,isDemoMode:isDemoMode()},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+  if (isDemoMode()) {
+    // #region agent log
+    fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H4',location:'cycleSymptomService.ts:getTodayHasSymptoms',message:'demo short-circuit',data:{today},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
+    return false;
+  }
   const symptoms = await getCycleSymptomsForRange(clientId, today, today);
+  // #region agent log
+  fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H4',location:'cycleSymptomService.ts:getTodayHasSymptoms',message:'range result',data:{count:symptoms.length},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
   return symptoms.length > 0;
 }
 
@@ -96,6 +109,7 @@ export async function getCycleSymptomsForRange(
   startDate: string,
   endDate: string
 ): Promise<CycleSymptom[]> {
+  if (isDemoMode()) return [];
   try {
     const { data, error } = await supabase
       .from("cycle_symptoms")

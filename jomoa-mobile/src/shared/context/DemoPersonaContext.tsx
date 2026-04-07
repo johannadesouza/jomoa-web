@@ -8,6 +8,8 @@ type DemoPersonaContextValue = {
   persona: DemoPersona;
   setPersona: (persona: DemoPersona) => Promise<void>;
   isReady: boolean;
+  /** Increments on persona switch to invalidate demo data caches */
+  epoch: number;
 };
 
 const STORAGE_KEY = "demo_persona";
@@ -17,6 +19,7 @@ const DemoPersonaContext = createContext<DemoPersonaContextValue | undefined>(un
 export function DemoPersonaProvider({ children }: { children: React.ReactNode }) {
   const [persona, setPersonaState] = useState<DemoPersona>(getDemoPersona());
   const [isReady, setIsReady] = useState(!isDemoMode());
+  const [epoch, setEpoch] = useState(0);
 
   useEffect(() => {
     if (!isDemoMode()) return;
@@ -48,14 +51,16 @@ export function DemoPersonaProvider({ children }: { children: React.ReactNode })
     () => ({
       persona,
       isReady,
+      epoch,
       setPersona: async (p) => {
+        setEpoch((n) => n + 1);
         setPersonaState(p);
         if (isDemoMode()) {
           await AsyncStorage.setItem(STORAGE_KEY, p);
         }
       },
     }),
-    [persona, isReady]
+    [persona, isReady, epoch]
   );
 
   return <DemoPersonaContext.Provider value={value}>{children}</DemoPersonaContext.Provider>;
@@ -68,6 +73,7 @@ export function useDemoPersona(): DemoPersonaContextValue {
       persona: getDemoPersona(),
       isReady: !isDemoMode(),
       setPersona: async () => {},
+      epoch: 0,
     };
   }
   return ctx;

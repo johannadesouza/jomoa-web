@@ -4,6 +4,7 @@ import { useScenario } from "../../shared/context/ScenarioContext";
 import { getReadinessForDate } from "../services/readinessService";
 import { getLocalDateString } from "../utils/date";
 import type { ReadinessRecord } from "../services/readinessService";
+import { useDemoPersona } from "../../shared/context/DemoPersonaContext";
 
 interface UseReadinessResult {
   readiness: ReadinessRecord | null;
@@ -18,6 +19,7 @@ export function useReadiness(
 ): UseReadinessResult {
   const appNow = useAppNow();
   const scenario = useScenario();
+  const demo = useDemoPersona();
   const viewDate = date ?? appNow.todayString();
   const [readiness, setReadiness] = useState<ReadinessRecord | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +46,7 @@ export function useReadiness(
 
   useEffect(() => {
     fetchReadiness();
-  }, [fetchReadiness]);
+  }, [fetchReadiness, demo.epoch]);
 
   // __DEV__ scenario: override today's readiness score when set
   const effectiveReadiness = useMemo(() => {

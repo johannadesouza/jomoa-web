@@ -4,6 +4,8 @@
  */
 
 import { supabase } from "../../config/supabase";
+import { isDemoMode, getRuntimeDemoPersona } from "../demo/demoMode";
+import { getDemoCycle } from "../demo/demoData";
 
 export type CycleEventType =
   | "period_start"
@@ -38,6 +40,11 @@ export interface CyclePhaseRecord {
 export async function getAllPeriodStarts(
   clientId: string
 ): Promise<string[]> {
+  if (isDemoMode()) {
+    const today = new Date().toISOString().slice(0, 10);
+    const demo = getDemoCycle(getRuntimeDemoPersona(), today);
+    return demo?.startDate ? [demo.startDate] : [];
+  }
   try {
     const { data, error } = await supabase
       .from("cycle_events")
@@ -60,6 +67,11 @@ export async function getAllPeriodStarts(
 export async function getLatestPeriodStart(
   clientId: string
 ): Promise<{ data: string | null; error: string | null }> {
+  if (isDemoMode()) {
+    const today = new Date().toISOString().slice(0, 10);
+    const demo = getDemoCycle(getRuntimeDemoPersona(), today);
+    return { data: demo?.startDate ?? null, error: null };
+  }
   try {
     const { data, error } = await supabase
       .from("cycle_events")
@@ -91,6 +103,9 @@ export async function savePeriodStart(
   clientId: string,
   date: string
 ): Promise<{ success: boolean; error?: string }> {
+  if (isDemoMode()) {
+    return { success: false, error: "Demo: read-only" };
+  }
   try {
     const { error } = await supabase.from("cycle_events").insert({
       client_id: clientId,
@@ -118,6 +133,9 @@ export async function getCyclePhases(
   startDate?: string,
   endDate?: string
 ): Promise<{ data: CyclePhaseRecord[]; error: string | null }> {
+  if (isDemoMode()) {
+    return { data: [], error: null };
+  }
   try {
     let query = supabase
       .from("cycle_phases")

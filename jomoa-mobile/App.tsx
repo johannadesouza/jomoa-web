@@ -26,6 +26,8 @@ import { ThemeProvider, useTheme } from "./src/shared/context/ThemeContext";
 import { getThemeColors } from "./src/shared/theme/colors";
 import { useAuth } from "./src/shared/context/AuthContext";
 import { DemoPersonaProvider } from "./src/shared/context/DemoPersonaContext";
+import { DemoPersonaOverlay } from "./src/shared/ui/DemoPersonaOverlay";
+import { isDemoMode } from "./src/lib/demo/demoMode";
 import {
   requestNotificationPermissions,
   scheduleDailyCheckin,
@@ -74,6 +76,11 @@ function NotificationSetup() {
 
 function AppContent() {
   const { theme } = useTheme();
+
+  // #region agent log
+  fetch('http://127.0.0.1:7348/ingest/41ec0831-5954-48fc-a855-14be2128bf09',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'a405e1'},body:JSON.stringify({sessionId:'a405e1',runId:'pre-fix',hypothesisId:'H10',location:'App.tsx:AppContent',message:'bundle marker',data:{marker:'2026-04-07T_debug_H10_v1'},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+
   return (
     <ErrorBoundary>
       <Theme name={theme}>
@@ -89,6 +96,7 @@ function AppContent() {
                         <NavigationContainer>
                           <StatusBar style={theme === "dark" ? "light" : "dark"} />
                           <RootNavigator />
+                          {isDemoMode() ? <DemoPersonaOverlay /> : null}
                         </NavigationContainer>
                       </CycleProvider>
                     </AssignmentProvider>
