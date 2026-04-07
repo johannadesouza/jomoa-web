@@ -59,6 +59,34 @@ export function TrainingDaysScreen({ navigation }: Props) {
             </AppText>
           </YStack>
 
+          <XStack flexWrap="wrap" gap="$2" justifyContent="center">
+            {DAYS.map((day) => {
+              const isSelected = data.trainingDays?.includes(day.value) || false;
+              return (
+                <Pressable key={day.value} onPress={() => handleToggleDay(day.value)}>
+                  <Card
+                    minWidth={40}
+                    paddingHorizontal="$2"
+                    paddingVertical="$2"
+                    backgroundColor={isSelected ? "$accent" : "$backgroundStrong"}
+                    borderColor={isSelected ? "$accent" : "$borderColor"}
+                    borderWidth={1}
+                  >
+                    <Card.Content>
+                      <AppText
+                        variant="small"
+                        fontWeight="600"
+                        color={isSelected ? "$background" : "$color"}
+                      >
+                        {day.short}
+                      </AppText>
+                    </Card.Content>
+                  </Card>
+                </Pressable>
+              );
+            })}
+          </XStack>
+
           <YStack gap="$2">
             {DAYS.map((day) => {
               const isSelected = data.trainingDays?.includes(day.value) || false;

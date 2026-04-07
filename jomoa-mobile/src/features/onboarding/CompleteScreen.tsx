@@ -38,6 +38,7 @@ export function CompleteScreen({ navigation }: Props) {
         onboarding_stage: "completed",
         presentation_profile: data.presentationProfile ?? "female",
         presentation_theme: data.presentationTheme ?? "neutral",
+        onboarding_path: data.onboardingPath ?? "both",
       };
 
       if (data.onboardingPath !== "cycle_only") {
@@ -125,12 +126,14 @@ export function CompleteScreen({ navigation }: Props) {
                   </AppText>
                 </YStack>
 
-                <YStack gap="$2">
-                  <AppText variant="small" muted>
-                    Träningsdagar
-                  </AppText>
-                  <AppText variant="h3">{daysLabel}</AppText>
-                </YStack>
+                {data.trainingDays?.length ? (
+                  <YStack gap="$2">
+                    <AppText variant="small" muted>
+                      Träningsdagar
+                    </AppText>
+                    <AppText variant="h3">{daysLabel}</AppText>
+                  </YStack>
+                ) : null}
               </>
             )}
 
@@ -167,6 +170,16 @@ export function CompleteScreen({ navigation }: Props) {
                 <AppText variant="body" fontWeight="600" minWidth={24}>3.</AppText>
                 <AppText variant="body">{getAppCopy(copy, "complete_next_step_3", "Logga check-in imorgon")}</AppText>
               </XStack>
+              {data.wantsCycleTracking === true && (
+                <XStack gap="$2" alignItems="center">
+                  <AppText variant="body" fontWeight="600" minWidth={24}>4.</AppText>
+                  <AppText variant="body">
+                    {data.lastPeriodStart
+                      ? getAppCopy(copy, "complete_next_step_cycle", "Logga periodstart under Cykel (eller Inställningar → Menscykel) när nästa period börjar")
+                      : getAppCopy(copy, "complete_next_step_cycle_no_date", "Du kan logga din senaste period under Cykel när du vill")}
+                  </AppText>
+                </XStack>
+              )}
             </YStack>
           </YStack>
         </YStack>

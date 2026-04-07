@@ -36,6 +36,8 @@ npm start
 
 **Se `jomoa-mobile/README.md` för fullständig dokumentation.**
 
+**Portfolio demo (web):** se `jomoa-mobile/docs/DEMO_MODE.md` för hur du kör en publik “klicka runt”-demo utan login.
+
 ### web (Landing)
 
 Landningssida med segment För privatpersoner (B2C) och För företag (B2B), väntelista och kontakt.

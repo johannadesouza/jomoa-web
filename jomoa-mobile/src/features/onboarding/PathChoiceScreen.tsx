@@ -3,7 +3,7 @@ import { YStack, XStack } from "tamagui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Pressable } from "react-native";
 
-import { Screen, AppText, Card } from "../../shared/ui";
+import { Screen, AppText, Card, AppIcon } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
 import { useAppCopy, getAppCopy } from "../../lib/hooks/useAppCopy";
@@ -42,15 +42,15 @@ export function PathChoiceScreen({ navigation }: Props) {
   const copy = useAppCopy("sv", data.presentationProfile);
 
   const handleSelect = (path: OnboardingPath) => {
-    updateData({ onboardingPath: path });
     if (path === "cycle_only") {
-      updateData({ wantsCycleTracking: true });
+      updateData({ onboardingPath: path, wantsCycleTracking: true });
       setCurrentStep(1);
       navigation.navigate("CycleSetup");
     } else if (path === "training_only") {
-      updateData({ wantsCycleTracking: false });
+      updateData({ onboardingPath: path, wantsCycleTracking: false });
       navigation.navigate("Goals");
     } else {
+      updateData({ onboardingPath: path, wantsCycleTracking: true });
       navigation.navigate("Goals");
     }
   };
@@ -104,6 +104,9 @@ export function PathChoiceScreen({ navigation }: Props) {
                           {path.description}
                         </AppText>
                       </YStack>
+                      {isSelected && (
+                        <AppIcon name="checkmark-circle" size={24} color="$background" />
+                      )}
                     </XStack>
                   </Card.Content>
                 </Card>

@@ -5,6 +5,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { fetchAppConfig, type FeatureFlags } from "../../lib/services/appConfigService";
+import { isDemoMode } from "../../lib/demo/demoMode";
 
 type FeatureFlagsState = {
   flags: FeatureFlags;
@@ -18,6 +19,10 @@ export function FeatureFlagsProvider({ children }: { children: React.ReactNode }
   const [state, setState] = useState<FeatureFlagsState>(defaultState);
 
   useEffect(() => {
+    if (isDemoMode()) {
+      setState({ flags: {}, isLoading: false });
+      return;
+    }
     let cancelled = false;
     fetchAppConfig().then((flags) => {
       if (!cancelled) setState({ flags, isLoading: false });

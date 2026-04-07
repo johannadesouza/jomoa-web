@@ -43,6 +43,7 @@ export function SettingsScreen() {
   const { theme, setTheme } = useTheme();
   const colors = useThemeColors();
   const showCycleInUI = client?.presentation_profile !== "male";
+  const isCycleOnly = client?.onboarding_path === "cycle_only";
 
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean | null>(null);
 
@@ -90,6 +91,7 @@ export function SettingsScreen() {
   };
 
   const settingsItems: SettingsItem[] = [
+    ...(isCycleOnly ? [{ iconName: "barbell-outline" as const, label: "Lägg till träning", subtitle: "Välj program när du känner dig redo", onPress: () => navigation.navigate("ProgramSelect") }] : []),
     { iconName: "person-outline", label: "Min profil", onPress: () => navigation.navigate("Profile") },
     { iconName: "barbell-outline", label: "Mina program", onPress: () => navigation.navigate("ProgramList") },
     ...(showCycleInUI ? [{ iconName: "moon-outline" as const, label: "Menscykel", onPress: () => navigation.navigate("Cycle") }] : []),

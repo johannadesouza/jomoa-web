@@ -12,7 +12,6 @@ import { CycleQuestionScreen } from "./CycleQuestionScreen";
 import { PathChoiceScreen } from "./PathChoiceScreen";
 import { GoalsScreen } from "./GoalsScreen";
 import { FrequencyScreen } from "./FrequencyScreen";
-import { TrainingDaysScreen } from "./TrainingDaysScreen";
 import { CycleSetupScreen } from "./CycleSetupScreen";
 import { CompleteScreen } from "./CompleteScreen";
 
@@ -24,7 +23,6 @@ export type OnboardingStackParamList = {
   PathChoice: undefined;
   Goals: undefined;
   Frequency: undefined;
-  TrainingDays: undefined;
   CycleSetup: undefined;
   Complete: undefined;
 };
@@ -50,7 +48,6 @@ function OnboardingStack() {
         <Stack.Screen name="PathChoice" component={PathChoiceScreen} />
         <Stack.Screen name="Goals" component={GoalsScreen} />
         <Stack.Screen name="Frequency" component={FrequencyScreen} />
-        <Stack.Screen name="TrainingDays" component={TrainingDaysScreen} />
         <Stack.Screen name="CycleSetup" component={CycleSetupScreen} />
         <Stack.Screen name="Complete" component={CompleteScreen} />
       </Stack.Navigator>

@@ -136,6 +136,9 @@ export function ThemeScreen({ navigation }: Props) {
                             {opt.description}
                           </AppText>
                         </YStack>
+                        {isSelected && (
+                          <AppIcon name="checkmark-circle" size={24} color="$background" />
+                        )}
                       </XStack>
                     </Card.Content>
                   </Card>

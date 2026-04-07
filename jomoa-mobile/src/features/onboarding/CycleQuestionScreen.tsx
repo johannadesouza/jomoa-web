@@ -3,7 +3,7 @@ import { YStack, XStack } from "tamagui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Pressable } from "react-native";
 
-import { Screen, AppText, Card } from "../../shared/ui";
+import { Screen, AppText, Card, AppIcon } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
 
@@ -30,7 +30,7 @@ export function CycleQuestionScreen({ navigation }: Props) {
         <YStack gap="$2">
           <AppText variant="h1">Har du menscykel?</AppText>
           <AppText variant="body" muted>
-            Vi frågar alla – oavsett kön – så att vi kan ge rätt rekommendationer. Om du har en cykel kan vi anpassa träning och återhämtning utifrån den. Om inte fokuserar vi på mål och readiness.
+            Vi frågar alla – oavsett kön – så att vi kan ge rätt rekommendationer. Om du har en cykel kan vi anpassa träning och återhämtning utifrån den. På nästa steg kan du välja endast cykel, endast träning eller båda. Om inte fokuserar vi på mål och readiness.
           </AppText>
         </YStack>
 
@@ -67,6 +67,9 @@ export function CycleQuestionScreen({ navigation }: Props) {
                       Jag vill spåra cykeln och få anpassade rekommendationer
                     </AppText>
                   </YStack>
+                  {data.wantsCycleTracking === true && (
+                    <AppIcon name="checkmark-circle" size={24} color="$background" />
+                  )}
                 </XStack>
               </Card.Content>
             </Card>
@@ -104,6 +107,9 @@ export function CycleQuestionScreen({ navigation }: Props) {
                       Jag vill fokusera på träning och mål utan cykelspårning
                     </AppText>
                   </YStack>
+                  {data.wantsCycleTracking === false && (
+                    <AppIcon name="checkmark-circle" size={24} color="$background" />
+                  )}
                 </XStack>
               </Card.Content>
             </Card>

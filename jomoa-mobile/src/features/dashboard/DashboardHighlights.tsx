@@ -23,6 +23,8 @@ export interface DashboardHighlightsProps {
   onOpenMorningRoutine: () => void;
   onNavigateWorkoutSession: (sessionId: string) => void;
   onNavigateTrain: () => void;
+  /** When true (cycle_only user), training cards and "Utforska pass" are hidden or simplified. */
+  isCycleOnly?: boolean;
 }
 
 export function DashboardHighlights({
@@ -37,10 +39,12 @@ export function DashboardHighlights({
   onOpenMorningRoutine,
   onNavigateWorkoutSession,
   onNavigateTrain,
+  isCycleOnly = false,
 }: DashboardHighlightsProps) {
   const flags = useFeatureFlags();
   const copy = useAppCopy("sv");
   const showMorningRoutine = flags.show_morning_routine !== false;
+  const showTrainingInHighlights = !isCycleOnly || !!assignment;
 
   return (
     <Section
@@ -74,7 +78,7 @@ export function DashboardHighlights({
           </Card.Content>
         </Card>
       )}
-      {showMorningRoutine && !readiness && todaySession && !todaySessionCompleted && isViewingToday && (
+      {showTrainingInHighlights && showMorningRoutine && !readiness && todaySession && !todaySessionCompleted && isViewingToday && (
         <Card pressable onPress={onOpenMorningRoutine}>
           <Card.Content>
             <YStack gap="$3">
@@ -103,7 +107,7 @@ export function DashboardHighlights({
           </Card.Content>
         </Card>
       )}
-      {todaySession && todaySessionCompleted && !readiness && (
+      {showTrainingInHighlights && todaySession && todaySessionCompleted && !readiness && (
         <Card>
           <Card.Content>
             <YStack alignItems="center" gap="$2" paddingVertical="$2">
@@ -123,21 +127,25 @@ export function DashboardHighlights({
               <Text fontSize="$xxl">🌿</Text>
               <AppText variant="h3" center>Lugn dag</AppText>
               <AppText variant="small" muted center>
-                Inget pass planerat – vila eller utforska fritt
+                {isCycleOnly
+                  ? "Inget pass planerat – fokus på cykel och välmående"
+                  : "Inget pass planerat – vila eller utforska fritt"}
               </AppText>
-              <AppButton
-                variant="secondary"
-                size="sm"
-                marginTop="$2"
-                onPress={onNavigateTrain}
-              >
-                Utforska pass
-              </AppButton>
+              {!isCycleOnly && (
+                <AppButton
+                  variant="secondary"
+                  size="sm"
+                  marginTop="$2"
+                  onPress={onNavigateTrain}
+                >
+                  Utforska pass
+                </AppButton>
+              )}
             </YStack>
           </Card.Content>
         </Card>
       )}
-      {readiness && todaySession && todaySessionCompleted && (
+      {showTrainingInHighlights && readiness && todaySession && todaySessionCompleted && (
         <Card>
           <Card.Content>
             <YStack alignItems="center" gap="$2" paddingVertical="$2">
@@ -150,7 +158,7 @@ export function DashboardHighlights({
           </Card.Content>
         </Card>
       )}
-      {readiness && todaySession && !todaySessionCompleted && isViewingToday && (
+      {showTrainingInHighlights && readiness && todaySession && !todaySessionCompleted && isViewingToday && (
         <Card pressable onPress={() => onNavigateWorkoutSession(todaySession.id)}>
           <Card.Content>
             <YStack gap="$3">
@@ -183,7 +191,7 @@ export function DashboardHighlights({
           </Card.Content>
         </Card>
       )}
-      {!isViewingToday && todaySession && !todaySessionCompleted && (
+      {showTrainingInHighlights && !isViewingToday && todaySession && !todaySessionCompleted && (
         <Card>
           <Card.Content>
             <YStack alignItems="center" gap="$2" paddingVertical="$2">

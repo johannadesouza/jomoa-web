@@ -3,7 +3,7 @@ import { YStack, XStack } from "tamagui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Pressable } from "react-native";
 
-import { Screen, AppText, AppButton, Card } from "../../shared/ui";
+import { Screen, AppText, AppButton, Card, AppIcon } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
 import { OnboardingStepDots } from "./OnboardingStepDots";
@@ -97,25 +97,9 @@ export function GoalsScreen({ navigation }: Props) {
                             {goal.description ?? ""}
                           </AppText>
                         </YStack>
-                        <XStack
-                          width={24}
-                          height={24}
-                          borderRadius="$full"
-                          borderWidth={2}
-                          borderColor={isSelected ? "$background" : "$borderColor"}
-                          backgroundColor={isSelected ? "$background" : "transparent"}
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          {isSelected && (
-                            <XStack
-                              width={12}
-                              height={12}
-                              borderRadius="$full"
-                              backgroundColor="$accent"
-                            />
-                          )}
-                        </XStack>
+                        {isSelected && (
+                          <AppIcon name="checkmark-circle" size={24} color="$background" />
+                        )}
                       </XStack>
                     </Card.Content>
                   </Card>

@@ -7,6 +7,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { useThemeColors } from "../shared/theme/useThemeColors";
 import { useTheme } from "../shared/context/ThemeContext";
+import { useAuth } from "../shared/context/AuthContext";
 import { DashboardScreen } from "../features/dashboard/DashboardScreen";
 import { TrainScreen } from "../features/train/TrainScreen";
 import { JourneyScreen } from "../features/journey/JourneyScreen";
@@ -23,7 +24,9 @@ export type TabParamList = {
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const CENTER_INDEX = 2; // Hem (0: Träna, 1: Logga&insikter, 2: Hem, 3: Kost, 4: Lär dig)
+// Hem is center pill; index depends on 4 vs 5 tabs (cycle_only has no TrainTab)
+const getCenterIndex = (routeNames: string[]) =>
+  routeNames.indexOf("HomeTab") >= 0 ? routeNames.indexOf("HomeTab") : 0;
 const CENTER_PILL_SIZE = 56;
 const CENTER_PILL_RISE = 16;
 
@@ -95,7 +98,8 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
       <View style={styles.row}>
         {state.routes.map((route, index) => {
           const isFocused = state.index === index;
-          const isCenter = index === CENTER_INDEX;
+          const centerIndex = getCenterIndex(state.routes.map((r) => r.name));
+          const isCenter = index === centerIndex;
           const { options } = descriptors[route.key];
           const icon = options.tabBarIcon?.({ focused: isFocused, color: "", size: 0 });
 
@@ -180,6 +184,8 @@ const styles = StyleSheet.create({
 export function TabNavigator() {
   const { theme } = useTheme();
   const colors = useThemeColors();
+  const { client } = useAuth();
+  const isCycleOnly = client?.onboarding_path === "cycle_only";
 
   return (
     <Tab.Navigator
@@ -189,15 +195,17 @@ export function TabNavigator() {
         tabBarShowLabel: false,
       }}
     >
-      <Tab.Screen
-        name="TrainTab"
-        component={TrainScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon label="Träna" icon="barbell-outline" focused={focused} />
-          ),
-        }}
-      />
+      {!isCycleOnly && (
+        <Tab.Screen
+          name="TrainTab"
+          component={TrainScreen}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <TabIcon label="Träna" icon="barbell-outline" focused={focused} />
+            ),
+          }}
+        />
+      )}
       <Tab.Screen
         name="JourneyTab"
         component={JourneyScreen}

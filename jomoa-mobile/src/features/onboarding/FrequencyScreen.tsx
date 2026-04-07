@@ -3,7 +3,7 @@ import { YStack, XStack } from "tamagui";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Pressable } from "react-native";
 
-import { Screen, AppText, AppButton, Card } from "../../shared/ui";
+import { Screen, AppText, AppButton, Card, AppIcon } from "../../shared/ui";
 import { OnboardingStackParamList } from "./OnboardingNavigator";
 import { useOnboarding } from "./OnboardingContext";
 import { OnboardingStepDots } from "./OnboardingStepDots";
@@ -31,8 +31,13 @@ export function FrequencyScreen({ navigation }: Props) {
   };
 
   const handleContinue = () => {
-    setCurrentStep(3);
-    navigation.navigate("TrainingDays");
+    if (data.onboardingPath === "training_only") {
+      setCurrentStep(3);
+      navigation.navigate("Complete");
+    } else {
+      setCurrentStep(3);
+      navigation.navigate("CycleSetup");
+    }
   };
 
   const handleBack = () => {
@@ -63,8 +68,8 @@ export function FrequencyScreen({ navigation }: Props) {
                     borderWidth={1}
                   >
                     <Card.Content>
-                      <XStack justifyContent="space-between" alignItems="center">
-                        <YStack>
+                      <XStack justifyContent="space-between" alignItems="center" gap="$3">
+                        <YStack flex={1}>
                           <AppText
                             variant="h3"
                             color={isSelected ? "$background" : "$color"}
@@ -78,25 +83,9 @@ export function FrequencyScreen({ navigation }: Props) {
                             {freq.description}
                           </AppText>
                         </YStack>
-                        <XStack
-                          width={24}
-                          height={24}
-                          borderRadius="$full"
-                          borderWidth={2}
-                          borderColor={isSelected ? "$background" : "$borderColor"}
-                          backgroundColor={isSelected ? "$background" : "transparent"}
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          {isSelected && (
-                            <XStack
-                              width={12}
-                              height={12}
-                              borderRadius="$full"
-                              backgroundColor="$accent"
-                            />
-                          )}
-                        </XStack>
+                        {isSelected && (
+                          <AppIcon name="checkmark-circle" size={24} color="$background" />
+                        )}
                       </XStack>
                     </Card.Content>
                   </Card>

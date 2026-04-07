@@ -2,7 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "../../config/supabase";
 
-import type { TrainingGoal, DayOfWeek, PresentationProfile, PresentationTheme } from "../types/onboarding";
+import type { TrainingGoal, DayOfWeek, PresentationProfile, PresentationTheme, OnboardingPath } from "../types/onboarding";
+import { getDemoPersona, isDemoMode } from "../../lib/demo/demoMode";
 
 export interface Client {
   id: string;
@@ -19,6 +20,7 @@ export interface Client {
   peri_menopause?: boolean | null;
   presentation_profile?: PresentationProfile | null;
   presentation_theme?: PresentationTheme | null;
+  onboarding_path?: OnboardingPath | null;
 }
 
 interface AuthContextType {
@@ -40,6 +42,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [client, setClient] = useState<Client | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Portfolio/web demo: bypass Supabase auth + seed a stable client persona.
+  // This makes it possible to deploy a public demo without requiring visitors
+  // to create accounts or touch production data.
+  useEffect(() => {
+    if (!isDemoMode()) return;
+
+    const persona = getDemoPersona();
+    const demoUserId = `demo_${persona}`;
+    const now = new Date().toISOString();
+
+    setSession({} as Session);
+    setUser({ id: demoUserId } as User);
+
+    const base: Client = {
+      id: `client_${demoUserId}`,
+      profile_id: demoUserId,
+      status: "active",
+      onboarding_stage: "completed",
+      created_at: now,
+      primary_goal: "strength" as TrainingGoal,
+      training_frequency: 3,
+      training_days: ["mon", "wed", "fri"] as DayOfWeek[],
+      cycle_length: 28,
+      irregular_cycle: false,
+      no_period: false,
+      peri_menopause: false,
+      presentation_profile: "default" as PresentationProfile,
+      presentation_theme: "dark" as PresentationTheme,
+      onboarding_path: "full" as OnboardingPath,
+    };
+
+    if (persona === "cycle_only") {
+      setClient({
+        ...base,
+        onboarding_path: "cycle_only" as OnboardingPath,
+      });
+    } else if (persona === "perimenopause") {
+      setClient({
+        ...base,
+        peri_menopause: true,
+        irregular_cycle: true,
+        onboarding_path: "full" as OnboardingPath,
+      });
+    } else {
+      setClient(base);
+    }
+
+    setIsLoading(false);
+  }, []);
 
   const fetchClient = async (userId: string) => {
     const { data, error } = await supabase
@@ -63,6 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    if (isDemoMode()) return;
     supabase.auth
       .getSession()
       .then(async ({ data: { session } }) => {
@@ -111,6 +164,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    if (isDemoMode()) return { error: null };
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -119,6 +173,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    if (isDemoMode()) return { error: null };
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -133,7 +188,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    if (!isDemoMode()) {
     await supabase.auth.signOut();
+    }
     setSession(null);
     setUser(null);
     setClient(null);

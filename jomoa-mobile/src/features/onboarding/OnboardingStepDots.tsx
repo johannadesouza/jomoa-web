@@ -1,11 +1,11 @@
 import React from "react";
-import { XStack } from "tamagui";
+import { XStack, YStack } from "tamagui";
 import type { OnboardingPath } from "../../shared/types/onboarding";
+import { AppText } from "../../shared/ui";
 
 type ScreenName =
   | "Goals"
   | "Frequency"
-  | "TrainingDays"
   | "CycleSetup"
   | "Complete";
 
@@ -30,21 +30,19 @@ function getStepConfig(
 
   if (path === "training_only") {
     const map: Record<string, StepConfig> = {
-      Goals: { total: 5, current: 1 },
-      Frequency: { total: 5, current: 2 },
-      TrainingDays: { total: 5, current: 3 },
-      Complete: { total: 5, current: 5 },
+      Goals: { total: 3, current: 1 },
+      Frequency: { total: 3, current: 2 },
+      Complete: { total: 3, current: 3 },
     };
     return map[screen] ?? null;
   }
 
   if (path === "both") {
     const map: Record<string, StepConfig> = {
-      Goals: { total: 6, current: 1 },
-      Frequency: { total: 6, current: 2 },
-      TrainingDays: { total: 6, current: 3 },
-      CycleSetup: { total: 6, current: 4 },
-      Complete: { total: 6, current: 6 },
+      Goals: { total: 4, current: 1 },
+      Frequency: { total: 4, current: 2 },
+      CycleSetup: { total: 4, current: 3 },
+      Complete: { total: 4, current: 4 },
     };
     return map[screen] ?? null;
   }
@@ -62,16 +60,21 @@ export function OnboardingStepDots({ path, screen }: OnboardingStepDotsProps) {
   if (!config) return null;
 
   return (
-    <XStack justifyContent="center" gap="$2">
-      {Array.from({ length: config.total }).map((_, i) => (
-        <XStack
-          key={i}
-          width={8}
-          height={8}
-          borderRadius="$full"
-          backgroundColor={i + 1 === config.current ? "$accent" : "$borderColor"}
-        />
-      ))}
-    </XStack>
+    <YStack alignItems="center" gap="$2">
+      <AppText variant="caption" muted>
+        Steg {config.current} av {config.total}
+      </AppText>
+      <XStack justifyContent="center" gap="$2">
+        {Array.from({ length: config.total }).map((_, i) => (
+          <XStack
+            key={i}
+            width={8}
+            height={8}
+            borderRadius="$full"
+            backgroundColor={i + 1 === config.current ? "$accent" : "$borderColor"}
+          />
+        ))}
+      </XStack>
+    </YStack>
   );
 }

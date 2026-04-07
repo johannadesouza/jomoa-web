@@ -149,6 +149,13 @@ npm start
 # Tryck 'i' för iOS, 'a' för Android, 'w' för web
 ```
 
+## Portfolio Demo (Expo Web)
+
+Vill du visa upp appen klickbart i en portfolio? Använd **Demo Mode** (ingen login) och kör som web.
+
+- Guide: `docs/DEMO_MODE.md`
+- Start web: `npm run web`
+
 ## Miljövariabler
 
 | Variabel | Beskrivning |

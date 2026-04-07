@@ -76,7 +76,11 @@ export function DashboardScreen() {
   const { readiness, refetch: refetchReadiness } = useReadiness(client?.id, selectedDate);
   const { refetch: refetchReadinessHistory } = useReadinessHistory(client?.id, 7);
   const copy = useAppCopy("sv");
-  const dashboardHeroLine = getAppCopy(copy, "dashboard_hero_line", "Din dag, din träning");
+  const showCycleInUI = client?.presentation_profile !== "male";
+  const isCycleOnly = client?.onboarding_path === "cycle_only";
+  const dashboardHeroLine = isCycleOnly
+    ? "Din dag, din cykel"
+    : getAppCopy(copy, "dashboard_hero_line", "Din dag, din träning");
   const { insight, refetch: refetchInsight } = useDailyInsight(client?.id, {
     defaultInsightTitle: getAppCopy(copy, "default_insight_title", "Dagens träningsrekommendation"),
   });
@@ -93,7 +97,6 @@ export function DashboardScreen() {
 
   const phaseInsight = useDailyPhaseInsight(client?.id);
   const appNow = useAppNow();
-  const showCycleInUI = client?.presentation_profile !== "male";
 
   const getGreeting = () => {
     const hour = appNow.now().getHours();
@@ -153,7 +156,7 @@ export function DashboardScreen() {
           onViewCalendar={() => navigation.navigate("Calendar")}
         />
 
-        {!assignment && (
+        {!assignment && !isCycleOnly && (
           <Card pressable onPress={() => navigation.navigate("Main", { screen: "TrainTab" })}>
             <Card.Content>
               <XStack alignItems="center" gap="$4">
@@ -180,6 +183,33 @@ export function DashboardScreen() {
           </Card>
         )}
 
+        {isCycleOnly && (
+          <Card pressable onPress={() => navigation.navigate("ProgramSelect")}>
+            <Card.Content>
+              <XStack alignItems="center" gap="$4">
+                <YStack
+                  width={48}
+                  height={48}
+                  borderRadius="$full"
+                  backgroundColor="$surface3"
+                  alignItems="center"
+                  justifyContent="center"
+                  flexShrink={0}
+                >
+                  <AppIcon name="barbell-outline" size={24} />
+                </YStack>
+                <YStack flex={1} gap="$1">
+                  <AppText variant="h3">Lägg till träning när du vill</AppText>
+                  <AppText variant="small" muted>
+                    Du fokuserar på cykel nu. Här kan du välja ett träningsprogram när du känner dig redo.
+                  </AppText>
+                </YStack>
+                <AppText variant="body" color="$textSecondary">→</AppText>
+              </XStack>
+            </Card.Content>
+          </Card>
+        )}
+
         <DashboardHighlights
           isViewingToday={isViewingToday}
           assignment={assignment}
@@ -192,6 +222,7 @@ export function DashboardScreen() {
           onOpenMorningRoutine={() => setMorningRoutineVisible(true)}
           onNavigateWorkoutSession={(sessionId) => navigation.navigate("WorkoutSession", { sessionId })}
           onNavigateTrain={() => navigation.navigate("Main", { screen: "TrainTab" })}
+          isCycleOnly={isCycleOnly}
         />
 
         <QuickActionsSection
@@ -288,7 +319,7 @@ export function DashboardScreen() {
           onNavigateCycleInsights={() => navigation.navigate("CycleInsights")}
         />
 
-        {isViewingToday && !todaySession && !(readiness && !todaySession) && (
+        {isViewingToday && !todaySession && !(readiness && !todaySession) && !isCycleOnly && (
           <Card pressable onPress={() => navigation.navigate("Main", { screen: "TrainTab" })}>
             <Card.Content>
               <XStack alignItems="center" gap="$4">
@@ -314,7 +345,7 @@ export function DashboardScreen() {
           </Card>
         )}
 
-        {!assignment && (
+        {!assignment && !isCycleOnly && (
           <RecommendedProgramsSection primaryGoal={client?.primary_goal} maxItems={2} />
         )}
 
